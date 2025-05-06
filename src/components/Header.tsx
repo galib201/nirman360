@@ -1,11 +1,20 @@
 
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Home, Menu, User, X } from "lucide-react";
+import { Home, Menu, User, X, Building, Search, MapPin, Calendar, Book } from "lucide-react";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  
+  // Helper function to determine if a link is active
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(path);
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b">
@@ -23,17 +32,57 @@ const Header = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          <Link to="/properties" className="text-sm font-medium hover:text-nirman-gold transition-colors">
-            Browse Properties
+          <Link 
+            to="/properties" 
+            className={`text-sm font-medium transition-colors ${
+              isActive('/properties') && !location.search.includes('category=') 
+                ? 'text-nirman-gold' 
+                : 'hover:text-nirman-gold'
+            }`}
+          >
+            <div className="flex items-center gap-1">
+              <Building size={16} />
+              <span>Browse Properties</span>
+            </div>
           </Link>
-          <Link to="/properties?category=buy" className="text-sm font-medium hover:text-nirman-gold transition-colors">
-            Buy
+          <Link 
+            to="/properties?category=buy" 
+            className={`text-sm font-medium transition-colors ${
+              location.search.includes('category=buy') 
+                ? 'text-nirman-gold' 
+                : 'hover:text-nirman-gold'
+            }`}
+          >
+            <div className="flex items-center gap-1">
+              <Search size={16} />
+              <span>Buy</span>
+            </div>
           </Link>
-          <Link to="/properties?category=rent" className="text-sm font-medium hover:text-nirman-gold transition-colors">
-            Rent
+          <Link 
+            to="/properties?category=rent" 
+            className={`text-sm font-medium transition-colors ${
+              location.search.includes('category=rent') 
+                ? 'text-nirman-gold' 
+                : 'hover:text-nirman-gold'
+            }`}
+          >
+            <div className="flex items-center gap-1">
+              <MapPin size={16} />
+              <span>Rent</span>
+            </div>
           </Link>
-          <Link to="/dashboard" className="text-sm font-medium hover:text-nirman-gold transition-colors">
-            My Nirman
+          <Link 
+            to="/dashboard" 
+            className={`text-sm font-medium transition-colors ${
+              isActive('/dashboard') 
+                ? 'text-nirman-gold' 
+                : 'hover:text-nirman-gold'
+            }`}
+          >
+            <div className="flex items-center gap-1">
+              <User size={16} />
+              <span>My Nirman</span>
+            </div>
           </Link>
         </nav>
 
@@ -66,30 +115,50 @@ const Header = () => {
           <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
             <Link 
               to="/properties" 
-              className="text-sm font-medium py-2 hover:text-nirman-gold transition-colors"
+              className={`text-sm font-medium py-2 flex items-center gap-2 ${
+                isActive('/properties') && !location.search.includes('category=')
+                  ? 'text-nirman-gold' 
+                  : 'hover:text-nirman-gold'
+              } transition-colors`}
               onClick={() => setIsMenuOpen(false)}
             >
+              <Building size={16} />
               Browse Properties
             </Link>
             <Link 
               to="/properties?category=buy" 
-              className="text-sm font-medium py-2 hover:text-nirman-gold transition-colors"
+              className={`text-sm font-medium py-2 flex items-center gap-2 ${
+                location.search.includes('category=buy')
+                  ? 'text-nirman-gold' 
+                  : 'hover:text-nirman-gold'
+              } transition-colors`}
               onClick={() => setIsMenuOpen(false)}
             >
+              <Search size={16} />
               Buy
             </Link>
             <Link 
               to="/properties?category=rent" 
-              className="text-sm font-medium py-2 hover:text-nirman-gold transition-colors"
+              className={`text-sm font-medium py-2 flex items-center gap-2 ${
+                location.search.includes('category=rent')
+                  ? 'text-nirman-gold' 
+                  : 'hover:text-nirman-gold'
+              } transition-colors`}
               onClick={() => setIsMenuOpen(false)}
             >
+              <MapPin size={16} />
               Rent
             </Link>
             <Link 
               to="/dashboard" 
-              className="text-sm font-medium py-2 hover:text-nirman-gold transition-colors"
+              className={`text-sm font-medium py-2 flex items-center gap-2 ${
+                isActive('/dashboard')
+                  ? 'text-nirman-gold' 
+                  : 'hover:text-nirman-gold'
+              } transition-colors`}
               onClick={() => setIsMenuOpen(false)}
             >
+              <User size={16} />
               My Nirman
             </Link>
             <div className="flex flex-col gap-2 pt-2 border-t">

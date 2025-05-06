@@ -3,13 +3,17 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Property } from "@/models";
 import { PropertyService } from "@/services/api";
 import PropertyCard from "@/components/PropertyCard";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Search } from "lucide-react";
+import { Search, Home, Building2, Users, Sofa, UserRound } from "lucide-react";
+import { toast } from "sonner";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -19,6 +23,14 @@ const Index = () => {
   const [premiumProperties, setPremiumProperties] = useState<Property[]>([]);
   const [recentlyVerified, setRecentlyVerified] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Rent-specific filters
+  const [forBachelors, setForBachelors] = useState(false);
+  const [forFamilies, setForFamilies] = useState(false);
+  const [isFurnished, setIsFurnished] = useState(false);
+  const [womenOnly, setWomenOnly] = useState(false);
+  const [propertyType, setPropertyType] = useState<string>("");
+  const [isRentalAlertModalOpen, setIsRentalAlertModalOpen] = useState(false);
   
   useEffect(() => {
     const fetchProperties = async () => {
@@ -48,7 +60,35 @@ const Index = () => {
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate(`/properties?location=${searchQuery}&category=${category}`);
+    
+    const filters: Record<string, any> = {
+      location: searchQuery,
+      category: category
+    };
+    
+    // Add rent-specific filters if category is rent
+    if (category === "rent") {
+      if (forBachelors) filters.forBachelors = true;
+      if (forFamilies) filters.forFamilies = true;
+      if (isFurnished) filters.furnished = true;
+      if (womenOnly) filters.womenOnly = true;
+      if (propertyType) filters.type = propertyType;
+    }
+    
+    // Convert filters to query params
+    const searchParams = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== "") {
+        searchParams.append(key, String(value));
+      }
+    });
+    
+    navigate(`/properties?${searchParams.toString()}`);
+  };
+
+  const handleRentalAlert = () => {
+    toast.success("Rental alert created! We'll notify you when matching properties are listed.");
+    setIsRentalAlertModalOpen(false);
   };
   
   return (
@@ -77,37 +117,110 @@ const Index = () => {
               Your trusted platform for verified premium real estate listings across Bangladesh
             </p>
             
-            <form onSubmit={handleSearch} className="bg-white rounded-lg p-2 md:p-3 shadow-lg max-w-2xl mx-auto">
-              <div className="flex flex-col md:flex-row gap-2">
-                <Tabs defaultValue={category} className="w-full md:w-auto mb-2 md:mb-0">
+            <form onSubmit={handleSearch} className="bg-white rounded-lg p-2 md:p-4 shadow-lg max-w-2xl mx-auto">
+              <div className="flex flex-col gap-4">
+                <Tabs 
+                  defaultValue={category} 
+                  className="w-full" 
+                  onValueChange={(value) => setCategory(value as "buy" | "rent")}
+                >
                   <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger 
-                      value="buy" 
-                      onClick={() => setCategory("buy")}
-                    >
-                      Buy
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="rent" 
-                      onClick={() => setCategory("rent")}
-                    >
-                      Rent
-                    </TabsTrigger>
+                    <TabsTrigger value="buy">Buy</TabsTrigger>
+                    <TabsTrigger value="rent">Rent</TabsTrigger>
                   </TabsList>
+                  
+                  <div className="mt-4">
+                    <div className="relative flex w-full">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                      <Input
+                        placeholder="Search by location, area, or city..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-10 w-full"
+                      />
+                    </div>
+                  </div>
+
+                  <TabsContent value="rent" className="mt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2 text-left">
+                        <div className="text-sm font-medium text-gray-700">For</div>
+                        <div className="flex flex-wrap gap-4">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox 
+                              id="bachelors" 
+                              checked={forBachelors}
+                              onCheckedChange={(checked) => {
+                                setForBachelors(checked === true);
+                                if (checked && forFamilies) setForFamilies(false);
+                              }}
+                            />
+                            <Label htmlFor="bachelors" className="text-gray-700">Bachelors</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox 
+                              id="families" 
+                              checked={forFamilies}
+                              onCheckedChange={(checked) => {
+                                setForFamilies(checked === true);
+                                if (checked && forBachelors) setForBachelors(false);
+                              }}
+                            />
+                            <Label htmlFor="families" className="text-gray-700">Families</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox 
+                              id="womenOnly"
+                              checked={womenOnly}
+                              onCheckedChange={(checked) => setWomenOnly(checked === true)}
+                            />
+                            <Label htmlFor="womenOnly" className="text-gray-700">Women Only</Label>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2 text-left">
+                        <div className="text-sm font-medium text-gray-700">Options</div>
+                        <div className="flex flex-wrap gap-4">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox 
+                              id="furnished" 
+                              checked={isFurnished}
+                              onCheckedChange={(checked) => setIsFurnished(checked === true)}
+                            />
+                            <Label htmlFor="furnished" className="text-gray-700">Furnished</Label>
+                          </div>
+                          <div>
+                            <Select value={propertyType} onValueChange={setPropertyType}>
+                              <SelectTrigger className="w-full md:w-[180px]">
+                                <SelectValue placeholder="Property Type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="apartment">Apartment</SelectItem>
+                                <SelectItem value="house">House</SelectItem>
+                                <SelectItem value="room">Room</SelectItem>
+                                <SelectItem value="office">Office</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4 flex justify-between">
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => toast.success("Rental alert created! We'll notify you when matching properties are listed.")}
+                      >
+                        Create Rental Alert
+                      </Button>
+                    </div>
+                  </TabsContent>
                 </Tabs>
                 
-                <div className="relative flex-grow">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                  <Input
-                    placeholder="Search by location, area, or city..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-                
-                <Button type="submit" className="w-full md:w-auto">
-                  Search
+                <Button type="submit" className="w-full">
+                  Search Properties
                 </Button>
               </div>
             </form>

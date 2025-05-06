@@ -52,15 +52,24 @@ export const PropertyService = {
         return false;
       }
       
-      // Handle bachelor vs family (just a simple implementation for demo)
-      if (filters.forBachelors && 
-          (property.features.bedrooms > 2 || property.price > 30000)) {
-        return false;
+      // Handle bachelor vs family
+      if (filters.forBachelors === true) {
+        if (!property.features.bachelorsAllowed) {
+          return false;
+        }
       }
       
-      if (filters.forFamilies && 
-          (property.features.bedrooms < 2 || !property.features.parking)) {
-        return false;
+      if (filters.forFamilies === true) {
+        if (!property.features.familiesAllowed) {
+          return false;
+        }
+      }
+      
+      // Women-only filter
+      if (filters.womenOnly === true) {
+        if (!property.features.womenOnly) {
+          return false;
+        }
       }
       
       return true;
@@ -86,6 +95,14 @@ export const PropertyService = {
     await delay(600);
     return MOCK_PROPERTIES.filter(property => property.isPremium)
       .slice(0, 3);
+  },
+
+  // Create rental alert (mock implementation)
+  createRentalAlert: async (criteria: Record<string, any>): Promise<boolean> => {
+    await delay(1000);
+    console.log('Creating rental alert with criteria:', criteria);
+    // In a real app, we'd store this in a database
+    return true;
   }
 };
 
