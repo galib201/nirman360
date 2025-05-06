@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -33,7 +33,7 @@ const BookVisit = () => {
     "4:00 PM", "5:00 PM"
   ];
   
-  useState(() => {
+  useEffect(() => {
     const fetchProperty = async () => {
       try {
         setLoading(true);
@@ -50,7 +50,7 @@ const BookVisit = () => {
     };
     
     fetchProperty();
-  });
+  }, [id]); // Added id as dependency
   
   const handleBooking = () => {
     if (!selectedDate || !selectedTime) {
