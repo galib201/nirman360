@@ -1,73 +1,57 @@
 
-// Model types for the application
+// Property related types
 export interface Property {
   id: string;
   title: string;
   description: string;
   price: number;
-  location: Location;
+  location: {
+    address: string;
+    city: string;
+    area: string;
+    coordinates?: {
+      latitude: number;
+      longitude: number;
+    };
+  };
   features: PropertyFeatures;
-  type: PropertyType;
-  category: PropertyCategory;
-  status: PropertyStatus;
+  type: "apartment" | "house" | "villa" | "commercial" | "room" | "office";
+  category: "buy" | "rent";
+  status: "available" | "sold" | "rented" | "pending";
   images: string[];
   isVerified: boolean;
   isPremium: boolean;
   postedAt: string;
-  areaSnapshot: AreaSnapshot;
-}
-
-export interface Location {
-  address: string;
-  city: string;
-  area: string;
-  coordinates: {
-    latitude: number;
-    longitude: number;
-  };
+  areaSnapshot?: AreaSnapshot;
 }
 
 export interface PropertyFeatures {
   bedrooms: number;
   bathrooms: number;
-  area: number; // in square feet
+  area: number;
   furnished: boolean;
   parking: boolean;
   petFriendly: boolean;
   garden: boolean;
   securitySystem: boolean;
+  bachelorsAllowed?: boolean;  // Added this property
+  familiesAllowed?: boolean;   // Added this property
+  womenOnly?: boolean;         // Added this property
   additionalFeatures: string[];
 }
 
-export type PropertyType = 'apartment' | 'house' | 'villa' | 'land' | 'commercial';
-
-export type PropertyCategory = 'rent' | 'buy';
-
-export type PropertyStatus = 'available' | 'pending' | 'sold' | 'rented';
-
 export interface AreaSnapshot {
   averagePrice: number;
-  nearbyPlaces: NearbyPlace[];
-  crimeRate: 'low' | 'medium' | 'high';
-  walkScore: number; // 0-100
+  nearbyPlaces: {
+    name: string;
+    type: string;
+    distance: number;
+  }[];
+  crimeRate: "low" | "medium" | "high";
+  walkScore: number;
 }
 
-export interface NearbyPlace {
-  name: string;
-  type: 'restaurant' | 'school' | 'hospital' | 'park' | 'shopping' | 'transport';
-  distance: number; // in kilometers
-}
-
-export interface BookingRequest {
-  id: string;
-  propertyId: string;
-  userId: string;
-  date: string;
-  timeSlot: string;
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
-  message?: string;
-}
-
+// User related types
 export interface User {
   id: string;
   name: string;
@@ -78,17 +62,48 @@ export interface User {
   inquiries: string[];
 }
 
+// Booking related types
+export interface BookingRequest {
+  id: string;
+  propertyId: string;
+  userId: string;
+  date: string;
+  timeSlot: string;
+  status: "pending" | "confirmed" | "cancelled" | "completed";
+}
+
+// Filter types
 export interface Filter {
   location?: string;
+  category?: "buy" | "rent";
+  type?: "apartment" | "house" | "villa" | "commercial" | "room" | "office";
   priceMin?: number;
   priceMax?: number;
-  category?: PropertyCategory;
-  type?: PropertyType;
   bedrooms?: number;
   bathrooms?: number;
   furnished?: boolean;
+  verified?: boolean;
   forBachelors?: boolean;
   forFamilies?: boolean;
   womenOnly?: boolean;
-  verified?: boolean;
+}
+
+// Nirman AI related types
+export interface AIRecommendation {
+  propertyId: string;
+  score: number;
+  matchReason: string;
+}
+
+export interface AIUserPreference {
+  budget: {
+    min: number;
+    max: number;
+  };
+  location: string[];
+  propertyType: string[];
+  bedrooms: number;
+  purpose: "buy" | "rent";
+  lifestyle: "bachelor" | "family" | "professional" | "student";
+  amenities: string[];
 }

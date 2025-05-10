@@ -1,6 +1,5 @@
-
-import { BookingRequest, Filter, Property, User } from "../models";
-import { MOCK_BOOKINGS, MOCK_PROPERTIES, MOCK_USERS } from "../utils/mockData";
+import { AIRecommendation, AIUserPreference, BookingRequest, Filter, Property, User } from "../models";
+import { MOCK_AI_USER_PREFERENCES, MOCK_BOOKINGS, MOCK_PROPERTIES, MOCK_USERS } from "../utils/mockData";
 
 // Simulating API delays
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -76,6 +75,12 @@ export const PropertyService = {
     });
   },
   
+  // Get properties by category (buy or rent)
+  getPropertiesByCategory: async (category: "buy" | "rent"): Promise<Property[]> => {
+    await delay(600);
+    return MOCK_PROPERTIES.filter(property => property.category === category);
+  },
+  
   // Get a specific property by ID
   getPropertyById: async (id: string): Promise<Property | undefined> => {
     await delay(500);
@@ -103,6 +108,53 @@ export const PropertyService = {
     console.log('Creating rental alert with criteria:', criteria);
     // In a real app, we'd store this in a database
     return true;
+  },
+  
+  // Get AI recommendations based on user preferences
+  getAIRecommendations: async (preferences: AIUserPreference): Promise<Property[]> => {
+    await delay(1500); // Simulate AI processing time
+    
+    // Filter properties based on AI preference criteria
+    const filteredProperties = MOCK_PROPERTIES.filter(property => {
+      // Match purpose (buy/rent)
+      if (property.category !== preferences.purpose) return false;
+      
+      // Match budget range
+      if (property.price < preferences.budget.min || property.price > preferences.budget.max) return false;
+      
+      // Match location if specified
+      if (preferences.location.length > 0 && 
+          !preferences.location.includes(property.location.area)) {
+        return false;
+      }
+      
+      // Match property type if specified
+      if (preferences.propertyType.length > 0 && 
+          !preferences.propertyType.includes(property.type)) {
+        return false;
+      }
+      
+      // Match minimum bedrooms
+      if (property.features.bedrooms < preferences.bedrooms) return false;
+      
+      // Match lifestyle preferences
+      if (preferences.lifestyle === 'bachelor' && property.features.bachelorsAllowed === false) return false;
+      if (preferences.lifestyle === 'family' && property.features.familiesAllowed === false) return false;
+      
+      // Match required amenities
+      for (const amenity of preferences.amenities) {
+        if (amenity === 'furnished' && !property.features.furnished) return false;
+        if (amenity === 'parking' && !property.features.parking) return false;
+        if (amenity === 'garden' && !property.features.garden) return false;
+        if (amenity === 'securitySystem' && !property.features.securitySystem) return false;
+        if (amenity === 'petFriendly' && !property.features.petFriendly) return false;
+      }
+      
+      return true;
+    });
+    
+    // Sort by relevance (in a real app, this would use machine learning)
+    return filteredProperties.slice(0, 6);
   }
 };
 

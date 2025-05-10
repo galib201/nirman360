@@ -1,5 +1,4 @@
-
-import { BookingRequest, Property, User } from "../models";
+import { AIUserPreference, BookingRequest, Property, User } from "../models";
 
 export const MOCK_PROPERTIES: Property[] = [
   {
@@ -25,6 +24,9 @@ export const MOCK_PROPERTIES: Property[] = [
       petFriendly: true,
       garden: false,
       securitySystem: true,
+      bachelorsAllowed: false,
+      familiesAllowed: true,
+      womenOnly: false,
       additionalFeatures: ["Swimming Pool", "Gym", "24/7 Security"]
     },
     type: "apartment",
@@ -72,6 +74,9 @@ export const MOCK_PROPERTIES: Property[] = [
       petFriendly: true,
       garden: true,
       securitySystem: true,
+      bachelorsAllowed: false,
+      familiesAllowed: true,
+      womenOnly: false,
       additionalFeatures: ["Spacious Backyard", "Modern Kitchen", "Home Office"]
     },
     type: "house",
@@ -119,6 +124,9 @@ export const MOCK_PROPERTIES: Property[] = [
       petFriendly: false,
       garden: false,
       securitySystem: true,
+      bachelorsAllowed: true,
+      familiesAllowed: false,
+      womenOnly: false,
       additionalFeatures: ["Fast Internet", "Close to University", "Shared Rooftop"]
     },
     type: "apartment",
@@ -166,6 +174,9 @@ export const MOCK_PROPERTIES: Property[] = [
       petFriendly: true,
       garden: true,
       securitySystem: true,
+      bachelorsAllowed: false,
+      familiesAllowed: true,
+      womenOnly: false,
       additionalFeatures: ["Private Pool", "Home Theatre", "Wine Cellar", "Smart Home System"]
     },
     type: "villa",
@@ -213,6 +224,9 @@ export const MOCK_PROPERTIES: Property[] = [
       petFriendly: true,
       garden: true,
       securitySystem: true,
+      bachelorsAllowed: false,
+      familiesAllowed: true,
+      womenOnly: false,
       additionalFeatures: ["Playground", "Community Center", "24/7 Security"]
     },
     type: "apartment",
@@ -260,6 +274,9 @@ export const MOCK_PROPERTIES: Property[] = [
       petFriendly: false,
       garden: false,
       securitySystem: true,
+      bachelorsAllowed: false,
+      familiesAllowed: false,
+      womenOnly: false,
       additionalFeatures: ["Meeting Rooms", "Reception Area", "High-Speed Internet"]
     },
     type: "commercial",
@@ -279,6 +296,56 @@ export const MOCK_PROPERTIES: Property[] = [
         { name: "Central Bank", type: "transport", distance: 0.3 },
         { name: "Corporate Tower", type: "transport", distance: 0.2 },
         { name: "Business Hotel", type: "transport", distance: 0.5 }
+      ],
+      crimeRate: "low",
+      walkScore: 90
+    }
+  },
+  {
+    id: "p7",
+    title: "Women's Hostel with Modern Amenities",
+    description: "Secure and comfortable hostel exclusively for women. Features modern amenities, study areas, and 24/7 security.",
+    price: 12000,
+    location: {
+      address: "27 University Road",
+      city: "Dhaka",
+      area: "Mohakhali",
+      coordinates: {
+        latitude: 23.7779,
+        longitude: 90.4065
+      }
+    },
+    features: {
+      bedrooms: 1,
+      bathrooms: 1,
+      area: 300,
+      furnished: true,
+      parking: false,
+      petFriendly: false,
+      garden: true,
+      securitySystem: true,
+      bachelorsAllowed: false,
+      familiesAllowed: false,
+      womenOnly: true,
+      additionalFeatures: ["Study Room", "Common Kitchen", "CCTV Security"]
+    },
+    type: "room",
+    category: "rent",
+    status: "available",
+    images: [
+      "https://images.unsplash.com/photo-1459767129954-1b1c1f9b9ace",
+      "https://images.unsplash.com/photo-1439158771502-46975e819208",
+      "https://images.unsplash.com/photo-1431576901776-e539bd916ba2"
+    ],
+    isVerified: true,
+    isPremium: false,
+    postedAt: "2023-04-25T10:30:00Z",
+    areaSnapshot: {
+      averagePrice: 14000,
+      nearbyPlaces: [
+        { name: "Women's University", type: "school", distance: 0.3 },
+        { name: "Coffee Shop", type: "restaurant", distance: 0.2 },
+        { name: "City Library", type: "library", distance: 0.5 }
       ],
       crimeRate: "low",
       walkScore: 90
@@ -308,3 +375,78 @@ export const MOCK_BOOKINGS: BookingRequest[] = [
     status: "confirmed"
   }
 ];
+
+// Add new mock data for Nirman AI
+export const MOCK_AI_USER_PREFERENCES: AIUserPreference[] = [
+  {
+    budget: {
+      min: 10000,
+      max: 30000
+    },
+    location: ["Dhanmondi", "Mohakhali"],
+    propertyType: ["apartment", "room"],
+    bedrooms: 1,
+    purpose: "rent",
+    lifestyle: "bachelor",
+    amenities: ["furnished", "securitySystem"]
+  },
+  {
+    budget: {
+      min: 15000000,
+      max: 40000000
+    },
+    location: ["Gulshan", "Banani", "Baridhara"],
+    propertyType: ["apartment", "house"],
+    bedrooms: 3,
+    purpose: "buy",
+    lifestyle: "family",
+    amenities: ["parking", "garden", "securitySystem"]
+  }
+];
+
+// Admin user
+export const ADMIN_USER = {
+  id: "admin1",
+  username: "admin",
+  password: "nirman360admin", // In a real app, this would be hashed
+  name: "Admin User",
+  email: "admin@nirman360.com",
+  role: "admin"
+};
+
+// Add property analytics for admin dashboard
+export const PROPERTY_ANALYTICS = {
+  totalListings: 178,
+  verifiedListings: 142,
+  pendingVerification: 36,
+  premiumListings: 24,
+  mostViewedAreas: ["Gulshan", "Dhanmondi", "Banani", "Uttara"],
+  listingsPerCategory: {
+    buy: 97,
+    rent: 81
+  },
+  listingsPerType: {
+    apartment: 102,
+    house: 43,
+    commercial: 12,
+    room: 21
+  },
+  recentTransactions: [
+    {
+      id: "t1",
+      propertyId: "p2",
+      amount: 25000000,
+      commission: 250000,
+      date: "2023-04-28T10:15:00Z",
+      type: "buy"
+    },
+    {
+      id: "t2",
+      propertyId: "p5",
+      amount: 25000,
+      commission: 2500,
+      date: "2023-04-26T14:30:00Z",
+      type: "rent"
+    }
+  ]
+};

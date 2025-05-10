@@ -12,14 +12,19 @@ import { PropertyService } from "@/services/api";
 import PropertyCard from "@/components/PropertyCard";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Search, Home, Building2, Users, Sofa, UserRound } from "lucide-react";
+import { Search, Home, Building2, Users, Sofa, UserRound, Zap } from "lucide-react";
 import { toast } from "sonner";
 
-const Index = () => {
+interface IndexProps {
+  onLogoClick?: () => void;
+}
+
+const Index = ({ onLogoClick }: IndexProps) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState<"buy" | "rent">("buy");
-  const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
+  const [featuredBuyProperties, setFeaturedBuyProperties] = useState<Property[]>([]);
+  const [featuredRentProperties, setFeaturedRentProperties] = useState<Property[]>([]);
   const [premiumProperties, setPremiumProperties] = useState<Property[]>([]);
   const [recentlyVerified, setRecentlyVerified] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +35,6 @@ const Index = () => {
   const [isFurnished, setIsFurnished] = useState(false);
   const [womenOnly, setWomenOnly] = useState(false);
   const [propertyType, setPropertyType] = useState<string>("");
-  const [isRentalAlertModalOpen, setIsRentalAlertModalOpen] = useState(false);
   
   useEffect(() => {
     const fetchProperties = async () => {
@@ -45,9 +49,12 @@ const Index = () => {
         const verified = await PropertyService.getRecentlyVerified();
         setRecentlyVerified(verified);
         
-        // Fetch all properties for featured section
-        const all = await PropertyService.getProperties();
-        setFeaturedProperties(all.slice(0, 6)); // Get first 6 properties
+        // Fetch properties by category for featured sections
+        const buyProperties = await PropertyService.getPropertiesByCategory("buy");
+        setFeaturedBuyProperties(buyProperties.slice(0, 3));
+        
+        const rentProperties = await PropertyService.getPropertiesByCategory("rent");
+        setFeaturedRentProperties(rentProperties.slice(0, 3));
       } catch (error) {
         console.error('Error fetching properties:', error);
       } finally {
@@ -88,12 +95,11 @@ const Index = () => {
 
   const handleRentalAlert = () => {
     toast.success("Rental alert created! We'll notify you when matching properties are listed.");
-    setIsRentalAlertModalOpen(false);
   };
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header onLogoClick={onLogoClick} />
       
       {/* Hero Section */}
       <section className="relative bg-gradient-premium py-16 md:py-24 text-white">
@@ -211,7 +217,7 @@ const Index = () => {
                       <Button 
                         type="button" 
                         variant="outline" 
-                        onClick={() => toast.success("Rental alert created! We'll notify you when matching properties are listed.")}
+                        onClick={handleRentalAlert}
                       >
                         Create Rental Alert
                       </Button>
@@ -248,18 +254,9 @@ const Index = () => {
               </div>
               <div className="flex flex-col items-center">
                 <div className="rounded-full bg-nirman-gold bg-opacity-20 p-3 mb-3">
-                  <svg className="w-5 h-5 text-nirman-gold" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19.4 15C19.2669 15.3016 19.2272 15.6362 19.287 15.9606C19.3468 16.285 19.5043 16.5843 19.738 16.8101C19.9717 17.0359 20.2717 17.1852 20.5967 17.2371C20.9216 17.2889 21.255 17.241 21.55 17.1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M16 18V18.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M12 18V18.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M8 18V18.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M4 18V18.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M2 12H22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M12 2C13.8565 3.57383 14.9697 5.81417 15 8.165V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M12 2C10.1435 3.57383 9.03029 5.81417 9 8.165V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <Zap className="w-5 h-5 text-nirman-gold" />
                 </div>
-                <span className="text-sm">AI-Powered</span>
+                <span className="text-sm">Nirman AI</span>
               </div>
               <div className="flex flex-col items-center">
                 <div className="rounded-full bg-nirman-gold bg-opacity-20 p-3 mb-3">
@@ -275,40 +272,88 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Nirman AI Banner */}
+      <section className="py-6 bg-nirman-cream">
+        <div className="container mx-auto px-4">
+          <div className="bg-gradient-premium rounded-lg text-white p-6 md:p-8 flex flex-col md:flex-row justify-between items-center">
+            <div className="mb-4 md:mb-0">
+              <div className="flex items-center gap-3">
+                <Zap className="h-8 w-8 text-nirman-gold" />
+                <h2 className="text-xl md:text-2xl font-semibold">Meet Nirman AI</h2>
+              </div>
+              <p className="mt-2 text-sm md:text-base max-w-xl">
+                Our AI assistant helps you find your perfect property based on your lifestyle and preferences. 
+                Get personalized recommendations in minutes.
+              </p>
+            </div>
+            <Button 
+              onClick={() => navigate('/nirman-ai')}
+              className="bg-nirman-gold text-nirman-navy hover:bg-opacity-90"
+              size="lg"
+            >
+              Try Nirman AI Now
+            </Button>
+          </div>
+        </div>
+      </section>
       
-      {/* Featured Properties */}
+      {/* Featured Properties - Buy */}
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
-          <h2 className="section-title text-center mb-10">Featured Properties</h2>
+          <div className="flex items-center justify-between mb-10">
+            <h2 className="text-2xl font-semibold">Featured Properties to Buy</h2>
+            <Button asChild variant="outline">
+              <a href="/properties?category=buy">View All</a>
+            </Button>
+          </div>
           
           {loading ? (
             <div className="flex justify-center items-center h-40">
               <div className="animate-spin rounded-full h-12 w-12 border-4 border-nirman-navy border-t-transparent"></div>
             </div>
           ) : (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {featuredProperties.map(property => (
-                  <div key={property.id} className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                    <PropertyCard property={property} />
-                  </div>
-                ))}
-              </div>
-              
-              <div className="text-center mt-10">
-                <Button asChild variant="outline" size="lg">
-                  <a href="/properties">View All Properties</a>
-                </Button>
-              </div>
-            </>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredBuyProperties.map(property => (
+                <div key={property.id} className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                  <PropertyCard property={property} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Featured Properties - Rent */}
+      <section className="py-12 md:py-16 bg-nirman-cream">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-10">
+            <h2 className="text-2xl font-semibold">Featured Rental Properties</h2>
+            <Button asChild variant="outline">
+              <a href="/properties?category=rent">View All</a>
+            </Button>
+          </div>
+          
+          {loading ? (
+            <div className="flex justify-center items-center h-40">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-nirman-navy border-t-transparent"></div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredRentProperties.map(property => (
+                <div key={property.id} className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                  <PropertyCard property={property} />
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </section>
       
       {/* Premium Properties */}
-      <section className="py-12 md:py-16 bg-nirman-cream">
+      <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
-          <h2 className="section-title text-center mb-4">Premium Properties</h2>
+          <h2 className="text-2xl font-semibold text-center mb-4">Premium Properties</h2>
           <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
             Handpicked luxury properties that offer exceptional quality, location, and amenities
           </p>
@@ -334,9 +379,9 @@ const Index = () => {
       </section>
       
       {/* Recently Verified */}
-      <section className="py-12 md:py-16">
+      <section className="py-12 md:py-16 bg-nirman-cream">
         <div className="container mx-auto px-4">
-          <h2 className="section-title text-center mb-4">Recently Verified Near You</h2>
+          <h2 className="text-2xl font-semibold text-center mb-4">Recently Verified Near You</h2>
           <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
             Freshly verified properties in your area that meet our quality standards
           </p>
@@ -362,9 +407,9 @@ const Index = () => {
       </section>
       
       {/* How It Works */}
-      <section className="py-12 md:py-16 bg-nirman-lightblue">
+      <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
-          <h2 className="section-title text-center mb-10">How Nirman360 Works</h2>
+          <h2 className="text-2xl font-semibold text-center mb-10">How Nirman360 Works</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex flex-col items-center text-center">

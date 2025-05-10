@@ -1,182 +1,153 @@
 
-import { Button } from "@/components/ui/button";
-import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Home, Menu, User, X, Building, Search, MapPin, Calendar, Book } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Home, Building, User, Search, ShieldCheck, Building2, MapPin, Zap } from "lucide-react";
+import { useMediaQuery } from "@/hooks/use-mobile";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
 
-const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const location = useLocation();
+interface HeaderProps {
+  onLogoClick?: () => void; // Add this prop for admin access
+}
+
+const Header = ({ onLogoClick }: HeaderProps) => {
+  const navigate = useNavigate();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   
-  // Helper function to determine if a link is active
-  const isActive = (path: string) => {
-    if (path === '/') {
-      return location.pathname === '/';
-    }
-    return location.pathname.startsWith(path);
-  };
-
+  const navItems = [
+    { label: "Home", path: "/", icon: Home },
+    { label: "Buy", path: "/properties?category=buy", icon: Building },
+    { label: "Rent", path: "/properties?category=rent", icon: Building2 },
+    { label: "Area Snapshot", path: "/area-snapshot", icon: MapPin },
+    { label: "Legal Support", path: "/legal-support", icon: ShieldCheck },
+    { label: "Nirman AI", path: "/nirman-ai", icon: Zap, isHighlighted: true },
+  ];
+  
   return (
-    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b">
-      <div className="container mx-auto px-4 flex items-center justify-between h-16">
-        <Link to="/" className="flex items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-nirman-navy text-white rounded flex items-center justify-center">
-              <Home size={18} />
-            </div>
-            <span className="font-display text-xl font-semibold text-nirman-navy">
-              Nirman<span className="text-nirman-gold">360</span>
-            </span>
-          </div>
-        </Link>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 items-center">
+        <div className="mr-4 flex">
           <Link 
-            to="/properties" 
-            className={`text-sm font-medium transition-colors ${
-              isActive('/properties') && !location.search.includes('category=') 
-                ? 'text-nirman-gold' 
-                : 'hover:text-nirman-gold'
-            }`}
+            to="/" 
+            className="flex items-center space-x-2"
+            onClick={() => onLogoClick && onLogoClick()}
           >
-            <div className="flex items-center gap-1">
-              <Building size={16} />
-              <span>Browse Properties</span>
-            </div>
+            <div className="bg-nirman-gold text-white font-bold rounded p-1.5">N360</div>
+            <span className="font-display font-semibold text-xl">Nirman360</span>
           </Link>
-          <Link 
-            to="/properties?category=buy" 
-            className={`text-sm font-medium transition-colors ${
-              location.search.includes('category=buy') 
-                ? 'text-nirman-gold' 
-                : 'hover:text-nirman-gold'
-            }`}
-          >
-            <div className="flex items-center gap-1">
-              <Search size={16} />
-              <span>Buy</span>
-            </div>
-          </Link>
-          <Link 
-            to="/properties?category=rent" 
-            className={`text-sm font-medium transition-colors ${
-              location.search.includes('category=rent') 
-                ? 'text-nirman-gold' 
-                : 'hover:text-nirman-gold'
-            }`}
-          >
-            <div className="flex items-center gap-1">
-              <MapPin size={16} />
-              <span>Rent</span>
-            </div>
-          </Link>
-          <Link 
-            to="/dashboard" 
-            className={`text-sm font-medium transition-colors ${
-              isActive('/dashboard') 
-                ? 'text-nirman-gold' 
-                : 'hover:text-nirman-gold'
-            }`}
-          >
-            <div className="flex items-center gap-1">
-              <User size={16} />
-              <span>My Nirman</span>
-            </div>
-          </Link>
-        </nav>
-
-        <div className="hidden md:flex items-center gap-3">
-          <Button variant="outline" asChild>
-            <Link to="/login">
-              <User size={16} className="mr-2" />
-              Sign In
-            </Link>
-          </Button>
-          <Button>
-            <Link to="/post-property">Post Property</Link>
-          </Button>
         </div>
+        
+        {!isMobile ? (
+          <nav className="flex items-center space-x-6 text-sm font-medium flex-1 justify-center">
+            {navItems.map((item) => (
+              <Link 
+                key={item.path}
+                to={item.path}
+                className={`flex items-center transition-colors hover:text-foreground/80 ${
+                  item.isHighlighted 
+                    ? "text-nirman-gold font-semibold" 
+                    : "text-foreground/60"
+                }`}
+              >
+                <item.icon className="mr-1.5 h-[1.1rem] w-[1.1rem]" />
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        ) : (
+          <div className="flex-1" />
+        )}
+        
+        <div className="flex items-center justify-end space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="hidden md:flex"
+            onClick={() => navigate("/ai-recommendations")}
+          >
+            <Search className="mr-2 h-3.5 w-3.5" />
+            AI Recommendations
+          </Button>
 
-        {/* Mobile Menu Button */}
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="md:hidden"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? <X /> : <Menu />}
-        </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate("/dashboard")}
+          >
+            <User className="h-4 w-4 md:mr-2" />
+            <span className="hidden md:inline">Account</span>
+          </Button>
+          
+          {isMobile && (
+            <Sheet open={showMobileMenu} onOpenChange={setShowMobileMenu}>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-5 w-5"
+                  >
+                    <line x1="4" x2="20" y1="12" y2="12" />
+                    <line x1="4" x2="20" y1="6" y2="6" />
+                    <line x1="4" x2="20" y1="18" y2="18" />
+                  </svg>
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right">
+                <SheetHeader>
+                  <SheetTitle>Nirman360</SheetTitle>
+                  <SheetDescription>
+                    Your Property Partner
+                  </SheetDescription>
+                </SheetHeader>
+                <nav className="flex flex-col gap-4 mt-8">
+                  {navItems.map((item) => (
+                    <SheetClose asChild key={item.path}>
+                      <Link 
+                        to={item.path}
+                        className={`flex items-center rounded-md px-2 py-1.5 transition-colors hover:bg-muted ${
+                          item.isHighlighted ? "text-nirman-gold font-semibold" : ""
+                        }`}
+                        onClick={() => setShowMobileMenu(false)}
+                      >
+                        <item.icon className="mr-2.5 h-5 w-5" />
+                        {item.label}
+                      </Link>
+                    </SheetClose>
+                  ))}
+                  <SheetClose asChild>
+                    <Link 
+                      to="/ai-recommendations"
+                      className="flex items-center rounded-md px-2 py-1.5 transition-colors hover:bg-muted"
+                      onClick={() => setShowMobileMenu(false)}
+                    >
+                      <Search className="mr-2.5 h-5 w-5" />
+                      AI Recommendations
+                    </Link>
+                  </SheetClose>
+                </nav>
+              </SheetContent>
+            </Sheet>
+          )}
+        </div>
       </div>
-
-      {/* Mobile Navigation */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-background border-b">
-          <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
-            <Link 
-              to="/properties" 
-              className={`text-sm font-medium py-2 flex items-center gap-2 ${
-                isActive('/properties') && !location.search.includes('category=')
-                  ? 'text-nirman-gold' 
-                  : 'hover:text-nirman-gold'
-              } transition-colors`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <Building size={16} />
-              Browse Properties
-            </Link>
-            <Link 
-              to="/properties?category=buy" 
-              className={`text-sm font-medium py-2 flex items-center gap-2 ${
-                location.search.includes('category=buy')
-                  ? 'text-nirman-gold' 
-                  : 'hover:text-nirman-gold'
-              } transition-colors`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <Search size={16} />
-              Buy
-            </Link>
-            <Link 
-              to="/properties?category=rent" 
-              className={`text-sm font-medium py-2 flex items-center gap-2 ${
-                location.search.includes('category=rent')
-                  ? 'text-nirman-gold' 
-                  : 'hover:text-nirman-gold'
-              } transition-colors`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <MapPin size={16} />
-              Rent
-            </Link>
-            <Link 
-              to="/dashboard" 
-              className={`text-sm font-medium py-2 flex items-center gap-2 ${
-                isActive('/dashboard')
-                  ? 'text-nirman-gold' 
-                  : 'hover:text-nirman-gold'
-              } transition-colors`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <User size={16} />
-              My Nirman
-            </Link>
-            <div className="flex flex-col gap-2 pt-2 border-t">
-              <Button variant="outline" asChild className="justify-start">
-                <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                  <User size={16} className="mr-2" />
-                  Sign In
-                </Link>
-              </Button>
-              <Button asChild className="justify-start">
-                <Link to="/post-property" onClick={() => setIsMenuOpen(false)}>
-                  Post Property
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </header>
   );
 };
