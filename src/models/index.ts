@@ -15,8 +15,8 @@ export interface Property {
     };
   };
   features: PropertyFeatures;
-  type: "apartment" | "house" | "villa" | "commercial" | "room" | "office";
-  category: "buy" | "rent";
+  type: PropertyType;
+  category: PropertyCategory;
   status: "available" | "sold" | "rented" | "pending";
   images: string[];
   isVerified: boolean;
@@ -24,6 +24,9 @@ export interface Property {
   postedAt: string;
   areaSnapshot?: AreaSnapshot;
 }
+
+export type PropertyType = "apartment" | "house" | "villa" | "commercial" | "room" | "office";
+export type PropertyCategory = "buy" | "rent";
 
 export interface PropertyFeatures {
   bedrooms: number;
@@ -75,8 +78,8 @@ export interface BookingRequest {
 // Filter types
 export interface Filter {
   location?: string;
-  category?: "buy" | "rent";
-  type?: "apartment" | "house" | "villa" | "commercial" | "room" | "office";
+  category?: PropertyCategory;
+  type?: PropertyType;
   priceMin?: number;
   priceMax?: number;
   bedrooms?: number;
@@ -103,7 +106,7 @@ export interface AIUserPreference {
   location: string[];
   propertyType: string[];
   bedrooms: number;
-  purpose: "buy" | "rent";
+  purpose: PropertyCategory;
   lifestyle: "bachelor" | "family" | "professional" | "student";
   amenities: string[];
 }

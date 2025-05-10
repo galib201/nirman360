@@ -1,3 +1,4 @@
+
 import * as React from "react"
 
 const MOBILE_BREAKPOINT = 768
@@ -16,4 +17,27 @@ export function useIsMobile() {
   }, [])
 
   return !!isMobile
+}
+
+// Add the missing useMediaQuery function that Header.tsx is trying to use
+export function useMediaQuery(query: string) {
+  const [matches, setMatches] = React.useState<boolean>(false)
+
+  React.useEffect(() => {
+    const mediaQuery = window.matchMedia(query)
+    const updateMatches = () => setMatches(mediaQuery.matches)
+    
+    // Initial check
+    updateMatches()
+    
+    // Add listener
+    mediaQuery.addEventListener('change', updateMatches)
+    
+    // Cleanup
+    return () => {
+      mediaQuery.removeEventListener('change', updateMatches)
+    }
+  }, [query])
+
+  return matches
 }

@@ -26,6 +26,17 @@ const queryClient = new QueryClient({
   },
 });
 
+// Define a common interface for page props to enforce type safety
+interface PageProps {
+  onLogoClick?: () => void;
+}
+
+// Assuming all these components accept onLogoClick as a prop
+// We're using a wrapper to solve the TypeScript error
+const withLogoClick = (Component: React.ComponentType<PageProps>, onLogoClickHandler: () => void) => {
+  return <Component onLogoClick={onLogoClickHandler} />;
+};
+
 const App = () => {
   const [logoClickCount, setLogoClickCount] = useState(0);
   const [isAdminEnabled, setIsAdminEnabled] = useState(false);
@@ -59,18 +70,18 @@ const App = () => {
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index onLogoClick={handleLogoClick} />} />
-          <Route path="/properties" element={<Properties onLogoClick={handleLogoClick} />} />
-          <Route path="/properties/:id" element={<PropertyDetail onLogoClick={handleLogoClick} />} />
-          <Route path="/dashboard" element={<Dashboard onLogoClick={handleLogoClick} />} />
-          <Route path="/legal-support" element={<LegalSupport onLogoClick={handleLogoClick} />} />
-          <Route path="/book-visit/:id" element={<BookVisit onLogoClick={handleLogoClick} />} />
-          <Route path="/area-snapshot" element={<AreaSnapshot onLogoClick={handleLogoClick} />} />
-          <Route path="/ai-recommendations" element={<AIRecommendations onLogoClick={handleLogoClick} />} />
-          <Route path="/nirman-ai" element={<NirmanAI onLogoClick={handleLogoClick} />} />
+          <Route path="/" element={withLogoClick(Index, handleLogoClick)} />
+          <Route path="/properties" element={withLogoClick(Properties, handleLogoClick)} />
+          <Route path="/properties/:id" element={withLogoClick(PropertyDetail, handleLogoClick)} />
+          <Route path="/dashboard" element={withLogoClick(Dashboard, handleLogoClick)} />
+          <Route path="/legal-support" element={withLogoClick(LegalSupport, handleLogoClick)} />
+          <Route path="/book-visit/:id" element={withLogoClick(BookVisit, handleLogoClick)} />
+          <Route path="/area-snapshot" element={withLogoClick(AreaSnapshot, handleLogoClick)} />
+          <Route path="/ai-recommendations" element={withLogoClick(AIRecommendations, handleLogoClick)} />
+          <Route path="/nirman-ai" element={withLogoClick(NirmanAI, handleLogoClick)} />
           {isAdminEnabled && <Route path="/admin" element={<Admin />} />}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound onLogoClick={handleLogoClick} />} />
+          <Route path="*" element={withLogoClick(NotFound, handleLogoClick)} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
