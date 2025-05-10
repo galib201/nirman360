@@ -15,6 +15,11 @@ import AreaSnapshot from "./pages/AreaSnapshot";
 import AIRecommendations from "./pages/AIRecommendations";
 import NirmanAI from "./pages/NirmanAI";
 import Admin from "./pages/Admin";
+import PostProperty from "./pages/PostProperty";
+import BuyingGuide from "./pages/BuyingGuide";
+import RentingGuide from "./pages/RentingGuide";
+import SellerGuide from "./pages/SellerGuide";
+import PricingFees from "./pages/PricingFees";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -79,6 +84,11 @@ const App = () => {
           <Route path="/area-snapshot" element={withLogoClick(AreaSnapshot, handleLogoClick)} />
           <Route path="/ai-recommendations" element={withLogoClick(AIRecommendations, handleLogoClick)} />
           <Route path="/nirman-ai" element={withLogoClick(NirmanAI, handleLogoClick)} />
+          <Route path="/post-property" element={withLogoClick(PostProperty, handleLogoClick)} />
+          <Route path="/buying-guide" element={withLogoClick(BuyingGuide, handleLogoClick)} />
+          <Route path="/renting-guide" element={withLogoClick(RentingGuide, handleLogoClick)} />
+          <Route path="/seller-guide" element={withLogoClick(SellerGuide, handleLogoClick)} />
+          <Route path="/pricing-fees" element={withLogoClick(PricingFees, handleLogoClick)} />
           {isAdminEnabled && <Route path="/admin" element={<Admin />} />}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={withLogoClick(NotFound, handleLogoClick)} />

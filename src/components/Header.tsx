@@ -41,8 +41,8 @@ const Header = ({ onLogoClick }: HeaderProps) => {
             className="flex items-center space-x-2"
             onClick={() => onLogoClick && onLogoClick()}
           >
-            <div className="bg-nirman-gold text-white font-bold rounded p-1.5">N360</div>
-            <span className="font-display font-semibold text-xl">Nirman360</span>
+            <div className="bg-nirman-gold text-white font-bold rounded p-1.5">NIRMAN</div>
+            <span className="font-display font-semibold text-xl">NIRMAN360</span>
           </Link>
         </div>
         
@@ -76,6 +76,16 @@ const Header = ({ onLogoClick }: HeaderProps) => {
           >
             <Search className="mr-2 h-3.5 w-3.5" />
             AI Recommendations
+          </Button>
+
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => navigate("/post-property")}
+            className="bg-nirman-gold hover:bg-nirman-gold/90"
+          >
+            <Building className="h-4 w-4 md:mr-2" />
+            <span className="hidden md:inline">Post Your Property</span>
           </Button>
 
           <Button
@@ -140,6 +150,16 @@ const Header = ({ onLogoClick }: HeaderProps) => {
                     >
                       <Search className="mr-2.5 h-5 w-5" />
                       AI Recommendations
+                    </Link>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <Link 
+                      to="/post-property"
+                      className="flex items-center rounded-md px-2 py-1.5 transition-colors hover:bg-muted bg-nirman-gold/10 text-nirman-gold"
+                      onClick={() => setShowMobileMenu(false)}
+                    >
+                      <Building className="mr-2.5 h-5 w-5" />
+                      Post Your Property
                     </Link>
                   </SheetClose>
                 </nav>
