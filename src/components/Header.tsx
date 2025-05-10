@@ -13,6 +13,15 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   onLogoClick?: () => void; // Add this prop for admin access
@@ -23,13 +32,18 @@ const Header = ({ onLogoClick }: HeaderProps) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   
-  const navItems = [
+  const mainNavItems = [
     { label: "Home", path: "/", icon: Home },
     { label: "Buy", path: "/properties?category=buy", icon: Building },
     { label: "Rent", path: "/properties?category=rent", icon: Building2 },
+  ];
+
+  const featureItems = [
     { label: "Area Snapshot", path: "/area-snapshot", icon: MapPin },
     { label: "Legal Support", path: "/legal-support", icon: ShieldCheck },
+    { label: "AI Recommendations", path: "/ai-recommendations", icon: Search },
     { label: "Nirman AI", path: "/nirman-ai", icon: Zap, isHighlighted: true },
+    { label: "Post Your Property", path: "/post-property", icon: Building2 },
   ];
   
   return (
@@ -41,27 +55,57 @@ const Header = ({ onLogoClick }: HeaderProps) => {
             className="flex items-center space-x-2"
             onClick={() => onLogoClick && onLogoClick()}
           >
-            <div className="bg-nirman-gold text-white font-bold rounded p-1.5">NIRMAN</div>
+            <div className="bg-nirman-gold text-white font-bold rounded p-1.5">
+              <Home className="h-5 w-5" />
+            </div>
             <span className="font-display font-semibold text-xl">NIRMAN360</span>
           </Link>
         </div>
         
         {!isMobile ? (
           <nav className="flex items-center space-x-6 text-sm font-medium flex-1 justify-center">
-            {navItems.map((item) => (
+            {mainNavItems.map((item) => (
               <Link 
                 key={item.path}
                 to={item.path}
-                className={`flex items-center transition-colors hover:text-foreground/80 ${
-                  item.isHighlighted 
-                    ? "text-nirman-gold font-semibold" 
-                    : "text-foreground/60"
-                }`}
+                className="flex items-center transition-colors hover:text-foreground/80 text-foreground/60"
               >
                 <item.icon className="mr-1.5 h-[1.1rem] w-[1.1rem]" />
                 {item.label}
               </Link>
             ))}
+
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>Our Features</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                      {featureItems.map((item) => (
+                        <li key={item.path}>
+                          <NavigationMenuLink asChild>
+                            <Link
+                              to={item.path}
+                              className={cn(
+                                "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                                item.isHighlighted ? "bg-muted text-nirman-gold" : ""
+                              )}
+                            >
+                              <div className="flex items-center">
+                                <item.icon className="h-4 w-4 mr-2" />
+                                <div className="text-sm font-medium leading-none">
+                                  {item.label}
+                                </div>
+                              </div>
+                            </Link>
+                          </NavigationMenuLink>
+                        </li>
+                      ))}
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
           </nav>
         ) : (
           <div className="flex-1" />
@@ -72,10 +116,10 @@ const Header = ({ onLogoClick }: HeaderProps) => {
             variant="outline"
             size="sm"
             className="hidden md:flex"
-            onClick={() => navigate("/ai-recommendations")}
+            onClick={() => navigate("/dashboard")}
           >
-            <Search className="mr-2 h-3.5 w-3.5" />
-            AI Recommendations
+            <User className="h-4 w-4 md:mr-2" />
+            <span className="hidden md:inline">Account</span>
           </Button>
 
           <Button
@@ -86,15 +130,6 @@ const Header = ({ onLogoClick }: HeaderProps) => {
           >
             <Building className="h-4 w-4 md:mr-2" />
             <span className="hidden md:inline">Post Your Property</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate("/dashboard")}
-          >
-            <User className="h-4 w-4 md:mr-2" />
-            <span className="hidden md:inline">Account</span>
           </Button>
           
           {isMobile && (
@@ -128,7 +163,21 @@ const Header = ({ onLogoClick }: HeaderProps) => {
                   </SheetDescription>
                 </SheetHeader>
                 <nav className="flex flex-col gap-4 mt-8">
-                  {navItems.map((item) => (
+                  {mainNavItems.map((item) => (
+                    <SheetClose asChild key={item.path}>
+                      <Link 
+                        to={item.path}
+                        className="flex items-center rounded-md px-2 py-1.5 transition-colors hover:bg-muted"
+                        onClick={() => setShowMobileMenu(false)}
+                      >
+                        <item.icon className="mr-2.5 h-5 w-5" />
+                        {item.label}
+                      </Link>
+                    </SheetClose>
+                  ))}
+                  
+                  <div className="px-2 py-1.5 text-sm font-semibold">Our Features</div>
+                  {featureItems.map((item) => (
                     <SheetClose asChild key={item.path}>
                       <Link 
                         to={item.path}
@@ -142,26 +191,6 @@ const Header = ({ onLogoClick }: HeaderProps) => {
                       </Link>
                     </SheetClose>
                   ))}
-                  <SheetClose asChild>
-                    <Link 
-                      to="/ai-recommendations"
-                      className="flex items-center rounded-md px-2 py-1.5 transition-colors hover:bg-muted"
-                      onClick={() => setShowMobileMenu(false)}
-                    >
-                      <Search className="mr-2.5 h-5 w-5" />
-                      AI Recommendations
-                    </Link>
-                  </SheetClose>
-                  <SheetClose asChild>
-                    <Link 
-                      to="/post-property"
-                      className="flex items-center rounded-md px-2 py-1.5 transition-colors hover:bg-muted bg-nirman-gold/10 text-nirman-gold"
-                      onClick={() => setShowMobileMenu(false)}
-                    >
-                      <Building className="mr-2.5 h-5 w-5" />
-                      Post Your Property
-                    </Link>
-                  </SheetClose>
                 </nav>
               </SheetContent>
             </Sheet>

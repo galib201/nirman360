@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -454,7 +453,11 @@ const Index = ({ onLogoClick }: IndexProps) => {
           <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-gray-200">
             Reach thousands of potential buyers and renters with our free listing service. Get your property verified for better visibility!
           </p>
-          <Button size="lg" className="bg-nirman-gold text-nirman-navy hover:bg-opacity-90">
+          <Button 
+            size="lg" 
+            className="bg-nirman-gold text-nirman-navy hover:bg-opacity-90"
+            onClick={() => navigate("/post-property")}
+          >
             Post Your Property Now
           </Button>
         </div>
