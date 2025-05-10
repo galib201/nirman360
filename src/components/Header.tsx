@@ -42,7 +42,6 @@ const Header = ({ onLogoClick }: HeaderProps) => {
     { label: "Area Snapshot", path: "/area-snapshot", icon: MapPin },
     { label: "Legal Support", path: "/legal-support", icon: ShieldCheck },
     { label: "AI Recommendations", path: "/ai-recommendations", icon: Search },
-    { label: "Nirman AI", path: "/nirman-ai", icon: Zap, isHighlighted: true },
     { label: "Post Your Property", path: "/post-property", icon: Building2 },
   ];
   
@@ -74,6 +73,15 @@ const Header = ({ onLogoClick }: HeaderProps) => {
                 {item.label}
               </Link>
             ))}
+            
+            {/* Nirman AI link outside dropdown with highlighting */}
+            <Link 
+              to="/nirman-ai"
+              className="flex items-center text-nirman-gold font-semibold transition-colors hover:text-nirman-gold/90"
+            >
+              <Zap className="mr-1.5 h-[1.1rem] w-[1.1rem]" />
+              Nirman AI
+            </Link>
 
             <NavigationMenu>
               <NavigationMenuList>
@@ -86,10 +94,7 @@ const Header = ({ onLogoClick }: HeaderProps) => {
                           <NavigationMenuLink asChild>
                             <Link
                               to={item.path}
-                              className={cn(
-                                "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                                item.isHighlighted ? "bg-muted text-nirman-gold" : ""
-                              )}
+                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                             >
                               <div className="flex items-center">
                                 <item.icon className="h-4 w-4 mr-2" />
@@ -176,14 +181,24 @@ const Header = ({ onLogoClick }: HeaderProps) => {
                     </SheetClose>
                   ))}
                   
+                  {/* Nirman AI in mobile menu with highlighting */}
+                  <SheetClose asChild>
+                    <Link 
+                      to="/nirman-ai"
+                      className="flex items-center rounded-md px-2 py-1.5 text-nirman-gold font-semibold"
+                      onClick={() => setShowMobileMenu(false)}
+                    >
+                      <Zap className="mr-2.5 h-5 w-5" />
+                      Nirman AI
+                    </Link>
+                  </SheetClose>
+                  
                   <div className="px-2 py-1.5 text-sm font-semibold">Our Features</div>
                   {featureItems.map((item) => (
                     <SheetClose asChild key={item.path}>
                       <Link 
                         to={item.path}
-                        className={`flex items-center rounded-md px-2 py-1.5 transition-colors hover:bg-muted ${
-                          item.isHighlighted ? "text-nirman-gold font-semibold" : ""
-                        }`}
+                        className="flex items-center rounded-md px-2 py-1.5 transition-colors hover:bg-muted"
                         onClick={() => setShowMobileMenu(false)}
                       >
                         <item.icon className="mr-2.5 h-5 w-5" />
