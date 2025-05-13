@@ -5,52 +5,28 @@ export interface Property {
   description: string;
   price: number;
   category: 'buy' | 'rent';
-  type: 'apartment' | 'house' | 'villa' | 'office' | 'commercial' | 'room';
+  type: 'apartment' | 'house' | 'villa' | 'office' | 'commercial';
   location: {
     address: string;
     area: string;
     city: string;
     coordinates?: {
-      latitude: number;
-      longitude: number;
+      lat: number;
+      lng: number;
     };
   };
-  features: {
-    bedrooms: number;
-    bathrooms: number;
-    area: number;
-    furnished: boolean;
-    parking: boolean;
-    petFriendly: boolean;
-    garden: boolean;
-    securitySystem: boolean;
-    bachelorsAllowed: boolean;
-    familiesAllowed: boolean;
-    womenOnly: boolean;
-    additionalFeatures: string[];
-  };
-  status: 'available' | 'sold' | 'rented' | 'pending';
+  beds: number;
+  baths: number;
+  size: number;
   images: string[];
+  amenities: string[];
   isVerified: boolean;
   isPremium: boolean;
   postedAt: string;
-  postedBy?: {
+  postedBy: {
     id: string;
     name: string;
     type: 'owner' | 'agent';
     image?: string;
   };
-  areaSnapshot: {
-    averagePrice: number;
-    nearbyPlaces: {
-      name: string;
-      type: string;
-      distance: number;
-    }[];
-    crimeRate: 'low' | 'medium' | 'high';
-    walkScore: number;
-  };
 }
-
-export type PropertyType = 'apartment' | 'house' | 'villa' | 'office' | 'commercial' | 'room';
-export type PropertyCategory = 'buy' | 'rent';
