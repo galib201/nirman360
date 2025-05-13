@@ -1,8 +1,10 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import './styles/index.css';
+import App from './App';
+import NotFound from './pages/NotFound';
 
 // Import page components
 import AIRecommendations from './pages/AIRecommendations';
@@ -10,10 +12,17 @@ import AIRecommendations from './pages/AIRecommendations';
 // Setup routes
 const router = createBrowserRouter([
   {
+    path: "/",
+    element: <Navigate to="/properties" replace />,
+  },
+  {
     path: "/nirman-ai",
     element: <AIRecommendations />,
   },
-  // Add other routes as needed
+  {
+    path: "*",
+    element: <App />,
+  }
 ]);
 
 // Render application
