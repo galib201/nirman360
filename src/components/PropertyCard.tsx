@@ -50,9 +50,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
         <div className="property-footer">
           <div className="property-price">{formattedPrice}</div>
           <div className="property-features">
-            <span className="feature-badge">{property.beds} beds</span>
-            <span className="feature-badge">{property.baths} baths</span>
-            <span className="feature-badge">{property.size} sqft</span>
+            <span className="feature-badge">{property.features.bedrooms} beds</span>
+            <span className="feature-badge">{property.features.bathrooms} baths</span>
+            <span className="feature-badge">{property.features.area} sqft</span>
           </div>
         </div>
       </div>
