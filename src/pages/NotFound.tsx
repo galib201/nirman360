@@ -3,17 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Home } from "lucide-react";
 import "../styles/NotFound.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
-interface NotFoundProps {
-  onLogoClick?: () => void;
-}
-
-const NotFound = ({ onLogoClick }: NotFoundProps) => {
+const NotFound = () => {
   return (
     <div className="not-found-container">
-      <Header onLogoClick={onLogoClick} />
       <div className="not-found-content">
         <div className="not-found-card">
           <h1 className="not-found-title">
@@ -30,7 +23,6 @@ const NotFound = ({ onLogoClick }: NotFoundProps) => {
           </Button>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

@@ -149,13 +149,13 @@ export class AIRecommendationsController {
     priceElement.textContent = `৳${property.price.toLocaleString()}`;
     
     const bedsElement = cardElement.querySelector('.property-beds') as HTMLElement;
-    bedsElement.textContent = `${property.features.bedrooms} beds`;
+    bedsElement.textContent = `${property.beds} beds`;
     
     const bathsElement = cardElement.querySelector('.property-baths') as HTMLElement;
-    bathsElement.textContent = `${property.features.bathrooms} baths`;
+    bathsElement.textContent = `${property.baths} baths`;
     
     const sizeElement = cardElement.querySelector('.property-size') as HTMLElement;
-    sizeElement.textContent = `${property.features.area} sqft`;
+    sizeElement.textContent = `${property.size} sqft`;
     
     // Set badge visibility
     const verifiedBadge = cardElement.querySelector('[data-verified]') as HTMLElement;
