@@ -1,0 +1,42 @@
+
+.collapsible {
+  width: 100%;
+}
+
+.collapsible-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.collapsible-content {
+  overflow: hidden;
+}
+
+.collapsible-content[data-state="closed"] {
+  animation: collapsibleUp 0.2s ease-out;
+  height: 0;
+}
+
+.collapsible-content[data-state="open"] {
+  animation: collapsibleDown 0.2s ease-out;
+}
+
+@keyframes collapsibleDown {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-collapsible-content-height);
+  }
+}
+
+@keyframes collapsibleUp {
+  from {
+    height: var(--radix-collapsible-content-height);
+  }
+  to {
+    height: 0;
+  }
+}

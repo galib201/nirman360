@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Home } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import "../styles/NotFound.css";
 
 const NotFound = () => {
   const location = useLocation();
@@ -17,15 +18,15 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="not-found-container">
       <Header />
       
-      <div className="flex-grow flex items-center justify-center bg-nirman-lightblue">
-        <div className="text-center px-4">
-          <h1 className="text-6xl md:text-8xl font-display font-bold mb-6 text-nirman-navy">
-            4<span className="text-nirman-gold">0</span>4
+      <div className="not-found-content">
+        <div className="not-found-card">
+          <h1 className="not-found-title">
+            4<span className="not-found-404-accent">0</span>4
           </h1>
-          <p className="text-xl mb-8 max-w-md">
+          <p className="not-found-message">
             Oops! We couldn't find the property or page you were looking for.
           </p>
           <Button asChild size="lg">
