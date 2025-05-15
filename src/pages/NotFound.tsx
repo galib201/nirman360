@@ -1,35 +1,42 @@
 
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 import { Home } from "lucide-react";
-import "../styles/NotFound.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-interface NotFoundProps {
-  onLogoClick?: () => void;
-}
+const NotFound = () => {
+  const location = useLocation();
 
-const NotFound = ({ onLogoClick }: NotFoundProps) => {
+  useEffect(() => {
+    console.error(
+      "404 Error: User attempted to access non-existent route:",
+      location.pathname
+    );
+  }, [location.pathname]);
+
   return (
-    <div className="not-found-container">
-      <Header onLogoClick={onLogoClick} />
-      <div className="not-found-content">
-        <div className="not-found-card">
-          <h1 className="not-found-title">
-            <span className="not-found-404-accent">404</span> Not Found
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      
+      <div className="flex-grow flex items-center justify-center bg-nirman-lightblue">
+        <div className="text-center px-4">
+          <h1 className="text-6xl md:text-8xl font-display font-bold mb-6 text-nirman-navy">
+            4<span className="text-nirman-gold">0</span>4
           </h1>
-          <p className="not-found-message">
-            The page you are looking for doesn't exist or has been moved.
+          <p className="text-xl mb-8 max-w-md">
+            Oops! We couldn't find the property or page you were looking for.
           </p>
-          <Button asChild>
-            <Link to="/" className="not-found-home-button">
-              <Home className="not-found-home-icon" />
-              <span>Go Back Home</span>
-            </Link>
+          <Button asChild size="lg">
+            <a href="/">
+              <Home className="mr-2 h-4 w-4" />
+              Return to Home
+            </a>
           </Button>
         </div>
       </div>
+      
       <Footer />
     </div>
   );

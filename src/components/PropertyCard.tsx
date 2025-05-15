@@ -1,78 +1,65 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Property } from '@/models';
-import '../styles/components/property-card.css';
+import { Property } from "@/models";
+import { formatPrice } from "@/utils/formatters";
+import { Badge } from "@/components/ui/badge";
+import { MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface PropertyCardProps {
   property: Property;
 }
 
-const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
-  const formattedPrice = `৳${property.price.toLocaleString()}`;
-  
+const PropertyCard = ({ property }: PropertyCardProps) => {
   return (
-    <div className="property-card">
-      <div className="property-image-container">
-        <img 
-          className="property-image" 
-          src={property.images[0]} 
-          alt={property.title} 
+    <Link to={`/properties/${property.id}`} className="property-card group block">
+      <div className="relative h-48 md:h-56 overflow-hidden">
+        <img
+          src={property.images[0]}
+          alt={property.title}
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
-        <div className="property-badges">
-          {property.isVerified && (
-            <span className="property-badge verified-badge">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="verified-icon">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-              </svg>
-              Verified
-            </span>
-          )}
-          {property.isPremium && (
-            <span className="property-badge premium-badge">Premium</span>
-          )}
-        </div>
+        
+        {property.isVerified && (
+          <div className="property-badge verified-badge flex items-center gap-1">
+            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 11L12 14L22 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M21 12V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Verified
+          </div>
+        )}
+        
+        {property.isPremium && (
+          <div className="property-badge premium-badge absolute top-3 left-3">
+            Premium
+          </div>
+        )}
       </div>
-      <div className="property-details">
-        <h3 className="property-title">
-          <Link to={`/properties/${property.id}`}>{property.title}</Link>
-        </h3>
-        <div className="property-location">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="location-icon">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-          </svg>
-          {property.location.area}, {property.location.city}
+      
+      <div className="p-4">
+        <h3 className="font-semibold text-lg line-clamp-1">{property.title}</h3>
+        
+        <div className="flex items-center text-sm text-muted-foreground mt-1">
+          <MapPin size={14} className="mr-1" />
+          <span>{property.location.area}, {property.location.city}</span>
         </div>
-        <div className="property-footer">
-          <div className="property-price">{formattedPrice}</div>
-          <div className="property-features">
-            <span className="feature-badge">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2 3h20v10H2z"></path>
-                <path d="M2 17h20v4H2z"></path>
-              </svg>
-              {property.features.bedrooms} beds
-            </span>
-            <span className="feature-badge">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"></path>
-                <path d="M14 9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"></path>
-                <path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2H8v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"></path>
-              </svg>
-              {property.features.bathrooms} baths
-            </span>
-            <span className="feature-badge">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-              </svg>
-              {property.features.area} sqft
-            </span>
+        
+        <div className="mt-3 flex items-center justify-between">
+          <div className="font-semibold text-lg">
+            {property.category === 'rent' ? `${formatPrice(property.price)}/mo` : formatPrice(property.price)}
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="text-xs">
+              {property.features.bedrooms} {property.features.bedrooms === 1 ? 'Bed' : 'Beds'}
+            </Badge>
+            <Badge variant="outline" className="text-xs">
+              {property.features.bathrooms} {property.features.bathrooms === 1 ? 'Bath' : 'Baths'}
+            </Badge>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Property } from "@/models";
 import { PropertyService } from "@/services/api";
 import PropertyCard from "@/components/PropertyCard";
@@ -7,7 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const AIRecommendations: React.FC = () => {
+const AIRecommendations = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [bestDeals, setBestDeals] = useState<Property[]>([]);
   const [recentlyVerified, setRecentlyVerified] = useState<Property[]>([]);
