@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import Properties from "./pages/Properties";
 import PropertyDetail from "./pages/PropertyDetail";
@@ -72,33 +73,35 @@ const App = () => {
   };
   
   return (
-    <QueryClientProvider client={queryClient}>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={withLogoClick(Index, handleLogoClick)} />
-          <Route path="/properties" element={withLogoClick(Properties, handleLogoClick)} />
-          <Route path="/properties/:id" element={withLogoClick(PropertyDetail, handleLogoClick)} />
-          <Route path="/dashboard" element={withLogoClick(Dashboard, handleLogoClick)} />
-          <Route path="/legal-support" element={withLogoClick(LegalSupport, handleLogoClick)} />
-          <Route path="/book-visit/:id" element={withLogoClick(BookVisit, handleLogoClick)} />
-          <Route path="/area-snapshot" element={withLogoClick(AreaSnapshot, handleLogoClick)} />
-          <Route path="/ai-recommendations" element={withLogoClick(AIRecommendations, handleLogoClick)} />
-          <Route path="/nirman-ai" element={withLogoClick(NirmanAI, handleLogoClick)} />
-          <Route path="/post-property" element={withLogoClick(PostProperty, handleLogoClick)} />
-          <Route path="/buying-guide" element={withLogoClick(BuyingGuide, handleLogoClick)} />
-          <Route path="/renting-guide" element={withLogoClick(RentingGuide, handleLogoClick)} />
-          <Route path="/seller-guide" element={withLogoClick(SellerGuide, handleLogoClick)} />
-          <Route path="/pricing-fees" element={withLogoClick(PricingFees, handleLogoClick)} />
-          <Route path="/trusted-developers" element={withLogoClick(TrustedDevelopers, handleLogoClick)} />
-          <Route path="/community-chat" element={withLogoClick(CommunityChat, handleLogoClick)} />
-          {isAdminEnabled && <Route path="/admin" element={<Admin />} />}
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={withLogoClick(NotFound, handleLogoClick)} />
-        </Routes>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={withLogoClick(Index, handleLogoClick)} />
+            <Route path="/properties" element={withLogoClick(Properties, handleLogoClick)} />
+            <Route path="/properties/:id" element={withLogoClick(PropertyDetail, handleLogoClick)} />
+            <Route path="/dashboard" element={withLogoClick(Dashboard, handleLogoClick)} />
+            <Route path="/legal-support" element={withLogoClick(LegalSupport, handleLogoClick)} />
+            <Route path="/book-visit/:id" element={withLogoClick(BookVisit, handleLogoClick)} />
+            <Route path="/area-snapshot" element={withLogoClick(AreaSnapshot, handleLogoClick)} />
+            <Route path="/ai-recommendations" element={withLogoClick(AIRecommendations, handleLogoClick)} />
+            <Route path="/nirman-ai" element={withLogoClick(NirmanAI, handleLogoClick)} />
+            <Route path="/post-property" element={withLogoClick(PostProperty, handleLogoClick)} />
+            <Route path="/buying-guide" element={withLogoClick(BuyingGuide, handleLogoClick)} />
+            <Route path="/renting-guide" element={withLogoClick(RentingGuide, handleLogoClick)} />
+            <Route path="/seller-guide" element={withLogoClick(SellerGuide, handleLogoClick)} />
+            <Route path="/pricing-fees" element={withLogoClick(PricingFees, handleLogoClick)} />
+            <Route path="/trusted-developers" element={withLogoClick(TrustedDevelopers, handleLogoClick)} />
+            <Route path="/community-chat" element={withLogoClick(CommunityChat, handleLogoClick)} />
+            {isAdminEnabled && <Route path="/admin" element={<Admin />} />}
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={withLogoClick(NotFound, handleLogoClick)} />
+          </Routes>
+          <Toaster />
+          <Sonner />
+        </BrowserRouter>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 };
 

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AIUserPreference, BuildingCostBreakdown, Property, PropertyBuildingRequest, TrustedDeveloper } from "@/models";
@@ -17,6 +16,7 @@ import PropertyCard from "@/components/PropertyCard";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Star } from "lucide-react";
 
 const NirmanAI = () => {
   const navigate = useNavigate();

@@ -9,7 +9,18 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Star, Award, Building, Users, CheckCircle, Phone, Mail, Globe } from "lucide-react";
+import { 
+  Shield, 
+  Star, 
+  Award, 
+  Building, 
+  Users, 
+  CheckCircle, 
+  Phone, 
+  Mail, 
+  Globe,
+  Construction 
+} from "lucide-react";
 
 const TrustedDevelopers = () => {
   const [developers, setDevelopers] = useState<TrustedDeveloper[]>([]);
