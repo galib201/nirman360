@@ -2,7 +2,7 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Index from "./pages/Index";
 import Properties from "./pages/Properties";
@@ -20,6 +20,7 @@ import BuyingGuide from "./pages/BuyingGuide";
 import RentingGuide from "./pages/RentingGuide";
 import SellerGuide from "./pages/SellerGuide";
 import PricingFees from "./pages/PricingFees";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -71,9 +72,9 @@ const App = () => {
   
   return (
     <QueryClientProvider client={queryClient}>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+      <ErrorBoundary>
+        <Toaster />
+        <Sonner />
         <Routes>
           <Route path="/" element={withLogoClick(Index, handleLogoClick)} />
           <Route path="/properties" element={withLogoClick(Properties, handleLogoClick)} />
@@ -90,10 +91,9 @@ const App = () => {
           <Route path="/seller-guide" element={withLogoClick(SellerGuide, handleLogoClick)} />
           <Route path="/pricing-fees" element={withLogoClick(PricingFees, handleLogoClick)} />
           {isAdminEnabled && <Route path="/admin" element={<Admin />} />}
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={withLogoClick(NotFound, handleLogoClick)} />
         </Routes>
-      </BrowserRouter>
+      </ErrorBoundary>
     </QueryClientProvider>
   );
 };

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -78,10 +77,26 @@ const AreaSnapshot = () => {
         // Calculate average price based on all properties in the area
         const avgPrice = areaProperties.reduce((sum, p) => sum + p.price, 0) / areaProperties.length;
         
-        // Combine data
+        // Create a complete AreaSnapshot with all required properties
         const snapshot: AreaSnapshotType = {
-          ...baseSnapshot,
-          averagePrice: avgPrice
+          id: `area-${area.toLowerCase().replace(/\s/g, '-')}`,
+          areaName: area,
+          city: areaProperties[0].location.city,
+          averagePrice: avgPrice,
+          priceHistory: [
+            { date: "2023-01", price: avgPrice * 0.95 },
+            { date: "2023-04", price: avgPrice * 0.97 },
+            { date: "2023-07", price: avgPrice * 0.99 },
+            { date: "2023-10", price: avgPrice },
+          ],
+          nearbyPlaces: baseSnapshot.nearbyPlaces,
+          crimeRate: baseSnapshot.crimeRate,
+          walkScore: baseSnapshot.walkScore,
+          demographics: {
+            population: 150000 + Math.floor(Math.random() * 50000),
+            averageAge: 32 + Math.floor(Math.random() * 8),
+            incomeLevel: baseSnapshot.crimeRate === 'low' ? 'high' : baseSnapshot.crimeRate === 'medium' ? 'medium' : 'low'
+          }
         };
         
         setData(snapshot);
