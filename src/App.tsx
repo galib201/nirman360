@@ -13,9 +13,8 @@ import NotFound from "./pages/NotFound";
 import LegalSupport from "./pages/LegalSupport";
 import BookVisit from "./pages/BookVisit";
 import AreaSnapshot from "./pages/AreaSnapshot";
-import ROICalculator from "./pages/ROICalculator";
+import AIRecommendations from "./pages/AIRecommendations";
 import NirmanAI from "./pages/NirmanAI";
-import FindProperty from "./pages/FindProperty";
 import Admin from "./pages/Admin";
 import PostProperty from "./pages/PostProperty";
 import BuyingGuide from "./pages/BuyingGuide";
@@ -85,9 +84,8 @@ const App = () => {
             <Route path="/legal-support" element={withLogoClick(LegalSupport, handleLogoClick)} />
             <Route path="/book-visit/:id" element={withLogoClick(BookVisit, handleLogoClick)} />
             <Route path="/area-snapshot" element={withLogoClick(AreaSnapshot, handleLogoClick)} />
-            <Route path="/roi-calculator" element={withLogoClick(ROICalculator, handleLogoClick)} />
+            <Route path="/ai-recommendations" element={withLogoClick(AIRecommendations, handleLogoClick)} />
             <Route path="/nirman-ai" element={withLogoClick(NirmanAI, handleLogoClick)} />
-            <Route path="/find-property" element={withLogoClick(FindProperty, handleLogoClick)} />
             <Route path="/post-property" element={withLogoClick(PostProperty, handleLogoClick)} />
             <Route path="/buying-guide" element={withLogoClick(BuyingGuide, handleLogoClick)} />
             <Route path="/renting-guide" element={withLogoClick(RentingGuide, handleLogoClick)} />
