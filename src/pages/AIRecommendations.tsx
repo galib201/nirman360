@@ -7,11 +7,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Import HTML template
-const template = () => {
-  return require('../templates/AIRecommendations.html');
-};
-
 const AIRecommendations: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [bestDeals, setBestDeals] = useState<Property[]>([]);

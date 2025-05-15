@@ -3,11 +3,6 @@ import React from 'react';
 import { Property } from '@/models';
 import '../styles/components/property-card.css';
 
-// Import HTML template
-const template = () => {
-  return require('../templates/PropertyCard.html');
-};
-
 interface PropertyCardProps {
   property: Property;
 }

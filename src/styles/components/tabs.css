@@ -8,9 +8,9 @@
 .tabs-list {
   display: inline-flex;
   height: 2.5rem;
-  items-center: center;
+  align-items: center;
   justify-content: center;
-  rounded-md: 0.375rem;
+  border-radius: 0.375rem;
   background-color: hsl(var(--muted));
   padding: 0.25rem;
   color: hsl(var(--muted-foreground));

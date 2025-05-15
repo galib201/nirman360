@@ -9,6 +9,9 @@
 @import url('/src/styles/components/separator.css');
 @import url('/src/styles/components/progress.css');
 @import url('/src/styles/components/property-card.css');
+@import url('/src/styles/components/tabs.css');
+@import url('/src/styles/components/header.css');
+@import url('/src/styles/components/footer.css');
 @import url('/src/styles/collapsible.css');
 @import url('/src/styles/aspect-ratio.css');
 @import url('/src/styles/NotFound.css');
