@@ -17,7 +17,7 @@ import PropertyCard from "@/components/PropertyCard";
 
 const NirmanAI = () => {
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0); // Starting with step 0 for initial choice
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<Property[]>([]);
   const [preferences, setPreferences] = useState<AIUserPreference>({
@@ -28,28 +28,55 @@ const NirmanAI = () => {
     location: [],
     propertyType: [],
     bedrooms: 2,
-    purpose: "buy",
+    purpose: "buy", // Default, will be set by user in first step
     lifestyle: "family",
     amenities: []
   });
 
-  // Step 1: Choose purpose and budget
-  const renderStep1 = () => (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <h2 className="text-xl font-semibold">What are you looking for?</h2>
-        <Tabs 
-          defaultValue={preferences.purpose} 
-          className="w-full"
-          onValueChange={(value) => setPreferences({...preferences, purpose: value as "buy" | "rent"})}
-        >
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="buy">Buy</TabsTrigger>
-            <TabsTrigger value="rent">Rent</TabsTrigger>
-          </TabsList>
-        </Tabs>
+  // Step 0: Choose purpose (buy or rent)
+  const renderPurposeSelection = () => (
+    <div className="space-y-8">
+      <div className="bg-gradient-premium text-white p-6 rounded-lg">
+        <h2 className="text-2xl font-semibold mb-2">Welcome to Nirman AI</h2>
+        <p>I'll help you find the perfect property based on your preferences.</p>
       </div>
 
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-center">What are you looking for?</h2>
+        
+        <div className="grid grid-cols-2 gap-6 mt-4">
+          <Button 
+            size="lg" 
+            className="h-40 flex flex-col items-center justify-center gap-2 text-lg"
+            onClick={() => {
+              setPreferences({...preferences, purpose: "buy"});
+              setCurrentStep(1);
+            }}
+          >
+            <span className="text-4xl">🏠</span>
+            Buy a Property
+          </Button>
+          
+          <Button 
+            size="lg"
+            variant="outline"
+            className="h-40 flex flex-col items-center justify-center gap-2 text-lg border-2"
+            onClick={() => {
+              setPreferences({...preferences, purpose: "rent"});
+              setCurrentStep(1);
+            }}
+          >
+            <span className="text-4xl">🔑</span>
+            Rent a Property
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Step 1: Budget and location
+  const renderStep1 = () => (
+    <div className="space-y-6">
       <div className="space-y-3">
         <h2 className="text-xl font-semibold">What is your budget?</h2>
         <div className="space-y-6 pt-2">
@@ -65,7 +92,7 @@ const NirmanAI = () => {
             
             {preferences.purpose === "buy" ? (
               <Slider 
-                defaultValue={[preferences.budget.min/1000000, preferences.budget.max/1000000]} 
+                defaultValue={[0, 50]} 
                 max={100} 
                 step={1} 
                 minStepsBetweenThumbs={1}
@@ -81,7 +108,7 @@ const NirmanAI = () => {
               />
             ) : (
               <Slider 
-                defaultValue={[preferences.budget.min, preferences.budget.max]} 
+                defaultValue={[0, 50000]} 
                 max={100000} 
                 step={1000} 
                 minStepsBetweenThumbs={5000}
@@ -100,84 +127,105 @@ const NirmanAI = () => {
         </div>
       </div>
       
+      <div className="space-y-3">
+        <h2 className="text-xl font-semibold">Preferred locations?</h2>
+        <p className="text-sm text-muted-foreground">Select one or more areas</p>
+        
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+          {["Gulshan", "Banani", "Dhanmondi", "Uttara", "Mohakhali", "Mirpur", "Baridhara"].map(location => (
+            <Button 
+              key={location} 
+              variant={preferences.location.includes(location) ? "default" : "outline"} 
+              onClick={() => {
+                const selectedLocations = preferences.location;
+                if (selectedLocations.includes(location)) {
+                  setPreferences({
+                    ...preferences,
+                    location: selectedLocations.filter(l => l !== location)
+                  });
+                } else {
+                  setPreferences({
+                    ...preferences,
+                    location: [...selectedLocations, location]
+                  });
+                }
+              }}
+              className="justify-start"
+            >
+              {preferences.location.includes(location) && <CheckCircle className="mr-2 h-4 w-4" />}
+              {location}
+            </Button>
+          ))}
+        </div>
+      </div>
+      
       <Button onClick={() => setCurrentStep(2)} className="w-full">Next</Button>
     </div>
   );
   
-  // Step 2: Location and property type
+  // Step 2: Property type and bedrooms - different based on buy/rent
   const renderStep2 = () => {
-    const locationOptions = ["Gulshan", "Banani", "Dhanmondi", "Uttara", "Mohakhali", "Mirpur", "Baridhara"];
-    const selectedLocations = preferences.location;
+    // Property type options differ based on purpose
+    const propertyTypeOptions = preferences.purpose === "buy" 
+      ? ["apartment", "house", "villa"] 
+      : ["apartment", "house", "room", "commercial"];
     
-    const toggleLocation = (location: string) => {
-      if (selectedLocations.includes(location)) {
-        setPreferences({
-          ...preferences,
-          location: selectedLocations.filter(l => l !== location)
-        });
-      } else {
-        setPreferences({
-          ...preferences,
-          location: [...selectedLocations, location]
-        });
-      }
+    const propertyTypeLabels: {[key: string]: string} = {
+      "apartment": "Apartment",
+      "house": "House",
+      "villa": "Villa",
+      "room": "Room",
+      "commercial": "Commercial Space"
     };
     
     return (
       <div className="space-y-6">
         <div className="space-y-3">
-          <h2 className="text-xl font-semibold">Preferred locations?</h2>
-          <p className="text-sm text-muted-foreground">Select one or more areas</p>
+          <h2 className="text-xl font-semibold">Property type?</h2>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {locationOptions.map(location => (
+          <div className="grid grid-cols-2 gap-3">
+            {propertyTypeOptions.map(type => (
               <Button 
-                key={location} 
-                variant={selectedLocations.includes(location) ? "default" : "outline"} 
-                onClick={() => toggleLocation(location)}
+                key={type} 
+                variant={preferences.propertyType.includes(type) ? "default" : "outline"}
+                onClick={() => {
+                  const selectedTypes = preferences.propertyType;
+                  if (selectedTypes.includes(type)) {
+                    setPreferences({
+                      ...preferences,
+                      propertyType: selectedTypes.filter(t => t !== type)
+                    });
+                  } else {
+                    setPreferences({
+                      ...preferences,
+                      propertyType: [...selectedTypes, type]
+                    });
+                  }
+                }}
                 className="justify-start"
               >
-                {selectedLocations.includes(location) && <CheckCircle className="mr-2 h-4 w-4" />}
-                {location}
+                {preferences.propertyType.includes(type) && <CheckCircle className="mr-2 h-4 w-4" />}
+                {propertyTypeLabels[type]}
               </Button>
             ))}
           </div>
-        </div>
-        
-        <div className="space-y-3">
-          <h2 className="text-xl font-semibold">Property type?</h2>
           
-          <Select 
-            value={preferences.propertyType.join(',')} 
-            onValueChange={(value) => setPreferences({...preferences, propertyType: value.split(',')})}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select property type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="apartment">Apartment</SelectItem>
-              <SelectItem value="house">House</SelectItem>
-              <SelectItem value="villa">Villa</SelectItem>
-              <SelectItem value="room">Room</SelectItem>
-              <SelectItem value="commercial">Commercial Space</SelectItem>
-              <SelectItem value="apartment,house">Apartment or House</SelectItem>
-            </SelectContent>
-          </Select>
-          
-          <div className="pt-2">
-            <label className="text-sm font-medium">Number of bedrooms</label>
-            <div className="grid grid-cols-4 gap-2 mt-1">
-              {[1, 2, 3, "4+"].map((num) => (
-                <Button 
-                  key={num} 
-                  variant={preferences.bedrooms === (num === "4+" ? 4 : Number(num)) ? "default" : "outline"}
-                  onClick={() => setPreferences({...preferences, bedrooms: num === "4+" ? 4 : Number(num)})}
-                >
-                  {num}
-                </Button>
-              ))}
+          {preferences.purpose === "buy" || preferences.propertyType.some(t => t !== "commercial") ? (
+            <div className="pt-4">
+              <label className="text-sm font-medium">Number of bedrooms</label>
+              <div className="grid grid-cols-4 gap-2 mt-1">
+                {[1, 2, 3, "4+"].map((num) => (
+                  <Button 
+                    key={num} 
+                    variant={preferences.bedrooms === (num === "4+" ? 4 : Number(num)) ? "default" : "outline"}
+                    onClick={() => setPreferences({...preferences, bedrooms: num === "4+" ? 4 : Number(num)})}
+                  >
+                    {num}
+                  </Button>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : null}
         </div>
         
         <div className="flex justify-between">
@@ -188,22 +236,37 @@ const NirmanAI = () => {
     );
   };
   
-  // Step 3: Lifestyle and amenities
+  // Step 3: Lifestyle and amenities - different based on buy/rent
   const renderStep3 = () => {
-    const lifestyleOptions = [
-      { value: 'bachelor', label: 'Bachelor/Single' },
-      { value: 'family', label: 'Family' },
-      { value: 'professional', label: 'Working Professional' },
-      { value: 'student', label: 'Student' }
-    ];
+    // Lifestyle options differ based on purpose
+    const lifestyleOptions = preferences.purpose === "buy"
+      ? [
+          { value: 'family', label: 'Family' },
+          { value: 'professional', label: 'Working Professional' },
+          { value: 'student', label: 'Student' },
+        ]
+      : [
+          { value: 'bachelor', label: 'Bachelor/Single' },
+          { value: 'family', label: 'Family' },
+          { value: 'professional', label: 'Working Professional' },
+          { value: 'student', label: 'Student' }
+        ];
     
-    const amenityOptions = [
-      { value: 'furnished', label: 'Furnished' },
-      { value: 'parking', label: 'Parking Space' },
-      { value: 'garden', label: 'Garden/Outdoor Space' },
-      { value: 'securitySystem', label: 'Security System' },
-      { value: 'petFriendly', label: 'Pet Friendly' }
-    ];
+    // Amenity options differ based on purpose
+    const amenityOptions = preferences.purpose === "buy"
+      ? [
+          { value: 'parking', label: 'Parking Space' },
+          { value: 'garden', label: 'Garden/Outdoor Space' },
+          { value: 'securitySystem', label: 'Security System' },
+          { value: 'petFriendly', label: 'Pet Friendly' }
+        ]
+      : [
+          { value: 'furnished', label: 'Furnished' },
+          { value: 'parking', label: 'Parking Space' },
+          { value: 'securitySystem', label: 'Security System' },
+          { value: 'petFriendly', label: 'Pet Friendly' },
+          { value: 'bachelorsAllowed', label: 'Bachelors Allowed' }
+        ];
     
     const toggleAmenity = (amenity: string) => {
       if (preferences.amenities.includes(amenity)) {
@@ -232,6 +295,7 @@ const NirmanAI = () => {
                 onClick={() => setPreferences({...preferences, lifestyle: option.value as any})}
                 className="justify-start"
               >
+                {preferences.lifestyle === option.value && <CheckCircle className="mr-2 h-4 w-4" />}
                 {option.label}
               </Button>
             ))}
@@ -268,12 +332,20 @@ const NirmanAI = () => {
     );
   };
   
-  // Results view
+  // Results view - with different messaging based on buy/rent
   const renderResults = () => (
     <div className="space-y-6">
       <div className="bg-gradient-premium text-white p-6 rounded-lg">
-        <h2 className="text-2xl font-semibold mb-2">Your Personalized Matches</h2>
-        <p>Nirman AI has analyzed your preferences and found these properties specifically for you.</p>
+        <h2 className="text-2xl font-semibold mb-2">
+          {preferences.purpose === "buy" 
+            ? "Your Dream Home Matches" 
+            : "Your Perfect Rental Matches"}
+        </h2>
+        <p>
+          {preferences.purpose === "buy"
+            ? "Nirman AI has analyzed your preferences and found these properties that match your home buying criteria."
+            : "Nirman AI has found these rental properties based on your specific requirements."}
+        </p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -288,7 +360,7 @@ const NirmanAI = () => {
         <div className="text-center py-12">
           <h3 className="text-xl font-semibold mb-2">No exact matches found</h3>
           <p className="text-muted-foreground mb-6">We couldn't find properties that exactly match your criteria. Try adjusting your preferences.</p>
-          <Button onClick={() => setCurrentStep(1)}>Start Over</Button>
+          <Button onClick={() => setCurrentStep(0)}>Start Over</Button>
         </div>
       )}
       
@@ -302,7 +374,7 @@ const NirmanAI = () => {
       </div>
       
       <div className="text-center">
-        <Button onClick={() => setCurrentStep(1)}>Start a New Search</Button>
+        <Button onClick={() => setCurrentStep(0)}>Start a New Search</Button>
       </div>
     </div>
   );
@@ -319,7 +391,7 @@ const NirmanAI = () => {
       setResults(filteredProperties);
       setCurrentStep(4);
       
-      toast.success("Nirman AI has found properties matching your preferences!");
+      toast.success(`Nirman AI has found ${preferences.purpose === "buy" ? "properties" : "rentals"} matching your preferences!`);
     } catch (error) {
       console.error('Error getting AI recommendations:', error);
       toast.error("Something went wrong. Please try again.");
@@ -330,12 +402,20 @@ const NirmanAI = () => {
   
   const renderCurrentStep = () => {
     switch (currentStep) {
+      case 0: return renderPurposeSelection();
       case 1: return renderStep1();
       case 2: return renderStep2();
       case 3: return renderStep3();
       case 4: return renderResults();
-      default: return renderStep1();
+      default: return renderPurposeSelection();
     }
+  };
+
+  // Calculate progress percentage for the progress bar
+  const progressPercentage = () => {
+    if (currentStep === 0) return 0;
+    if (currentStep === 4) return 100;
+    return (currentStep / 3) * 100;
   };
   
   return (
@@ -352,44 +432,51 @@ const NirmanAI = () => {
             
             <Card>
               <CardHeader>
-                <CardTitle>Find Your Perfect Property</CardTitle>
+                <CardTitle>
+                  {currentStep === 0 
+                    ? "Find Your Perfect Property" 
+                    : currentStep === 4 
+                      ? "Your Personalized Matches" 
+                      : preferences.purpose === "buy" 
+                        ? "Find Your Dream Home" 
+                        : "Find Your Ideal Rental"}
+                </CardTitle>
                 <CardDescription>
-                  Tell us what you're looking for and our AI will find the best matches for you
+                  {currentStep === 0 
+                    ? "Tell us what you're looking for and our AI will find the best matches for you" 
+                    : currentStep === 4 
+                      ? "Our AI has selected these properties based on your preferences" 
+                      : "Tell us your preferences and we'll find the perfect match"}
                 </CardDescription>
               </CardHeader>
               
               <CardContent>
-                {currentStep < 4 && (
-                  <div className="flex justify-between items-center mb-6">
-                    {[1, 2, 3].map((step) => (
+                {currentStep > 0 && currentStep < 4 && (
+                  <div className="mb-6">
+                    <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                       <div 
-                        key={step} 
-                        className={`flex flex-col items-center ${currentStep === step ? 'text-primary' : 'text-muted-foreground'}`}
-                      >
-                        <div 
-                          className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 
-                            ${currentStep >= step ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
-                        >
-                          {step}
-                        </div>
-                        <span className="text-xs hidden md:block">
-                          {step === 1 ? 'Purpose & Budget' : 
-                           step === 2 ? 'Location & Type' : 
-                           'Lifestyle & Amenities'}
-                        </span>
-                      </div>
-                    ))}
-                    <div className="absolute left-0 right-0 h-[2px] bg-muted -z-10" />
+                        className="h-full bg-primary transition-all duration-300 ease-in-out"
+                        style={{ width: `${progressPercentage()}%` }}
+                      ></div>
+                    </div>
+                    <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+                      <span>Step {currentStep} of 3</span>
+                      <span>
+                        {currentStep === 1 ? "Budget & Location" : 
+                         currentStep === 2 ? "Property Details" : 
+                         "Lifestyle & Amenities"}
+                      </span>
+                    </div>
                   </div>
                 )}
                 
                 {renderCurrentStep()}
               </CardContent>
               
-              {currentStep < 4 && (
+              {currentStep > 0 && currentStep < 4 && (
                 <CardFooter className="flex justify-between border-t px-6 py-4">
                   <div className="text-sm text-muted-foreground">
-                    Step {currentStep} of 3
+                    {preferences.purpose === "buy" ? "Home buying journey" : "Rental search"}
                   </div>
                   {currentStep < 3 ? (
                     <Button variant="ghost" size="sm" onClick={() => setCurrentStep(currentStep + 1)}>

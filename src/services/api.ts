@@ -1,3 +1,4 @@
+
 import { AIRecommendation, AIUserPreference, BookingRequest, Filter, Property, User } from "../models";
 import { MOCK_AI_USER_PREFERENCES, MOCK_BOOKINGS, MOCK_PROPERTIES, MOCK_USERS } from "../utils/mockData";
 
@@ -137,23 +138,47 @@ export const PropertyService = {
       // Match minimum bedrooms
       if (property.features.bedrooms < preferences.bedrooms) return false;
       
-      // Match lifestyle preferences
-      if (preferences.lifestyle === 'bachelor' && property.features.bachelorsAllowed === false) return false;
-      if (preferences.lifestyle === 'family' && property.features.familiesAllowed === false) return false;
+      // Match lifestyle preferences with appropriate rules
+      if (preferences.purpose === "rent") {
+        if (preferences.lifestyle === 'bachelor' && property.features.bachelorsAllowed === false) return false;
+        if (preferences.lifestyle === 'family' && property.features.familiesAllowed === false) return false;
+        if (preferences.lifestyle === 'student' && property.features.bachelorsAllowed === false) return false;
+      }
       
-      // Match required amenities
+      // Match required amenities with different rules for buy vs rent
       for (const amenity of preferences.amenities) {
         if (amenity === 'furnished' && !property.features.furnished) return false;
         if (amenity === 'parking' && !property.features.parking) return false;
         if (amenity === 'garden' && !property.features.garden) return false;
         if (amenity === 'securitySystem' && !property.features.securitySystem) return false;
         if (amenity === 'petFriendly' && !property.features.petFriendly) return false;
+        if (amenity === 'bachelorsAllowed' && !property.features.bachelorsAllowed) return false;
       }
       
       return true;
     });
     
-    // Sort by relevance (in a real app, this would use machine learning)
+    // Apply different sorting based on purpose
+    if (preferences.purpose === "buy") {
+      // For buying: prioritize value for money (simulated here)
+      filteredProperties.sort((a, b) => {
+        // Value calculation example (lower price per square foot is better)
+        const aValue = a.price / a.features.area;
+        const bValue = b.price / b.features.area;
+        return aValue - bValue;
+      });
+    } else {
+      // For renting: prioritize verified and recent listings
+      filteredProperties.sort((a, b) => {
+        // Verified listings first
+        if (a.isVerified !== b.isVerified) {
+          return a.isVerified ? -1 : 1;
+        }
+        // Then most recent
+        return new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime();
+      });
+    }
+    
     return filteredProperties.slice(0, 6);
   }
 };
