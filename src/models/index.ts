@@ -110,3 +110,59 @@ export interface AIUserPreference {
   lifestyle: "bachelor" | "family" | "professional" | "student";
   amenities: string[];
 }
+
+// Trusted Developer related types
+export interface TrustedDeveloper {
+  id: string;
+  name: string;
+  description: string;
+  establishedYear: number;
+  completedProjects: number;
+  rating: number;
+  specializations: string[];
+  location: string;
+  contactInfo: {
+    phone: string;
+    email: string;
+    website: string;
+  };
+  certifications: string[];
+  image: string;
+}
+
+// Property Building related types
+export interface PropertyBuildingRequest {
+  buildingType: "apartment" | "duplex" | "commercial" | "villa" | "house";
+  landArea: number; // in square feet
+  floors: number;
+  location: string;
+  luxuryLevel: "standard" | "premium" | "luxury";
+  timeframe: number; // in months
+  roomRequirements?: {
+    bedrooms: number;
+    bathrooms: number;
+    additionalRooms: string[];
+  };
+  budget?: number;
+  specialRequirements?: string[];
+}
+
+export interface BuildingCostBreakdown {
+  landCost: number;
+  materialCost: number;
+  laborCost: number;
+  designCost: number;
+  permitCost: number;
+  finishingCost: number;
+  electricalPlumbingCost: number;
+  miscCost: number;
+  totalCost: number;
+  timeline: {
+    planning: number; // in months
+    foundation: number;
+    structure: number;
+    finishing: number;
+    total: number;
+  };
+  recommendedDevelopers: TrustedDeveloper[];
+}

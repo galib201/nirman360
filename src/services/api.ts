@@ -1,6 +1,7 @@
 
-import { AIRecommendation, AIUserPreference, BookingRequest, Filter, Property, User } from "../models";
+import { AIRecommendation, AIUserPreference, BookingRequest, BuildingCostBreakdown, Filter, Property, PropertyBuildingRequest, TrustedDeveloper, User } from "../models";
 import { MOCK_AI_USER_PREFERENCES, MOCK_BOOKINGS, MOCK_PROPERTIES, MOCK_USERS } from "../utils/mockData";
+import { MOCK_TRUSTED_DEVELOPERS } from "../utils/developerData";
 
 // Simulating API delays
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -224,5 +225,160 @@ export const UserService = {
     await delay(800);
     // In a real app, we'd update the database
     return true;
+  }
+};
+
+export const DeveloperService = {
+  // Get all trusted developers
+  getAllDevelopers: async (): Promise<TrustedDeveloper[]> => {
+    await delay(800);
+    return MOCK_TRUSTED_DEVELOPERS;
+  },
+  
+  // Get developers by specialization
+  getDevelopersBySpecialization: async (specialization: string): Promise<TrustedDeveloper[]> => {
+    await delay(600);
+    return MOCK_TRUSTED_DEVELOPERS.filter(
+      developer => developer.specializations.some(
+        spec => spec.toLowerCase().includes(specialization.toLowerCase())
+      )
+    );
+  },
+  
+  // Get developers by location
+  getDevelopersByLocation: async (location: string): Promise<TrustedDeveloper[]> => {
+    await delay(600);
+    return MOCK_TRUSTED_DEVELOPERS.filter(
+      developer => developer.location.toLowerCase().includes(location.toLowerCase())
+    );
+  },
+  
+  // Get a specific developer by ID
+  getDeveloperById: async (id: string): Promise<TrustedDeveloper | undefined> => {
+    await delay(500);
+    return MOCK_TRUSTED_DEVELOPERS.find(developer => developer.id === id);
+  }
+};
+
+export const PropertyBuildingService = {
+  // Calculate the cost breakdown for a property building project
+  calculateBuildingCost: async (request: PropertyBuildingRequest): Promise<BuildingCostBreakdown> => {
+    await delay(1500); // Simulate complex calculation time
+    
+    // Base rates per square foot based on luxury level (in BDT)
+    const baseRates = {
+      standard: 3000,
+      premium: 4500,
+      luxury: 6500
+    };
+    
+    // Location cost multipliers
+    const locationMultipliers: {[key: string]: number} = {
+      'dhaka': 1.5,
+      'chattogram': 1.3,
+      'sylhet': 1.1,
+      'rajshahi': 0.9,
+      'khulna': 0.9,
+      'barisal': 0.8,
+      'rangpur': 0.8,
+      'mymensingh': 0.8,
+      'cox\'s bazar': 1.2
+    };
+    
+    // Determine the location multiplier
+    let locationMultiplier = 1.0;
+    const locationLower = request.location.toLowerCase();
+    
+    for (const [key, multiplier] of Object.entries(locationMultipliers)) {
+      if (locationLower.includes(key)) {
+        locationMultiplier = multiplier;
+        break;
+      }
+    }
+    
+    // Building type multipliers
+    const buildingTypeMultipliers: {[key: string]: number} = {
+      'apartment': 1.3,
+      'duplex': 1.2,
+      'commercial': 1.5,
+      'villa': 1.4,
+      'house': 1.0
+    };
+    
+    const baseRate = baseRates[request.luxuryLevel];
+    const totalArea = request.landArea * request.floors;
+    const baseConstructionCost = totalArea * baseRate * locationMultiplier * buildingTypeMultipliers[request.buildingType];
+    
+    // Calculate individual cost components
+    const landCost = request.landArea * 5000 * locationMultiplier; // Assumed land cost per sq ft
+    const materialCost = baseConstructionCost * 0.65;
+    const laborCost = baseConstructionCost * 0.2;
+    const designCost = baseConstructionCost * 0.05;
+    const permitCost = baseConstructionCost * 0.02;
+    const finishingCost = baseConstructionCost * 0.1;
+    const electricalPlumbingCost = baseConstructionCost * 0.08;
+    const miscCost = baseConstructionCost * 0.03;
+    
+    // Calculate total cost
+    const constructionCost = materialCost + laborCost + designCost + permitCost + finishingCost + electricalPlumbingCost + miscCost;
+    const totalCost = landCost + constructionCost;
+    
+    // Calculate timeline components (in months)
+    const planningTime = 2;
+    const foundationTime = request.floors * 0.5;
+    const structureTime = request.floors * 1.5;
+    const finishingTime = request.floors * 1.0;
+    const totalTime = planningTime + foundationTime + structureTime + finishingTime;
+    
+    // Find recommended developers based on building type and location
+    const recommendedDevelopers = MOCK_TRUSTED_DEVELOPERS
+      .filter(developer => {
+        // Match by relevant specialization for the building type
+        let matchesSpecialization = false;
+        
+        if (request.buildingType === 'apartment' && developer.specializations.some(s => 
+          s.toLowerCase().includes('apartment') || s.toLowerCase().includes('residential'))) {
+          matchesSpecialization = true;
+        } else if (request.buildingType === 'commercial' && developer.specializations.some(s => 
+          s.toLowerCase().includes('commercial'))) {
+          matchesSpecialization = true;
+        } else if (request.buildingType === 'villa' && developer.specializations.some(s => 
+          s.toLowerCase().includes('villa') || s.toLowerCase().includes('luxury'))) {
+          matchesSpecialization = true;
+        } else if (developer.specializations.some(s => 
+          s.toLowerCase().includes(request.buildingType.toLowerCase()))) {
+          matchesSpecialization = true;
+        }
+        
+        // Factor in luxury level
+        if (request.luxuryLevel === 'luxury' && !developer.specializations.some(s => 
+          s.toLowerCase().includes('luxury'))) {
+          return false;
+        }
+        
+        return matchesSpecialization;
+      })
+      .sort((a, b) => b.rating - a.rating) // Sort by rating
+      .slice(0, 3); // Get top 3
+    
+    return {
+      landCost,
+      materialCost,
+      laborCost,
+      designCost,
+      permitCost,
+      finishingCost,
+      electricalPlumbingCost,
+      miscCost,
+      totalCost,
+      timeline: {
+        planning: planningTime,
+        foundation: foundationTime,
+        structure: structureTime,
+        finishing: finishingTime,
+        total: totalTime
+      },
+      recommendedDevelopers
+    };
   }
 };

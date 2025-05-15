@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Building, User, Search, ShieldCheck, Building2, MapPin, Zap } from "lucide-react";
+import { Home, Building, User, Search, ShieldCheck, Building2, MapPin, Zap, Users, Construction, MessageSquare } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-mobile";
 import {
   Sheet,
@@ -36,6 +36,8 @@ const Header = ({ onLogoClick }: HeaderProps) => {
     { label: "Home", path: "/", icon: Home },
     { label: "Buy", path: "/properties?category=buy", icon: Building },
     { label: "Rent", path: "/properties?category=rent", icon: Building2 },
+    { label: "Trusted Developers", path: "/trusted-developers", icon: Users },
+    { label: "Build Your Own Property", path: "/nirman-ai?tab=property-nirman", icon: Construction },
   ];
 
   const featureItems = [
@@ -43,6 +45,7 @@ const Header = ({ onLogoClick }: HeaderProps) => {
     { label: "Legal Support", path: "/legal-support", icon: ShieldCheck },
     { label: "AI Recommendations", path: "/ai-recommendations", icon: Search },
     { label: "Post Your Property", path: "/post-property", icon: Building2 },
+    { label: "Community Chat", path: "/community-chat", icon: MessageSquare },
   ];
   
   return (
@@ -63,7 +66,7 @@ const Header = ({ onLogoClick }: HeaderProps) => {
         
         {!isMobile ? (
           <nav className="flex items-center space-x-6 text-sm font-medium flex-1 justify-center">
-            {mainNavItems.map((item) => (
+            {mainNavItems.slice(0, 3).map((item) => (
               <Link 
                 key={item.path}
                 to={item.path}
@@ -81,6 +84,24 @@ const Header = ({ onLogoClick }: HeaderProps) => {
             >
               <Zap className="mr-1.5 h-[1.1rem] w-[1.1rem]" />
               Nirman AI
+            </Link>
+
+            {/* Trusted Developers link */}
+            <Link 
+              to="/trusted-developers"
+              className="flex items-center transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              <Users className="mr-1.5 h-[1.1rem] w-[1.1rem]" />
+              Trusted Developers
+            </Link>
+
+            {/* Build Your Own Property link */}
+            <Link 
+              to="/nirman-ai?tab=property-nirman"
+              className="flex items-center transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              <Construction className="mr-1.5 h-[1.1rem] w-[1.1rem]" />
+              Build Your Own
             </Link>
 
             <NavigationMenu>

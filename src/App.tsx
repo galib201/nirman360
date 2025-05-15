@@ -20,6 +20,8 @@ import BuyingGuide from "./pages/BuyingGuide";
 import RentingGuide from "./pages/RentingGuide";
 import SellerGuide from "./pages/SellerGuide";
 import PricingFees from "./pages/PricingFees";
+import TrustedDevelopers from "./pages/TrustedDevelopers";
+import CommunityChat from "./pages/CommunityChat";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -89,6 +91,8 @@ const App = () => {
           <Route path="/renting-guide" element={withLogoClick(RentingGuide, handleLogoClick)} />
           <Route path="/seller-guide" element={withLogoClick(SellerGuide, handleLogoClick)} />
           <Route path="/pricing-fees" element={withLogoClick(PricingFees, handleLogoClick)} />
+          <Route path="/trusted-developers" element={withLogoClick(TrustedDevelopers, handleLogoClick)} />
+          <Route path="/community-chat" element={withLogoClick(CommunityChat, handleLogoClick)} />
           {isAdminEnabled && <Route path="/admin" element={<Admin />} />}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={withLogoClick(NotFound, handleLogoClick)} />
