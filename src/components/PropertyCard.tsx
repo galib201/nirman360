@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Property } from '@/models';
 import '../styles/components/property-card.css';
 
@@ -34,7 +35,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
         </div>
       </div>
       <div className="property-details">
-        <h3 className="property-title">{property.title}</h3>
+        <h3 className="property-title">
+          <Link to={`/properties/${property.id}`}>{property.title}</Link>
+        </h3>
         <div className="property-location">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="location-icon">
             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -45,9 +48,27 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
         <div className="property-footer">
           <div className="property-price">{formattedPrice}</div>
           <div className="property-features">
-            <span className="feature-badge">{property.features.bedrooms} beds</span>
-            <span className="feature-badge">{property.features.bathrooms} baths</span>
-            <span className="feature-badge">{property.features.area} sqft</span>
+            <span className="feature-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 3h20v10H2z"></path>
+                <path d="M2 17h20v4H2z"></path>
+              </svg>
+              {property.features.bedrooms} beds
+            </span>
+            <span className="feature-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"></path>
+                <path d="M14 9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"></path>
+                <path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2H8v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"></path>
+              </svg>
+              {property.features.bathrooms} baths
+            </span>
+            <span className="feature-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              </svg>
+              {property.features.area} sqft
+            </span>
           </div>
         </div>
       </div>

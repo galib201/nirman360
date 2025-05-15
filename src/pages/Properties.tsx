@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
 import PropertyFilters from "@/components/PropertyFilters";
+import "../styles/pages/properties.css";
 
 const Properties = () => {
   const [searchParams] = useSearchParams();
@@ -55,31 +56,51 @@ const Properties = () => {
   };
   
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="properties-container">
       <Header />
       
-      <main className="flex-grow bg-background py-8">
+      {/* Hero Section */}
+      <section className="hero-section">
+        <div className="container mx-auto px-4 py-12">
+          <div className="hero-content text-center">
+            <h1 className="hero-title">Find Your Dream Property</h1>
+            <p className="hero-subtitle">Browse through our exclusive collection of premium properties</p>
+            <div className="hero-badges">
+              <span className="hero-badge">Verified Listings</span>
+              <span className="hero-badge">Premium Support</span>
+              <span className="hero-badge">Secure Transactions</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <main className="properties-main">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl md:text-4xl font-display font-semibold mb-6">
-            Browse Properties
-          </h1>
-          
           <PropertyFilters onFilterChange={handleFilterChange} currentFilters={filters} />
           
           {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-nirman-navy border-t-transparent"></div>
+            <div className="properties-loading">
+              <div className="properties-spinner"></div>
             </div>
           ) : (
             <>
-              <div className="flex justify-between items-center mb-6">
-                <p className="text-muted-foreground">
-                  {properties.length} properties found
-                </p>
+              <div className="properties-header">
+                <h2 className="properties-title">
+                  Available Properties
+                  <span className="properties-count"> ({properties.length} found)</span>
+                </h2>
+                <div className="properties-sort">
+                  <label htmlFor="sort-select">Sort by:</label>
+                  <select id="sort-select" className="sort-select">
+                    <option value="newest">Newest First</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                  </select>
+                </div>
               </div>
               
               {properties.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="properties-grid">
                   {properties.map((property, index) => (
                     <div 
                       key={property.id}
@@ -91,7 +112,7 @@ const Properties = () => {
                   ))}
                 </div>
               ) : (
-                <div className="bg-muted py-16 rounded-lg text-center">
+                <div className="properties-empty">
                   <h3 className="text-xl font-semibold mb-2">No properties found</h3>
                   <p className="text-muted-foreground">
                     Try adjusting your filters to see more results
