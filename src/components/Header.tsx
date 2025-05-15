@@ -1,8 +1,8 @@
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Building, User, Search, ShieldCheck, Building2, MapPin, Zap, Users, Construction, MessageSquare } from "lucide-react";
+import { Building, User, Search, ShieldCheck, Building2, MapPin, Zap, Users, ArrowLeft, Calculator } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-mobile";
 import {
   Sheet,
@@ -24,41 +24,53 @@ import {
 import { cn } from "@/lib/utils";
 
 interface HeaderProps {
-  onLogoClick?: () => void; // Add this prop for admin access
+  onLogoClick?: () => void;
 }
 
 const Header = ({ onLogoClick }: HeaderProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   
+  const isHomePage = location.pathname === "/";
+  
   const mainNavItems = [
-    { label: "Home", path: "/", icon: Home },
     { label: "Buy", path: "/properties?category=buy", icon: Building },
     { label: "Rent", path: "/properties?category=rent", icon: Building2 },
     { label: "Trusted Developers", path: "/trusted-developers", icon: Users },
-    { label: "Build Your Own Property", path: "/nirman-ai?tab=property-nirman", icon: Construction },
+    { label: "Find Property", path: "/find-property", icon: Search },
   ];
 
   const featureItems = [
     { label: "Area Snapshot", path: "/area-snapshot", icon: MapPin },
     { label: "Legal Support", path: "/legal-support", icon: ShieldCheck },
-    { label: "AI Recommendations", path: "/ai-recommendations", icon: Search },
-    { label: "Post Your Property", path: "/post-property", icon: Building2 },
-    { label: "Community Chat", path: "/community-chat", icon: MessageSquare },
+    { label: "ROI Calculator", path: "/roi-calculator", icon: Calculator },
+    { label: "Community Chat", path: "/community-chat", icon: Building2 },
   ];
   
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
-        <div className="mr-4 flex">
+        {!isHomePage && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="mr-2"
+            onClick={() => navigate("/")}
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        )}
+        
+        <div className={cn("mr-4 flex", isHomePage ? "" : "ml-0")}>
           <Link 
             to="/" 
             className="flex items-center space-x-2"
             onClick={() => onLogoClick && onLogoClick()}
           >
             <div className="bg-nirman-gold text-white font-bold rounded p-1.5">
-              <Home className="h-5 w-5" />
+              <Building className="h-5 w-5" />
             </div>
             <span className="font-display font-semibold text-xl">NIRMAN360</span>
           </Link>
@@ -66,7 +78,7 @@ const Header = ({ onLogoClick }: HeaderProps) => {
         
         {!isMobile ? (
           <nav className="flex items-center space-x-6 text-sm font-medium flex-1 justify-center">
-            {mainNavItems.slice(0, 3).map((item) => (
+            {mainNavItems.map((item) => (
               <Link 
                 key={item.path}
                 to={item.path}
@@ -77,32 +89,27 @@ const Header = ({ onLogoClick }: HeaderProps) => {
               </Link>
             ))}
             
-            {/* Nirman AI link outside dropdown with highlighting */}
-            <Link 
-              to="/nirman-ai"
-              className="flex items-center text-nirman-gold font-semibold transition-colors hover:text-nirman-gold/90"
+            {/* Nirman AI as a highlighted button */}
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => navigate("/nirman-ai")}
+              className="bg-nirman-gold hover:bg-nirman-gold/90"
             >
-              <Zap className="mr-1.5 h-[1.1rem] w-[1.1rem]" />
-              Nirman AI
-            </Link>
+              <Zap className="h-4 w-4 mr-2" />
+              <span>Nirman AI</span>
+            </Button>
 
-            {/* Trusted Developers link */}
-            <Link 
-              to="/trusted-developers"
-              className="flex items-center transition-colors hover:text-foreground/80 text-foreground/60"
+            {/* Find Property button */}
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => navigate("/find-property")}
+              className="bg-nirman-gold hover:bg-nirman-gold/90"
             >
-              <Users className="mr-1.5 h-[1.1rem] w-[1.1rem]" />
-              Trusted Developers
-            </Link>
-
-            {/* Build Your Own Property link */}
-            <Link 
-              to="/nirman-ai?tab=property-nirman"
-              className="flex items-center transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              <Construction className="mr-1.5 h-[1.1rem] w-[1.1rem]" />
-              Build Your Own
-            </Link>
+              <Search className="h-4 w-4 mr-2" />
+              <span>Find Property</span>
+            </Button>
 
             <NavigationMenu>
               <NavigationMenuList>
@@ -146,16 +153,6 @@ const Header = ({ onLogoClick }: HeaderProps) => {
           >
             <User className="h-4 w-4 md:mr-2" />
             <span className="hidden md:inline">Account</span>
-          </Button>
-
-          <Button
-            variant="default"
-            size="sm"
-            onClick={() => navigate("/post-property")}
-            className="bg-nirman-gold hover:bg-nirman-gold/90"
-          >
-            <Building className="h-4 w-4 md:mr-2" />
-            <span className="hidden md:inline">Post Your Property</span>
           </Button>
           
           {isMobile && (
