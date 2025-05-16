@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -10,10 +9,11 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building, Construction, Gauge, HardHat, LucideIcon, MessageSquare, RefreshCw, User, Users, Zap } from "lucide-react";
+import { Building, Calculator, Construction, Gauge, HardHat, LucideIcon, MessageSquare, RefreshCw, User, Users, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface NirmanAIProps {
   onLogoClick?: () => void;
@@ -81,6 +81,7 @@ const mockDevelopers = [
 
 const NirmanAI = ({ onLogoClick }: NirmanAIProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [messageInput, setMessageInput] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [step, setStep] = useState(1);
@@ -253,6 +254,22 @@ const NirmanAI = ({ onLogoClick }: NirmanAIProps) => {
     setCostEstimate(null);
     setRecommendedDevelopers([]);
     setTimeEstimate("");
+  };
+  
+  // Function to navigate to ROI calculator with cost estimate data
+  const goToRoiCalculator = () => {
+    if (costEstimate) {
+      // Navigate to ROI calculator with cost estimate data as state
+      navigate('/roi-calculator', {
+        state: {
+          propertyValue: costEstimate.totalCost,
+          propertyType,
+          location,
+          propertySize,
+          fromNirmanAI: true
+        }
+      });
+    }
   };
   
   return (
@@ -550,6 +567,27 @@ const NirmanAI = ({ onLogoClick }: NirmanAIProps) => {
                                 <span>
                                   Estimated completion time: <strong>{timeEstimate}</strong>
                                 </span>
+                              </div>
+                            </div>
+                            
+                            {/* ROI Calculator Button */}
+                            <div className="bg-nirman-cream p-4 rounded-lg">
+                              <div className="flex flex-col md:flex-row justify-between items-center">
+                                <div>
+                                  <h3 className="text-lg font-semibold">
+                                    Calculate Return on Investment
+                                  </h3>
+                                  <p className="text-muted-foreground text-sm">
+                                    See how your investment in this property will perform over time
+                                  </p>
+                                </div>
+                                <Button 
+                                  className="bg-nirman-gold hover:bg-nirman-gold/90 mt-3 md:mt-0"
+                                  onClick={goToRoiCalculator}
+                                >
+                                  <Calculator className="h-4 w-4 mr-2" />
+                                  Calculate ROI
+                                </Button>
                               </div>
                             </div>
                             
