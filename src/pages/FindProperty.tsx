@@ -28,15 +28,27 @@ import {
   CheckSquare 
 } from "lucide-react";
 
+// Adding custom typing for Property with amenities and details needed by this component
+interface ExtendedProperty extends Property {
+  views?: number;
+  amenities?: string[];
+  details?: {
+    bedrooms: number;
+    [key: string]: any;
+  };
+}
+
 const FindProperty = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>("buy");
   const [loading, setLoading] = useState<boolean>(true);
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [recommendations, setRecommendations] = useState<Property[]>([]);
+  const [properties, setProperties] = useState<ExtendedProperty[]>([]);
+  const [recommendations, setRecommendations] = useState<ExtendedProperty[]>([]);
   
   // Form filters
   const [budget, setBudget] = useState<[number, number]>([1000000, 10000000]);
+  const [minBudgetInput, setMinBudgetInput] = useState<string>("1000000");
+  const [maxBudgetInput, setMaxBudgetInput] = useState<string>("10000000");
   const [minBedrooms, setMinBedrooms] = useState<string>("any");
   const [location, setLocation] = useState<string>("any");
   const [propertyType, setPropertyType] = useState<string>("any");
@@ -57,6 +69,24 @@ const FindProperty = () => {
       return `${value.toLocaleString()} BDT`;
     }
   };
+
+  // Update the slider when input values change
+  const handleBudgetInputChange = () => {
+    const minVal = parseInt(minBudgetInput) || budget[0];
+    const maxVal = parseInt(maxBudgetInput) || budget[1];
+    
+    // Ensure minVal is not greater than maxVal
+    const newMinVal = Math.min(minVal, maxVal);
+    const newMaxVal = Math.max(minVal, maxVal);
+    
+    setBudget([newMinVal, newMaxVal]);
+  };
+
+  // Update the input fields when slider changes
+  useEffect(() => {
+    setMinBudgetInput(budget[0].toString());
+    setMaxBudgetInput(budget[1].toString());
+  }, [budget]);
   
   useEffect(() => {
     const fetchProperties = async () => {
@@ -64,8 +94,16 @@ const FindProperty = () => {
         setLoading(true);
         const allProperties = await PropertyService.getProperties();
         
+        // Add required fields for type safety
+        const extendedProperties = allProperties.map(prop => ({
+          ...prop,
+          views: prop.views || 0,
+          amenities: prop.amenities || [],
+          details: prop.details || { bedrooms: 2 }
+        }));
+        
         // Filter properties based on the active tab
-        const filteredProperties = allProperties.filter(
+        const filteredProperties = extendedProperties.filter(
           property => property.category === activeTab
         );
         
@@ -73,7 +111,7 @@ const FindProperty = () => {
         
         // Create initial recommendations based on popularity
         const recommendedProperties = [...filteredProperties]
-          .sort((a, b) => b.views - a.views)
+          .sort((a, b) => (b.views || 0) - (a.views || 0))
           .slice(0, 4);
         
         setRecommendations(recommendedProperties);
@@ -96,7 +134,7 @@ const FindProperty = () => {
       
       const matchesBedrooms = 
         minBedrooms === "any" || 
-        (property.details && property.details.bedrooms >= parseInt(minBedrooms));
+        ((property.details?.bedrooms || 0) >= parseInt(minBedrooms));
       
       const matchesLocation = 
         location === "any" || 
@@ -119,14 +157,14 @@ const FindProperty = () => {
       let aScore = 0;
       let bScore = 0;
       
-      if (hasGym && a.amenities?.includes("Gym")) aScore++;
-      if (hasGym && b.amenities?.includes("Gym")) bScore++;
+      if (hasGym && (a.amenities || []).includes("Gym")) aScore++;
+      if (hasGym && (b.amenities || []).includes("Gym")) bScore++;
       
-      if (hasPool && a.amenities?.includes("Swimming Pool")) aScore++;
-      if (hasPool && b.amenities?.includes("Swimming Pool")) bScore++;
+      if (hasPool && (a.amenities || []).includes("Swimming Pool")) aScore++;
+      if (hasPool && (b.amenities || []).includes("Swimming Pool")) bScore++;
       
-      if (hasSecurity && a.amenities?.includes("24/7 Security")) aScore++;
-      if (hasSecurity && b.amenities?.includes("24/7 Security")) bScore++;
+      if (hasSecurity && (a.amenities || []).includes("24/7 Security")) aScore++;
+      if (hasSecurity && (b.amenities || []).includes("24/7 Security")) bScore++;
       
       return bScore - aScore;
     });
@@ -162,18 +200,45 @@ const FindProperty = () => {
                 
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="budget">
-                      Budget Range: {formatBudget(budget[0])} - {formatBudget(budget[1])}
-                    </Label>
-                    <Slider
-                      id="budget"
-                      min={activeTab === "buy" ? 1000000 : 10000}
-                      max={activeTab === "buy" ? 50000000 : 500000}
-                      step={activeTab === "buy" ? 500000 : 5000}
-                      value={budget}
-                      onValueChange={setBudget}
-                      className="mt-2"
-                    />
+                    <Label>Budget Range</Label>
+                    <div className="grid grid-cols-2 gap-4 mt-2 mb-4">
+                      <div>
+                        <Label htmlFor="minBudget" className="text-xs text-muted-foreground">Min Budget</Label>
+                        <Input
+                          id="minBudget"
+                          type="number"
+                          value={minBudgetInput}
+                          onChange={(e) => setMinBudgetInput(e.target.value)}
+                          onBlur={handleBudgetInputChange}
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="maxBudget" className="text-xs text-muted-foreground">Max Budget</Label>
+                        <Input
+                          id="maxBudget"
+                          type="number"
+                          value={maxBudgetInput}
+                          onChange={(e) => setMaxBudgetInput(e.target.value)}
+                          onBlur={handleBudgetInputChange}
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="px-2">
+                      <Slider
+                        min={activeTab === "buy" ? 1000000 : 10000}
+                        max={activeTab === "buy" ? 50000000 : 500000}
+                        step={activeTab === "buy" ? 500000 : 5000}
+                        value={budget}
+                        onValueChange={(value: number[]) => setBudget([value[0], value[1]])}
+                        className="mt-2"
+                      />
+                      <div className="flex justify-between mt-1">
+                        <span className="text-xs text-muted-foreground">{formatBudget(budget[0])}</span>
+                        <span className="text-xs text-muted-foreground">{formatBudget(budget[1])}</span>
+                      </div>
+                    </div>
                   </div>
                   
                   <div className="space-y-2">

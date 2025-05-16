@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,7 @@ import { PropertyService } from "@/services/api";
 import PropertyCard from "@/components/PropertyCard";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Search, Home, Building2, Users, Sofa, UserRound, Zap } from "lucide-react";
+import { Search, Home, Building2, Users, Sofa, UserRound, Zap, Construction } from "lucide-react";
 import { toast } from "sonner";
 
 interface IndexProps {
@@ -34,6 +35,10 @@ const Index = ({ onLogoClick }: IndexProps) => {
   const [isFurnished, setIsFurnished] = useState(false);
   const [womenOnly, setWomenOnly] = useState(false);
   const [propertyType, setPropertyType] = useState<string>("");
+  
+  // Added for budget range inputs
+  const [minBudget, setMinBudget] = useState("");
+  const [maxBudget, setMaxBudget] = useState("");
   
   useEffect(() => {
     const fetchProperties = async () => {
@@ -71,6 +76,10 @@ const Index = ({ onLogoClick }: IndexProps) => {
       location: searchQuery,
       category: category
     };
+    
+    // Add budget range if provided
+    if (minBudget) filters.minBudget = minBudget;
+    if (maxBudget) filters.maxBudget = maxBudget;
     
     // Add rent-specific filters if category is rent
     if (category === "rent") {
@@ -142,6 +151,32 @@ const Index = ({ onLogoClick }: IndexProps) => {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-10 w-full"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Budget Range Inputs */}
+                  <div className="mt-4 grid grid-cols-2 gap-2">
+                    <div>
+                      <Label htmlFor="minBudget" className="text-gray-700 text-sm">Min Budget</Label>
+                      <Input
+                        id="minBudget"
+                        type="number"
+                        placeholder="Min amount"
+                        value={minBudget}
+                        onChange={(e) => setMinBudget(e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="maxBudget" className="text-gray-700 text-sm">Max Budget</Label>
+                      <Input
+                        id="maxBudget"
+                        type="number"
+                        placeholder="Max amount"
+                        value={maxBudget}
+                        onChange={(e) => setMaxBudget(e.target.value)}
+                        className="mt-1"
                       />
                     </div>
                   </div>
@@ -282,8 +317,8 @@ const Index = ({ onLogoClick }: IndexProps) => {
                 <h2 className="text-xl md:text-2xl font-semibold">Meet Nirman AI</h2>
               </div>
               <p className="mt-2 text-sm md:text-base max-w-xl">
-                Our AI assistant helps you find your perfect property based on your lifestyle and preferences. 
-                Get personalized recommendations in minutes.
+                Our AI assistant helps you build your perfect property with Property Nirman feature.
+                Get cost estimates and connect with trusted developers.
               </p>
             </div>
             <Button 
@@ -291,7 +326,7 @@ const Index = ({ onLogoClick }: IndexProps) => {
               className="bg-nirman-gold text-nirman-navy hover:bg-opacity-90"
               size="lg"
             >
-              Try Nirman AI Now
+              Try Property Nirman
             </Button>
           </div>
         </div>
@@ -444,7 +479,7 @@ const Index = ({ onLogoClick }: IndexProps) => {
         </div>
       </section>
       
-      {/* Call To Action */}
+      {/* Call To Action - Post Property */}
       <section className="py-12 md:py-16 bg-gradient-premium text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-display text-3xl md:text-4xl font-semibold mb-6">
@@ -459,6 +494,26 @@ const Index = ({ onLogoClick }: IndexProps) => {
             onClick={() => navigate("/post-property")}
           >
             Post Your Property Now
+          </Button>
+        </div>
+      </section>
+      
+      {/* Call To Action - Build Your Own Property */}
+      <section className="py-12 md:py-16 bg-nirman-cream">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-6">
+            Want to Build Your Dream Property?
+          </h2>
+          <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-gray-700">
+            Use our Property Nirman feature to plan your dream property, get cost estimates and connect with trusted developers!
+          </p>
+          <Button 
+            size="lg" 
+            className="bg-nirman-gold text-nirman-navy hover:bg-opacity-90"
+            onClick={() => navigate("/nirman-ai")}
+          >
+            <Construction className="mr-2 h-5 w-5" />
+            Build Your Property with Nirman
           </Button>
         </div>
       </section>

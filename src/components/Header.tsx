@@ -39,14 +39,14 @@ const Header = ({ onLogoClick }: HeaderProps) => {
     { label: "Buy", path: "/properties?category=buy", icon: Building },
     { label: "Rent", path: "/properties?category=rent", icon: Building2 },
     { label: "Trusted Developers", path: "/trusted-developers", icon: Users },
-    { label: "Find Property", path: "/find-property", icon: Search },
   ];
 
   const featureItems = [
     { label: "Area Snapshot", path: "/area-snapshot", icon: MapPin },
     { label: "Legal Support", path: "/legal-support", icon: ShieldCheck },
     { label: "ROI Calculator", path: "/roi-calculator", icon: Calculator },
-    { label: "Community Chat", path: "/community-chat", icon: Building2 },
+    { label: "Community Chat", path: "/community-chat", icon: Users },
+    { label: "Find Property", path: "/find-property", icon: Search },
   ];
   
   return (
@@ -89,26 +89,26 @@ const Header = ({ onLogoClick }: HeaderProps) => {
               </Link>
             ))}
             
-            {/* Nirman AI as a highlighted button */}
+            {/* ROI Calculator button */}
             <Button
               variant="default"
               size="sm"
-              onClick={() => navigate("/nirman-ai")}
+              onClick={() => navigate("/roi-calculator")}
               className="bg-nirman-gold hover:bg-nirman-gold/90"
             >
-              <Zap className="h-4 w-4 mr-2" />
-              <span>Nirman AI</span>
+              <Calculator className="h-4 w-4 mr-2" />
+              <span>ROI Calculator</span>
             </Button>
 
-            {/* Find Property button */}
+            {/* Community Chat button */}
             <Button
               variant="default"
               size="sm"
-              onClick={() => navigate("/find-property")}
+              onClick={() => navigate("/community-chat")}
               className="bg-nirman-gold hover:bg-nirman-gold/90"
             >
-              <Search className="h-4 w-4 mr-2" />
-              <span>Find Property</span>
+              <Users className="h-4 w-4 mr-2" />
+              <span>Community Chat</span>
             </Button>
 
             <NavigationMenu>
@@ -144,7 +144,19 @@ const Header = ({ onLogoClick }: HeaderProps) => {
           <div className="flex-1" />
         )}
         
-        <div className="flex items-center justify-end space-x-2">
+        <div className="flex items-center justify-end space-x-2 ml-auto">
+          {/* Nirman AI button */}
+          <Button
+            variant="outline"
+            size="sm"
+            className="hidden md:flex"
+            onClick={() => navigate("/nirman-ai")}
+          >
+            <Zap className="h-4 w-4 md:mr-2" />
+            <span className="hidden md:inline">Nirman AI</span>
+          </Button>
+          
+          {/* Account button */}
           <Button
             variant="outline"
             size="sm"
