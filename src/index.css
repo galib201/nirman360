@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
 @tailwind base;
@@ -128,6 +127,28 @@
   
   .button-secondary {
     @apply bg-nirman-gold text-nirman-navy hover:bg-opacity-90 transition-colors px-4 py-2 rounded-md;
+  }
+  
+  /* Add this class for consistent text coloring */
+  .light-bg-section {
+    @apply bg-white text-nirman-navy;
+  }
+  
+  .light-bg-section h2, 
+  .light-bg-section h3, 
+  .light-bg-section p {
+    @apply text-nirman-navy;
+  }
+  
+  /* Class for cream background sections */
+  .cream-bg-section {
+    @apply bg-nirman-cream text-nirman-navy;
+  }
+  
+  .cream-bg-section h2, 
+  .cream-bg-section h3, 
+  .cream-bg-section p {
+    @apply text-nirman-navy;
   }
 }
 
