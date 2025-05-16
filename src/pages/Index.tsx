@@ -307,7 +307,7 @@ const Index = ({ onLogoClick }: IndexProps) => {
       </section>
 
       {/* Nirman AI Banner */}
-      <section className="py-6 cream-bg-section">
+      <section className="py-6 bg-nirman-cream">
         <div className="container mx-auto px-4">
           <div className="bg-gradient-premium rounded-lg text-white p-6 md:p-8 flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
@@ -332,10 +332,10 @@ const Index = ({ onLogoClick }: IndexProps) => {
       </section>
       
       {/* Featured Properties - Buy */}
-      <section className="py-12 md:py-16 light-bg-section">
+      <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-10">
-            <h2 className="text-2xl font-semibold text-nirman-navy">Featured Properties to Buy</h2>
+            <h2 className="text-2xl font-semibold">Featured Properties to Buy</h2>
             <Button asChild variant="outline">
               <a href="/properties?category=buy">View All</a>
             </Button>
@@ -358,10 +358,10 @@ const Index = ({ onLogoClick }: IndexProps) => {
       </section>
 
       {/* Featured Properties - Rent */}
-      <section className="py-12 md:py-16 cream-bg-section">
+      <section className="py-12 md:py-16 bg-nirman-cream">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-10">
-            <h2 className="text-2xl font-semibold text-nirman-navy">Featured Rental Properties</h2>
+            <h2 className="text-2xl font-semibold">Featured Rental Properties</h2>
             <Button asChild variant="outline">
               <a href="/properties?category=rent">View All</a>
             </Button>
@@ -384,9 +384,9 @@ const Index = ({ onLogoClick }: IndexProps) => {
       </section>
       
       {/* Premium Properties */}
-      <section className="py-12 md:py-16 light-bg-section">
+      <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-semibold text-center mb-4 text-nirman-navy">Premium Properties</h2>
+          <h2 className="text-2xl font-semibold text-center mb-4">Premium Properties</h2>
           <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
             Handpicked luxury properties that offer exceptional quality, location, and amenities
           </p>
@@ -412,9 +412,9 @@ const Index = ({ onLogoClick }: IndexProps) => {
       </section>
       
       {/* Recently Verified */}
-      <section className="py-12 md:py-16 cream-bg-section">
+      <section className="py-12 md:py-16 bg-nirman-cream">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-semibold text-center mb-4 text-nirman-navy">Recently Verified Near You</h2>
+          <h2 className="text-2xl font-semibold text-center mb-4">Recently Verified Near You</h2>
           <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
             Freshly verified properties in your area that meet our quality standards
           </p>
@@ -440,9 +440,9 @@ const Index = ({ onLogoClick }: IndexProps) => {
       </section>
       
       {/* How It Works */}
-      <section className="py-12 md:py-16 light-bg-section">
+      <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-semibold text-center mb-10 text-nirman-navy">How Nirman360 Works</h2>
+          <h2 className="text-2xl font-semibold text-center mb-10">How Nirman360 Works</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex flex-col items-center text-center">
@@ -498,12 +498,12 @@ const Index = ({ onLogoClick }: IndexProps) => {
       </section>
       
       {/* Call To Action - Build Your Own Property */}
-      <section className="py-12 md:py-16 cream-bg-section">
+      <section className="py-12 md:py-16 bg-nirman-cream">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-6 text-nirman-navy">
+          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-6">
             Want to Build Your Dream Property?
           </h2>
-          <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-nirman-navy">
+          <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-gray-700">
             Use our Property Nirman feature to plan your dream property, get cost estimates and connect with trusted developers!
           </p>
           <Button 
