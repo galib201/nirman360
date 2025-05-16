@@ -1,4 +1,3 @@
-
 // Property related types
 export interface Property {
   id: string;
@@ -23,6 +22,13 @@ export interface Property {
   isPremium: boolean;
   postedAt: string;
   areaSnapshot?: AreaSnapshot;
+  // Adding missing properties used in FindProperty.tsx
+  views?: number;
+  amenities?: string[];
+  details?: {
+    bedrooms: number;
+    [key: string]: any;
+  };
 }
 
 export type PropertyType = "apartment" | "house" | "villa" | "commercial" | "room" | "office";

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
@@ -28,22 +27,12 @@ import {
   CheckSquare 
 } from "lucide-react";
 
-// Adding custom typing for Property with amenities and details needed by this component
-interface ExtendedProperty extends Property {
-  views?: number;
-  amenities?: string[];
-  details?: {
-    bedrooms: number;
-    [key: string]: any;
-  };
-}
-
 const FindProperty = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>("buy");
   const [loading, setLoading] = useState<boolean>(true);
-  const [properties, setProperties] = useState<ExtendedProperty[]>([]);
-  const [recommendations, setRecommendations] = useState<ExtendedProperty[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [recommendations, setRecommendations] = useState<Property[]>([]);
   
   // Form filters
   const [budget, setBudget] = useState<[number, number]>([1000000, 10000000]);
@@ -94,12 +83,12 @@ const FindProperty = () => {
         setLoading(true);
         const allProperties = await PropertyService.getProperties();
         
-        // Add required fields for type safety
+        // Add default values for optional properties
         const extendedProperties = allProperties.map(prop => ({
           ...prop,
           views: prop.views || 0,
           amenities: prop.amenities || [],
-          details: prop.details || { bedrooms: 2 }
+          details: prop.details || { bedrooms: prop.features.bedrooms }
         }));
         
         // Filter properties based on the active tab
@@ -134,7 +123,7 @@ const FindProperty = () => {
       
       const matchesBedrooms = 
         minBedrooms === "any" || 
-        ((property.details?.bedrooms || 0) >= parseInt(minBedrooms));
+        ((property.details?.bedrooms || property.features.bedrooms) >= parseInt(minBedrooms));
       
       const matchesLocation = 
         location === "any" || 
