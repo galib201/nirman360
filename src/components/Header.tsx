@@ -89,7 +89,29 @@ const Header = ({ onLogoClick }: HeaderProps) => {
               </Link>
             ))}
             
-            {/* ROI Calculator button */}
+            {/* Nirman AI button (now first in the order) */}
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => navigate("/nirman-ai")}
+              className="bg-nirman-gold hover:bg-nirman-gold/90"
+            >
+              <Zap className="h-4 w-4 mr-2" />
+              <span>Nirman AI</span>
+            </Button>
+            
+            {/* Find Property button (now second in the order) */}
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => navigate("/find-property")}
+              className="bg-nirman-gold hover:bg-nirman-gold/90"
+            >
+              <Search className="h-4 w-4 mr-2" />
+              <span>Find Property</span>
+            </Button>
+
+            {/* ROI Calculator button (now third in the order) */}
             <Button
               variant="default"
               size="sm"
@@ -98,17 +120,6 @@ const Header = ({ onLogoClick }: HeaderProps) => {
             >
               <Calculator className="h-4 w-4 mr-2" />
               <span>ROI Calculator</span>
-            </Button>
-
-            {/* Community Chat button */}
-            <Button
-              variant="default"
-              size="sm"
-              onClick={() => navigate("/community-chat")}
-              className="bg-nirman-gold hover:bg-nirman-gold/90"
-            >
-              <Users className="h-4 w-4 mr-2" />
-              <span>Community Chat</span>
             </Button>
 
             <NavigationMenu>
@@ -145,18 +156,7 @@ const Header = ({ onLogoClick }: HeaderProps) => {
         )}
         
         <div className="flex items-center justify-end space-x-2 ml-auto">
-          {/* Nirman AI button */}
-          <Button
-            variant="outline"
-            size="sm"
-            className="hidden md:flex"
-            onClick={() => navigate("/nirman-ai")}
-          >
-            <Zap className="h-4 w-4 md:mr-2" />
-            <span className="hidden md:inline">Nirman AI</span>
-          </Button>
-          
-          {/* Account button */}
+          {/* Account button - moved to the last position */}
           <Button
             variant="outline"
             size="sm"
@@ -211,15 +211,37 @@ const Header = ({ onLogoClick }: HeaderProps) => {
                     </SheetClose>
                   ))}
                   
-                  {/* Nirman AI in mobile menu with highlighting */}
+                  {/* Reordered buttons in mobile menu too */}
                   <SheetClose asChild>
                     <Link 
                       to="/nirman-ai"
-                      className="flex items-center rounded-md px-2 py-1.5 text-nirman-gold font-semibold"
+                      className="flex items-center rounded-md px-2 py-1.5 bg-nirman-gold/20 text-nirman-gold font-semibold"
                       onClick={() => setShowMobileMenu(false)}
                     >
                       <Zap className="mr-2.5 h-5 w-5" />
                       Nirman AI
+                    </Link>
+                  </SheetClose>
+
+                  <SheetClose asChild>
+                    <Link 
+                      to="/find-property"
+                      className="flex items-center rounded-md px-2 py-1.5 bg-nirman-gold/20 text-nirman-gold font-semibold"
+                      onClick={() => setShowMobileMenu(false)}
+                    >
+                      <Search className="mr-2.5 h-5 w-5" />
+                      Find Property
+                    </Link>
+                  </SheetClose>
+                  
+                  <SheetClose asChild>
+                    <Link 
+                      to="/roi-calculator"
+                      className="flex items-center rounded-md px-2 py-1.5 bg-nirman-gold/20 text-nirman-gold font-semibold"
+                      onClick={() => setShowMobileMenu(false)}
+                    >
+                      <Calculator className="mr-2.5 h-5 w-5" />
+                      ROI Calculator
                     </Link>
                   </SheetClose>
                   
@@ -241,6 +263,11 @@ const Header = ({ onLogoClick }: HeaderProps) => {
             </Sheet>
           )}
         </div>
+      </div>
+      <div className="container text-center py-1 bg-nirman-cream">
+        <p className="text-sm font-medium text-nirman-navy">
+          Want to Build Your Dream Property? <Link to="/nirman-ai" className="text-nirman-gold underline">Use Nirman AI</Link>
+        </p>
       </div>
     </header>
   );
