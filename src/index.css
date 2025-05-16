@@ -1,4 +1,5 @@
 
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
 @tailwind base;
@@ -129,6 +130,16 @@
   .button-secondary {
     @apply bg-nirman-gold text-nirman-navy hover:bg-opacity-90 transition-colors px-4 py-2 rounded-md;
   }
+  
+  /* Add class for black text on white/cream backgrounds */
+  .text-on-light {
+    @apply text-nirman-navy;
+  }
+  
+  /* Section heading for light backgrounds */
+  .section-heading-light {
+    @apply text-2xl font-semibold text-nirman-navy mb-4;
+  }
 }
 
 /* Custom Scroll Bar */
@@ -148,3 +159,4 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #b8941f;
 }
+

@@ -1,674 +1,628 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building, Calculator, Construction, Gauge, HardHat, LucideIcon, MessageSquare, RefreshCw, User, Users, Zap } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Slider } from "@/components/ui/slider";
+import { 
+  Building, 
+  Home, 
+  Zap, 
+  Loader2, 
+  Send, 
+  Calculator,
+  Construction,
+  Building2,
+  Landmark,
+  PenTool,
+  Users,
+  Banknote
+} from "lucide-react";
+import { toast } from "sonner";
 
-interface NirmanAIProps {
-  onLogoClick?: () => void;
-}
-
-// Property type options
-const propertyTypeOptions = [
-  { value: "apartment", label: "Apartment Building" },
-  { value: "commercial", label: "Commercial Building" },
-  { value: "duplex", label: "Duplex House" },
-  { value: "villa", label: "Villa" },
-  { value: "singlefamily", label: "Single Family House" },
-];
-
-// Location based pricing factors (multiplier)
-const locationPriceFactors: Record<string, number> = {
-  "Gulshan": 1.8,
-  "Banani": 1.7,
-  "Baridhara": 1.65,
-  "Dhanmondi": 1.5,
-  "Bashundhara": 1.3,
-  "Uttara": 1.2,
-  "Mirpur": 1.0,
-  "Mohammadpur": 1.1,
-  "Khilgaon": 0.9,
-  "Rampura": 0.85,
-  "Other": 0.8,
+// Mock AI service - replace with actual API integration
+const mockAIResponse = (prompt: string) => {
+  return new Promise<any>((resolve) => {
+    setTimeout(() => {
+      // Extract key information from the prompt
+      const isApartment = prompt.toLowerCase().includes("apartment");
+      const isOffice = prompt.toLowerCase().includes("office");
+      const isVilla = prompt.toLowerCase().includes("villa");
+      const isLuxury = prompt.toLowerCase().includes("luxury");
+      const isBudget = prompt.toLowerCase().includes("budget");
+      
+      // Extract location if mentioned
+      let location = "Dhaka";
+      const locationMatches = prompt.match(/in\s+([A-Za-z\s]+)/i);
+      if (locationMatches && locationMatches[1]) {
+        location = locationMatches[1].trim();
+      }
+      
+      // Extract size if mentioned
+      let size = Math.floor(Math.random() * 1000) + 1000;
+      const sizeMatches = prompt.match(/(\d+)\s*sq(uare)?\s*(ft|feet)/i);
+      if (sizeMatches && sizeMatches[1]) {
+        size = parseInt(sizeMatches[1]);
+      }
+      
+      // Generate a response based on the extracted information
+      const propertyType = isApartment ? "Apartment" : isOffice ? "Office Space" : isVilla ? "Villa" : "Residential Building";
+      const pricePerSqft = isLuxury ? 15000 : isBudget ? 5000 : 10000;
+      const estimatedCost = size * pricePerSqft;
+      
+      const response = {
+        propertyType,
+        location,
+        totalArea: size,
+        estimatedCost,
+        recommendations: [
+          `Use ${isLuxury ? "premium" : "standard"} materials for construction`,
+          `Consider ${isApartment ? "modern open floor plan" : "traditional layout"} for best space utilization`,
+          `Incorporate energy-efficient design elements to reduce long-term costs`,
+          `${isLuxury ? "Include smart home features for added value" : "Focus on durability and functionality"}`
+        ],
+        costBreakdown: {
+          foundation: 0.15 * estimatedCost,
+          structure: 0.35 * estimatedCost,
+          finishes: 0.25 * estimatedCost,
+          electrical: 0.10 * estimatedCost,
+          plumbing: 0.08 * estimatedCost,
+          miscellaneous: 0.07 * estimatedCost
+        },
+        timeEstimate: {
+          planning: "1-2 months",
+          permits: "2-3 months",
+          construction: isLuxury ? "12-18 months" : "8-12 months",
+          finishing: "2-3 months"
+        }
+      };
+      
+      resolve(response);
+    }, 3000); // Simulate API delay
+  });
 };
 
-// Mock developers data
-const mockDevelopers = [
-  {
-    id: 1,
-    name: "BuildRight Developers Ltd.",
-    specialty: ["Apartment", "Commercial"],
-    rating: 4.8,
-    completedProjects: 36,
-    image: "https://images.unsplash.com/photo-1533750349088-cd871a92f312?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-  },
-  {
-    id: 2,
-    name: "MasterCraft Construction",
-    specialty: ["Villa", "Duplex"],
-    rating: 4.7,
-    completedProjects: 42,
-    image: "https://images.unsplash.com/photo-1517292987719-0369a794ec0f?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-  },
-  {
-    id: 3,
-    name: "Nirman Builders & Associates",
-    specialty: ["Apartment", "Commercial", "Villa"],
-    rating: 4.9,
-    completedProjects: 51,
-    image: "https://images.unsplash.com/photo-1613963931023-5dc59437c8a6?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-  },
-  {
-    id: 4,
-    name: "GreenLife Eco Builders",
-    specialty: ["Sustainable", "Villa", "Apartment"],
-    rating: 4.6,
-    completedProjects: 28,
-    image: "https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-  },
-];
-
-const NirmanAI = ({ onLogoClick }: NirmanAIProps) => {
-  const { toast } = useToast();
+const NirmanAI = () => {
   const navigate = useNavigate();
-  const [messageInput, setMessageInput] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [step, setStep] = useState(1);
-  const [activeTab, setActiveTab] = useState("property-nirman");
+  const [prompt, setPrompt] = useState("");
+  const [chatHistory, setChatHistory] = useState<{role: string, content: string}[]>([
+    {
+      role: "assistant",
+      content: "Hello! I'm Nirman AI, your property building assistant. Describe the property you want to build, and I'll help you plan it, estimate costs, and connect you with trusted developers."
+    }
+  ]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("chat");
+  const [aiResults, setAIResults] = useState<any>(null);
   
-  // Property Nirman form state
-  const [propertyType, setPropertyType] = useState<string>("");
-  const [propertySize, setPropertySize] = useState<string>("");
-  const [location, setLocation] = useState<string>("");
-  const [bedroomsCount, setBedroomsCount] = useState<string>("3");
-  const [bathroomsCount, setBathroomsCount] = useState<string>("3");
-  const [floorCount, setFloorCount] = useState<string>("");
-  const [luxuryLevel, setLuxuryLevel] = useState<string>("standard");
-  const [hasBasement, setHasBasement] = useState(false);
-  const [hasGarage, setHasGarage] = useState(false);
-  const [hasElevator, setHasElevator] = useState(false);
-  const [hasSolar, setHasSolar] = useState(false);
-  const [hasGarden, setHasGarden] = useState(false);
-  const [hasSwimmingPool, setHasSwimmingPool] = useState(false);
-  const [hasGym, setHasGym] = useState(false);
-  const [hasBbqArea, setHasBbqArea] = useState(false);
+  // Property configuration state
+  const [propertyType, setPropertyType] = useState("apartment");
+  const [propertySize, setPropertySize] = useState(1200);
+  const [propertyLocation, setPropertyLocation] = useState("dhanmondi");
+  const [luxuryLevel, setLuxuryLevel] = useState(50);
+  const [bedrooms, setBedrooms] = useState(3);
+  const [bathrooms, setBathrooms] = useState(2);
   
-  // Results
-  const [costEstimate, setCostEstimate] = useState<any>(null);
-  const [recommendedDevelopers, setRecommendedDevelopers] = useState<any[]>([]);
-  const [timeEstimate, setTimeEstimate] = useState<string>("");
+  const chatEndRef = useRef<HTMLDivElement>(null);
   
-  // Generate cost estimate
-  const generateCostEstimate = () => {
-    setIsProcessing(true);
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatHistory]);
+  
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  
+  const handleSendMessage = async () => {
+    if (!prompt.trim()) return;
     
-    // Perform validation
-    if (!propertyType || !propertySize || !location) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all the required fields before generating an estimate.",
-        variant: "destructive",
-      });
-      setIsProcessing(false);
-      return;
-    }
+    const userMessage = prompt;
+    setPrompt("");
     
-    setTimeout(() => {
-      // Base costs per square foot based on property type and luxury level
-      const baseCostMap: Record<string, Record<string, number>> = {
-        standard: {
-          apartment: 3500,
-          commercial: 4000,
-          duplex: 4200,
-          villa: 4500,
-          singlefamily: 3800,
-        },
-        premium: {
-          apartment: 5000,
-          commercial: 6000,
-          duplex: 6500,
-          villa: 7000,
-          singlefamily: 5500,
-        },
-        luxury: {
-          apartment: 8000,
-          commercial: 9500,
-          duplex: 10000,
-          villa: 12000,
-          singlefamily: 9000,
-        },
-      };
+    // Add user message to chat
+    setChatHistory(prev => [...prev, { role: "user", content: userMessage }]);
+    
+    // Show loading state
+    setIsLoading(true);
+    setChatHistory(prev => [...prev, { role: "assistant", content: "Thinking..." }]);
+    
+    try {
+      // Call AI service
+      const response = await mockAIResponse(userMessage);
       
-      // Calculate base cost
-      const size = parseInt(propertySize);
-      const baseSquareFoot = baseCostMap[luxuryLevel][propertyType];
-      const locationFactor = locationPriceFactors[location] || locationPriceFactors["Other"];
-      
-      let baseCost = size * baseSquareFoot * locationFactor;
-      
-      // Additional costs for features
-      const additionalCosts = {
-        basement: hasBasement ? size * 0.3 * baseSquareFoot : 0,
-        garage: hasGarage ? 800000 : 0,
-        elevator: hasElevator ? 1500000 * (parseInt(floorCount) || 1) : 0,
-        solar: hasSolar ? 1200000 : 0,
-        garden: hasGarden ? 500000 : 0,
-        swimmingPool: hasSwimmingPool ? 3000000 : 0,
-        gym: hasGym ? 1000000 : 0,
-        bbqArea: hasBbqArea ? 300000 : 0,
-      };
-      
-      const totalAdditionalCosts = Object.values(additionalCosts).reduce((sum, cost) => sum + cost, 0);
-      const totalCost = baseCost + totalAdditionalCosts;
-      
-      // Cost breakdown
-      const costBreakdown = {
-        structural: totalCost * 0.45,
-        finishes: totalCost * 0.25,
-        electrical: totalCost * 0.1,
-        plumbing: totalCost * 0.08,
-        hvac: totalCost * 0.07,
-        site_work: totalCost * 0.05,
-      };
-      
-      // Time estimate based on property type and size
-      const baseMonths = {
-        apartment: 18,
-        commercial: 24,
-        duplex: 12,
-        villa: 14,
-        singlefamily: 10,
-      };
-      
-      const sizeFactor = Math.ceil(size / 1000); // Every 1000 sqft adds time
-      let timeInMonths = baseMonths[propertyType] + sizeFactor;
-      
-      // Adjust for complexity
-      if (hasBasement) timeInMonths += 2;
-      if (hasElevator) timeInMonths += 1;
-      if (hasSwimmingPool) timeInMonths += 2;
-      if (parseInt(floorCount) > 5) timeInMonths += parseInt(floorCount) - 5;
-      
-      // Set results
-      setCostEstimate({
-        totalCost,
-        costPerSquareFoot: totalCost / size,
-        breakdown: costBreakdown,
-        additionalCosts,
+      // Update chat with AI response
+      setChatHistory(prev => {
+        const newHistory = [...prev];
+        newHistory.pop(); // Remove "Thinking..." message
+        return [...newHistory, { 
+          role: "assistant", 
+          content: `Based on your requirements, I've created a plan for a ${response.propertyType} in ${response.location}. The estimated cost is approximately ${new Intl.NumberFormat('en-BD', { style: 'currency', currency: 'BDT', maximumFractionDigits: 0 }).format(response.estimatedCost)}. Would you like to see the detailed breakdown?` 
+        }];
       });
       
-      setTimeEstimate(`${timeInMonths} months`);
+      // Store AI results
+      setAIResults(response);
       
-      // Filter and sort developers based on property type
-      const filteredDevelopers = mockDevelopers.filter(dev => 
-        dev.specialty.some(s => s.toLowerCase() === propertyType || 
-        s.toLowerCase() === luxuryLevel)
-      );
-      
-      filteredDevelopers.sort((a, b) => b.rating - a.rating);
-      setRecommendedDevelopers(filteredDevelopers);
-      
-      setIsProcessing(false);
-      setStep(2);
-    }, 2500);
-  };
-  
-  const formatNumber = (num: number) => {
-    if (num >= 10000000) {
-      return `৳${(num / 10000000).toFixed(2)} Crore`;
-    } else if (num >= 100000) {
-      return `৳${(num / 100000).toFixed(2)} Lac`;
-    } else {
-      return `৳${num.toFixed(2)}`;
+    } catch (error) {
+      console.error("Error getting AI response:", error);
+      setChatHistory(prev => {
+        const newHistory = [...prev];
+        newHistory.pop(); // Remove "Thinking..." message
+        return [...newHistory, { 
+          role: "assistant", 
+          content: "I'm sorry, I encountered an error processing your request. Please try again." 
+        }];
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
   
-  const resetForm = () => {
-    setStep(1);
-    setPropertyType("");
-    setPropertySize("");
-    setLocation("");
-    setBedroomsCount("3");
-    setBathroomsCount("3");
-    setFloorCount("");
-    setLuxuryLevel("standard");
-    setHasBasement(false);
-    setHasGarage(false);
-    setHasElevator(false);
-    setHasSolar(false);
-    setHasGarden(false);
-    setHasSwimmingPool(false);
-    setHasGym(false);
-    setHasBbqArea(false);
-    setCostEstimate(null);
-    setRecommendedDevelopers([]);
-    setTimeEstimate("");
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
   
-  // Function to navigate to ROI calculator with cost estimate data
-  const goToRoiCalculator = () => {
-    if (costEstimate) {
-      // Navigate to ROI calculator with cost estimate data as state
-      navigate('/roi-calculator', {
-        state: {
-          propertyValue: costEstimate.totalCost,
-          propertyType,
-          location,
-          propertySize,
-          fromNirmanAI: true
-        }
-      });
+  const handleGenerateFromConfig = async () => {
+    setIsLoading(true);
+    
+    try {
+      // Generate a prompt based on configuration
+      const configPrompt = `I want to build a ${propertyType} with ${propertySize} square feet in ${propertyLocation}. It should have ${bedrooms} bedrooms and ${bathrooms} bathrooms. The luxury level is ${luxuryLevel}% of maximum quality.`;
+      
+      // Call AI service
+      const response = await mockAIResponse(configPrompt);
+      
+      // Store AI results
+      setAIResults(response);
+      
+      // Switch to results tab
+      setActiveTab("results");
+      
+      toast.success("Property plan generated successfully!");
+      
+    } catch (error) {
+      console.error("Error generating from config:", error);
+      toast.error("Failed to generate property plan. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
+  };
+  
+  const handleROICalculation = () => {
+    if (!aiResults) return;
+    
+    // Prepare the data to be sent to ROI calculator
+    const nirmanData = {
+      propertyType: aiResults.propertyType || "apartment",
+      location: aiResults.location || "",
+      squareFeet: aiResults.totalArea || 1000,
+      estimatedCost: aiResults.estimatedCost || 5000000,
+    };
+    
+    // Navigate to ROI calculator with the Nirman AI data
+    navigate('/roi-calculator', { state: { nirmanData } });
   };
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Header onLogoClick={onLogoClick} />
+      <Header />
       
-      <main className="flex-grow py-8 md:py-12 bg-gray-50">
+      <main className="flex-grow py-8">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="mb-8 text-center">
-              <div className="flex justify-center mb-4">
-                <div className="bg-nirman-gold p-3 rounded-full">
-                  <Zap className="h-8 w-8 text-white" />
-                </div>
-              </div>
-              <h1 className="font-display text-3xl md:text-4xl font-bold mb-4">
-                Nirman AI Property Builder
+          <div className="mb-8 text-center">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Zap className="h-8 w-8 text-nirman-gold" />
+              <h1 className="text-3xl md:text-4xl font-display font-semibold">
+                Nirman AI
               </h1>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Plan your dream property, get accurate cost estimates, and connect with trusted developers
-              </p>
             </div>
-            
-            <Tabs 
-              defaultValue="property-nirman" 
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="mb-8"
-            >
-              <TabsList className="grid grid-cols-1 w-full">
-                <TabsTrigger value="property-nirman">
-                  <Construction className="mr-2 h-4 w-4" />
-                  Property Nirman
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Your AI-powered assistant for planning, designing, and estimating costs for your dream property in Bangladesh.
+            </p>
+          </div>
+          
+          <div className="max-w-4xl mx-auto">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid grid-cols-3 mb-8">
+                <TabsTrigger value="chat" className="flex items-center gap-2">
+                  <Send className="h-4 w-4" />
+                  <span>Chat with Nirman AI</span>
+                </TabsTrigger>
+                <TabsTrigger value="configure" className="flex items-center gap-2">
+                  <PenTool className="h-4 w-4" />
+                  <span>Configure Property</span>
+                </TabsTrigger>
+                <TabsTrigger value="results" className="flex items-center gap-2" disabled={!aiResults}>
+                  <Building className="h-4 w-4" />
+                  <span>View Results</span>
                 </TabsTrigger>
               </TabsList>
               
-              <TabsContent value="property-nirman">
-                <Card className="mt-4">
+              <TabsContent value="chat" className="space-y-4">
+                <Card>
                   <CardHeader>
-                    <Badge className="mb-2 w-fit bg-nirman-gold text-white hover:bg-nirman-gold/90">
-                      Step {step} of 2
-                    </Badge>
-                    <CardTitle>
-                      {step === 1 ? "Property Details & Requirements" : "Cost Estimation & Developers"}
-                    </CardTitle>
+                    <CardTitle>Chat with Nirman AI</CardTitle>
                     <CardDescription>
-                      {step === 1 
-                        ? "Fill in the details of your dream property to get cost estimates" 
-                        : "Review the cost breakdown and connect with developers"
-                      }
+                      Describe your dream property and get personalized recommendations
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {step === 1 ? (
-                      <div className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="space-y-2">
-                            <Label htmlFor="propertyType">Property Type <span className="text-red-500">*</span></Label>
-                            <Select value={propertyType} onValueChange={setPropertyType}>
-                              <SelectTrigger id="propertyType">
-                                <SelectValue placeholder="Select property type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {propertyTypeOptions.map(option => (
-                                  <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <Label htmlFor="propertySize">Size (sq. ft) <span className="text-red-500">*</span></Label>
-                            <Input 
-                              id="propertySize" 
-                              type="number"
-                              placeholder="e.g. 1800"
-                              value={propertySize}
-                              onChange={(e) => setPropertySize(e.target.value)}
-                            />
+                    <div className="h-[400px] overflow-y-auto border rounded-md p-4 mb-4">
+                      {chatHistory.map((message, index) => (
+                        <div 
+                          key={index} 
+                          className={`mb-4 ${message.role === "user" ? "text-right" : ""}`}
+                        >
+                          <div 
+                            className={`inline-block rounded-lg px-4 py-2 max-w-[80%] ${
+                              message.role === "user" 
+                                ? "bg-nirman-navy text-white" 
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {message.content === "Thinking..." ? (
+                              <div className="flex items-center gap-2">
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                <span>Thinking...</span>
+                              </div>
+                            ) : (
+                              message.content
+                            )}
                           </div>
                         </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="space-y-2">
-                            <Label htmlFor="location">Location <span className="text-red-500">*</span></Label>
-                            <Select value={location} onValueChange={setLocation}>
-                              <SelectTrigger id="location">
-                                <SelectValue placeholder="Select area" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {Object.keys(locationPriceFactors).map(loc => (
-                                  <SelectItem key={loc} value={loc}>
-                                    {loc}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <Label htmlFor="floorCount">Number of Floors</Label>
-                            <Input 
-                              id="floorCount" 
-                              type="number"
-                              placeholder="e.g. 2"
-                              value={floorCount}
-                              onChange={(e) => setFloorCount(e.target.value)}
-                            />
-                          </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                          <div className="space-y-2">
-                            <Label htmlFor="bedroomsCount">Bedrooms</Label>
-                            <Select value={bedroomsCount} onValueChange={setBedroomsCount}>
-                              <SelectTrigger id="bedroomsCount">
-                                <SelectValue placeholder="Select" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
-                                  <SelectItem key={num} value={num.toString()}>
-                                    {num}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <Label htmlFor="bathroomsCount">Bathrooms</Label>
-                            <Select value={bathroomsCount} onValueChange={setBathroomsCount}>
-                              <SelectTrigger id="bathroomsCount">
-                                <SelectValue placeholder="Select" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
-                                  <SelectItem key={num} value={num.toString()}>
-                                    {num}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <Label htmlFor="luxuryLevel">Quality Level</Label>
-                            <Select value={luxuryLevel} onValueChange={setLuxuryLevel}>
-                              <SelectTrigger id="luxuryLevel">
-                                <SelectValue placeholder="Select" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="standard">Standard</SelectItem>
-                                <SelectItem value="premium">Premium</SelectItem>
-                                <SelectItem value="luxury">Luxury</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                        
-                        <div className="space-y-3">
-                          <Label>Additional Features</Label>
-                          
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            <div className="flex items-center space-x-2">
-                              <Checkbox 
-                                id="basement" 
-                                checked={hasBasement} 
-                                onCheckedChange={setHasBasement as any} 
-                              />
-                              <Label htmlFor="basement" className="cursor-pointer">Basement</Label>
-                            </div>
-                            
-                            <div className="flex items-center space-x-2">
-                              <Checkbox 
-                                id="garage" 
-                                checked={hasGarage} 
-                                onCheckedChange={setHasGarage as any} 
-                              />
-                              <Label htmlFor="garage" className="cursor-pointer">Garage</Label>
-                            </div>
-                            
-                            <div className="flex items-center space-x-2">
-                              <Checkbox 
-                                id="elevator" 
-                                checked={hasElevator} 
-                                onCheckedChange={setHasElevator as any} 
-                              />
-                              <Label htmlFor="elevator" className="cursor-pointer">Elevator</Label>
-                            </div>
-                            
-                            <div className="flex items-center space-x-2">
-                              <Checkbox 
-                                id="solar" 
-                                checked={hasSolar} 
-                                onCheckedChange={setHasSolar as any} 
-                              />
-                              <Label htmlFor="solar" className="cursor-pointer">Solar Panels</Label>
-                            </div>
-                            
-                            <div className="flex items-center space-x-2">
-                              <Checkbox 
-                                id="garden" 
-                                checked={hasGarden} 
-                                onCheckedChange={setHasGarden as any} 
-                              />
-                              <Label htmlFor="garden" className="cursor-pointer">Garden Area</Label>
-                            </div>
-                            
-                            <div className="flex items-center space-x-2">
-                              <Checkbox 
-                                id="swimming-pool" 
-                                checked={hasSwimmingPool} 
-                                onCheckedChange={setHasSwimmingPool as any} 
-                              />
-                              <Label htmlFor="swimming-pool" className="cursor-pointer">Swimming Pool</Label>
-                            </div>
-                            
-                            <div className="flex items-center space-x-2">
-                              <Checkbox 
-                                id="gym" 
-                                checked={hasGym} 
-                                onCheckedChange={setHasGym as any} 
-                              />
-                              <Label htmlFor="gym" className="cursor-pointer">Gym</Label>
-                            </div>
-                            
-                            <div className="flex items-center space-x-2">
-                              <Checkbox 
-                                id="bbq-area" 
-                                checked={hasBbqArea} 
-                                onCheckedChange={setHasBbqArea as any} 
-                              />
-                              <Label htmlFor="bbq-area" className="cursor-pointer">BBQ Area</Label>
-                            </div>
-                          </div>
-                        </div>
+                      ))}
+                      <div ref={chatEndRef} />
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <Textarea 
+                        placeholder="Describe the property you want to build..." 
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        className="flex-grow"
+                        disabled={isLoading}
+                      />
+                      <Button 
+                        onClick={handleSendMessage} 
+                        disabled={!prompt.trim() || isLoading}
+                        className="bg-nirman-gold text-nirman-navy hover:bg-nirman-gold/90"
+                      >
+                        {isLoading ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Send className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium">Example</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm">
+                        "I want to build a 3-bedroom apartment in Dhanmondi with modern amenities."
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium">Example</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm">
+                        "Design a luxury villa with 5 bedrooms, a swimming pool, and a garden in Gulshan."
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium">Example</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm">
+                        "What would it cost to build a budget-friendly 1000 sq ft office space in Mirpur?"
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="configure">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Configure Your Property</CardTitle>
+                    <CardDescription>
+                      Set specific parameters for your property to get a detailed plan and cost estimate
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="propertyType">Property Type</Label>
+                        <Select value={propertyType} onValueChange={setPropertyType}>
+                          <SelectTrigger id="propertyType">
+                            <SelectValue placeholder="Select property type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="apartment">Apartment</SelectItem>
+                            <SelectItem value="house">House</SelectItem>
+                            <SelectItem value="villa">Villa</SelectItem>
+                            <SelectItem value="office">Office Space</SelectItem>
+                            <SelectItem value="commercial">Commercial Building</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
-                    ) : (
-                      <div className="space-y-8">
-                        {costEstimate && (
-                          <>
-                            <div className="bg-nirman-cream p-4 rounded-lg">
-                              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
-                                <div>
-                                  <h3 className="text-lg font-semibold">
-                                    Estimated Total Cost
-                                  </h3>
-                                  <p className="text-muted-foreground text-sm">
-                                    Based on your project specifications
-                                  </p>
-                                </div>
-                                <div className="text-2xl md:text-3xl font-bold text-nirman-gold mt-2 md:mt-0">
-                                  {formatNumber(costEstimate.totalCost)}
-                                </div>
-                              </div>
-                              
-                              <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-                                <div>
-                                  <h4 className="text-sm font-medium">
-                                    Cost per square foot
-                                  </h4>
-                                </div>
-                                <div className="font-medium mt-1 md:mt-0">
-                                  {formatNumber(costEstimate.costPerSquareFoot)} / sq.ft
-                                </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="location">Location</Label>
+                        <Select value={propertyLocation} onValueChange={setPropertyLocation}>
+                          <SelectTrigger id="location">
+                            <SelectValue placeholder="Select location" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="gulshan">Gulshan</SelectItem>
+                            <SelectItem value="banani">Banani</SelectItem>
+                            <SelectItem value="dhanmondi">Dhanmondi</SelectItem>
+                            <SelectItem value="bashundhara">Bashundhara</SelectItem>
+                            <SelectItem value="uttara">Uttara</SelectItem>
+                            <SelectItem value="mirpur">Mirpur</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="propertySize">
+                          Property Size (sq ft): {propertySize}
+                        </Label>
+                        <Slider 
+                          id="propertySize"
+                          min={500} 
+                          max={10000} 
+                          step={100} 
+                          value={[propertySize]} 
+                          onValueChange={(value) => setPropertySize(value[0])}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="luxuryLevel">
+                          Luxury Level: {luxuryLevel}%
+                        </Label>
+                        <Slider 
+                          id="luxuryLevel"
+                          min={10} 
+                          max={100} 
+                          step={5} 
+                          value={[luxuryLevel]} 
+                          onValueChange={(value) => setLuxuryLevel(value[0])}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="bedrooms">Bedrooms</Label>
+                        <Select value={bedrooms.toString()} onValueChange={(value) => setBedrooms(parseInt(value))}>
+                          <SelectTrigger id="bedrooms">
+                            <SelectValue placeholder="Select number of bedrooms" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {[1, 2, 3, 4, 5, 6].map((num) => (
+                              <SelectItem key={num} value={num.toString()}>
+                                {num}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="bathrooms">Bathrooms</Label>
+                        <Select value={bathrooms.toString()} onValueChange={(value) => setBathrooms(parseInt(value))}>
+                          <SelectTrigger id="bathrooms">
+                            <SelectValue placeholder="Select number of bathrooms" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {[1, 2, 3, 4, 5, 6].map((num) => (
+                              <SelectItem key={num} value={num.toString()}>
+                                {num}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button 
+                      onClick={handleGenerateFromConfig} 
+                      className="w-full bg-nirman-gold text-nirman-navy hover:bg-nirman-gold/90"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Generating...
+                        </>
+                      ) : (
+                        <>
+                          <Building className="mr-2 h-4 w-4" />
+                          Generate Property Plan
+                        </>
+                      )}
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="results">
+                {aiResults ? (
+                  <div className="space-y-6">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Property Summary</CardTitle>
+                        <CardDescription>
+                          Overview of your property plan
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-4">
+                            <div className="flex items-center gap-2">
+                              <Building2 className="h-5 w-5 text-nirman-gold" />
+                              <div>
+                                <p className="text-sm text-muted-foreground">Property Type</p>
+                                <p className="font-medium">{aiResults.propertyType}</p>
                               </div>
                             </div>
                             
-                            <div>
-                              <h3 className="font-semibold mb-3">Cost Breakdown</h3>
-                              
-                              <div className="space-y-2">
-                                {Object.entries(costEstimate.breakdown).map(([key, value]: [string, any]) => (
-                                  <div key={key} className="flex justify-between">
-                                    <span className="text-muted-foreground capitalize">
-                                      {key.replace('_', ' ')}
-                                    </span>
-                                    <span className="font-medium">
-                                      {formatNumber(value)} 
-                                      <span className="text-xs text-muted-foreground ml-1">
-                                        ({Math.round((value / costEstimate.totalCost) * 100)}%)
-                                      </span>
-                                    </span>
-                                  </div>
-                                ))}
+                            <div className="flex items-center gap-2">
+                              <Landmark className="h-5 w-5 text-nirman-gold" />
+                              <div>
+                                <p className="text-sm text-muted-foreground">Location</p>
+                                <p className="font-medium">{aiResults.location}</p>
                               </div>
                             </div>
                             
-                            <div>
-                              <h3 className="font-semibold mb-2">Project Timeline</h3>
-                              <div className="flex items-center">
-                                <Gauge className="h-5 w-5 text-nirman-gold mr-2" />
+                            <div className="flex items-center gap-2">
+                              <Users className="h-5 w-5 text-nirman-gold" />
+                              <div>
+                                <p className="text-sm text-muted-foreground">Size</p>
+                                <p className="font-medium">{aiResults.totalArea} sq ft</p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-4">
+                            <div className="flex items-center gap-2">
+                              <Banknote className="h-5 w-5 text-nirman-gold" />
+                              <div>
+                                <p className="text-sm text-muted-foreground">Estimated Cost</p>
+                                <p className="font-medium">
+                                  {new Intl.NumberFormat('en-BD', { 
+                                    style: 'currency', 
+                                    currency: 'BDT',
+                                    maximumFractionDigits: 0
+                                  }).format(aiResults.estimatedCost)}
+                                </p>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                              <Construction className="h-5 w-5 text-nirman-gold" />
+                              <div>
+                                <p className="text-sm text-muted-foreground">Construction Time</p>
+                                <p className="font-medium">{aiResults.timeEstimate?.construction || "8-12 months"}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Cost Breakdown</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          {aiResults.costBreakdown && (
+                            <div className="space-y-2">
+                              {Object.entries(aiResults.costBreakdown).map(([key, value]: [string, any]) => (
+                                <div key={key} className="flex justify-between items-center">
+                                  <span className="capitalize">{key}</span>
+                                  <span className="font-medium">
+                                    {new Intl.NumberFormat('en-BD', { 
+                                      style: 'currency', 
+                                      currency: 'BDT',
+                                      maximumFractionDigits: 0
+                                    }).format(value)}
+                                  </span>
+                                </div>
+                              ))}
+                              <div className="border-t pt-2 mt-2 flex justify-between items-center font-semibold">
+                                <span>Total</span>
                                 <span>
-                                  Estimated completion time: <strong>{timeEstimate}</strong>
+                                  {new Intl.NumberFormat('en-BD', { 
+                                    style: 'currency', 
+                                    currency: 'BDT',
+                                    maximumFractionDigits: 0
+                                  }).format(aiResults.estimatedCost)}
                                 </span>
                               </div>
                             </div>
-                            
-                            {/* ROI Calculator Button */}
-                            <div className="bg-nirman-cream p-4 rounded-lg">
-                              <div className="flex flex-col md:flex-row justify-between items-center">
-                                <div>
-                                  <h3 className="text-lg font-semibold">
-                                    Calculate Return on Investment
-                                  </h3>
-                                  <p className="text-muted-foreground text-sm">
-                                    See how your investment in this property will perform over time
-                                  </p>
-                                </div>
-                                <Button 
-                                  className="bg-nirman-gold hover:bg-nirman-gold/90 mt-3 md:mt-0"
-                                  onClick={goToRoiCalculator}
-                                >
-                                  <Calculator className="h-4 w-4 mr-2" />
-                                  Calculate ROI
-                                </Button>
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <h3 className="font-semibold mb-4">Recommended Developers</h3>
-                              
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {recommendedDevelopers.length > 0 ? (
-                                  recommendedDevelopers.map(developer => (
-                                    <div key={developer.id} className="border rounded-lg p-4 flex">
-                                      <div 
-                                        className="w-16 h-16 rounded-full bg-cover bg-center mr-4"
-                                        style={{ backgroundImage: `url(${developer.image})` }}
-                                      />
-                                      <div>
-                                        <h4 className="font-medium">{developer.name}</h4>
-                                        <div className="flex items-center text-sm mt-1">
-                                          <span className="flex items-center mr-3">
-                                            <svg className="w-4 h-4 text-yellow-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            {developer.rating}
-                                          </span>
-                                          <span className="flex items-center">
-                                            <HardHat className="w-4 h-4 mr-1" />
-                                            {developer.completedProjects} projects
-                                          </span>
-                                        </div>
-                                        <div className="flex flex-wrap gap-1 mt-2">
-                                          {developer.specialty.map((spec: string) => (
-                                            <Badge key={spec} variant="secondary" className="text-xs">
-                                              {spec}
-                                            </Badge>
-                                          ))}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  ))
-                                ) : (
-                                  <div className="col-span-2 text-center py-8 text-muted-foreground">
-                                    No matching developers found for your project specifications
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </CardContent>
-                  <CardFooter className="flex justify-end gap-3">
-                    {step === 2 ? (
-                      <>
-                        <Button variant="outline" onClick={resetForm}>
-                          <RefreshCw className="h-4 w-4 mr-2" />
-                          Start New Estimate
-                        </Button>
-                      </>
-                    ) : (
+                          )}
+                        </CardContent>
+                      </Card>
+                      
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Recommendations</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          {aiResults.recommendations && (
+                            <ul className="list-disc pl-5 space-y-1">
+                              {aiResults.recommendations.map((rec: string, index: number) => (
+                                <li key={index}>{rec}</li>
+                              ))}
+                            </ul>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </div>
+                    
+                    <div className="flex flex-col md:flex-row gap-4">
                       <Button 
-                        className="bg-nirman-gold hover:bg-nirman-gold/90"
-                        onClick={generateCostEstimate}
-                        disabled={isProcessing}
+                        onClick={handleROICalculation}
+                        className="bg-nirman-gold text-nirman-navy hover:bg-nirman-gold/90"
                       >
-                        {isProcessing ? (
-                          <>
-                            <span className="animate-spin mr-2">
-                              <RefreshCw className="h-4 w-4" />
-                            </span>
-                            Processing...
-                          </>
-                        ) : (
-                          <>
-                            <Zap className="h-4 w-4 mr-2" />
-                            Generate Estimate
-                          </>
-                        )}
+                        <Calculator className="mr-2 h-4 w-4" />
+                        Calculate ROI for this property
                       </Button>
-                    )}
-                  </CardFooter>
-                </Card>
+                      
+                      <Button variant="outline">
+                        Connect with Developers
+                      </Button>
+                      
+                      <Button variant="outline">
+                        Download Report
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground">
+                      No results yet. Chat with Nirman AI or configure your property to generate results.
+                    </p>
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
           </div>

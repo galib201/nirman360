@@ -361,7 +361,7 @@ const Index = ({ onLogoClick }: IndexProps) => {
       <section className="py-12 md:py-16 bg-nirman-cream">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-10">
-            <h2 className="text-2xl font-semibold">Featured Rental Properties</h2>
+            <h2 className="text-2xl font-semibold text-on-light">Featured Rental Properties</h2>
             <Button asChild variant="outline">
               <a href="/properties?category=rent">View All</a>
             </Button>
@@ -414,7 +414,7 @@ const Index = ({ onLogoClick }: IndexProps) => {
       {/* Recently Verified */}
       <section className="py-12 md:py-16 bg-nirman-cream">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-semibold text-center mb-4">Recently Verified Near You</h2>
+          <h2 className="text-2xl font-semibold text-center mb-4 text-on-light">Recently Verified Near You</h2>
           <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
             Freshly verified properties in your area that meet our quality standards
           </p>
@@ -500,7 +500,7 @@ const Index = ({ onLogoClick }: IndexProps) => {
       {/* Call To Action - Build Your Own Property */}
       <section className="py-12 md:py-16 bg-nirman-cream">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-6">
+          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-6 text-on-light">
             Want to Build Your Dream Property?
           </h2>
           <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-gray-700">

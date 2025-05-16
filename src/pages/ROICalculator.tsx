@@ -1,5 +1,6 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { 
@@ -21,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Calculator, PiggyBank, TrendingUp, BarChart4 } from "lucide-react";
+import { toast } from "sonner";
 
 // Property types and their base ROI multipliers
 const propertyTypes = [
@@ -43,23 +45,92 @@ const locations = [
 ];
 
 const ROICalculator = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [propertyType, setPropertyType] = useState("");
-  const [location, setLocation] = useState("");
+  const [propertyLocation, setPropertyLocation] = useState("");
   const [squareFeet, setSquareFeet] = useState("1000");
   const [initialInvestment, setInitialInvestment] = useState("5000000");
   const [maintenancePercent, setMaintenancePercent] = useState(5);
   const [occupancyRate, setOccupancyRate] = useState(90);
   const [results, setResults] = useState<any>(null);
   const [showResults, setShowResults] = useState(false);
+  const [dataSource, setDataSource] = useState("manual");
+
+  // Parse and apply data from NirmanAI if available
+  useEffect(() => {
+    if (location.state && location.state.nirmanData) {
+      const nirmanData = location.state.nirmanData;
+      
+      // Set data source for tracking
+      setDataSource("nirman");
+      
+      // Toast notification
+      toast.success("Data pre-filled from Nirman AI results");
+      
+      // Map the property type from Nirman AI to our options
+      const mappedPropertyType = mapNirmanPropertyType(nirmanData.propertyType);
+      if (mappedPropertyType) setPropertyType(mappedPropertyType);
+      
+      // Map location if available
+      if (nirmanData.location) {
+        const mappedLocation = locations.find(
+          loc => loc.label.toLowerCase() === nirmanData.location.toLowerCase()
+        )?.value;
+        if (mappedLocation) setPropertyLocation(mappedLocation);
+      }
+      
+      // Set square feet if available
+      if (nirmanData.squareFeet || nirmanData.area) {
+        setSquareFeet(String(nirmanData.squareFeet || nirmanData.area || 1000));
+      }
+      
+      // Set initial investment based on estimated cost if available
+      if (nirmanData.estimatedCost) {
+        setInitialInvestment(String(nirmanData.estimatedCost));
+      }
+    }
+  }, [location.state]);
+
+  // Helper function to map Nirman AI property types to our options
+  const mapNirmanPropertyType = (nirmanType: string): string | undefined => {
+    const typeMap: Record<string, string> = {
+      "apartment": "apartment",
+      "residential": "apartment",
+      "duplex": "duplex",
+      "commercial": "commercial",
+      "office": "office",
+      "villa": "villa",
+      "house": "villa"
+    };
+    
+    if (!nirmanType) return undefined;
+    
+    for (const [key, value] of Object.entries(typeMap)) {
+      if (nirmanType.toLowerCase().includes(key)) {
+        return value;
+      }
+    }
+    
+    return undefined;
+  };
 
   const calculateROI = () => {
     const selectedProperty = propertyTypes.find(p => p.value === propertyType);
-    const selectedLocation = locations.find(l => l.value === location);
+    const selectedLocation = locations.find(l => l.value === propertyLocation);
     
-    if (!selectedProperty || !selectedLocation) return;
+    if (!selectedProperty || !selectedLocation) {
+      toast.error("Please select both property type and location");
+      return;
+    }
 
     const sqft = parseFloat(squareFeet);
     const investment = parseFloat(initialInvestment);
+    
+    if (isNaN(sqft) || isNaN(investment)) {
+      toast.error("Please enter valid numbers for square feet and investment");
+      return;
+    }
     
     // Calculate base metrics
     const baseRentPerSqft = 50; // in BDT
@@ -100,7 +171,8 @@ const ROICalculator = () => {
       totalROI,
       paybackPeriod,
       numberOfUnits,
-      monthlyIncomePerUnit
+      monthlyIncomePerUnit,
+      dataOrigin: dataSource
     });
     
     setShowResults(true);
@@ -126,6 +198,7 @@ const ROICalculator = () => {
             </h1>
             <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
               Calculate the potential return on investment for your property in Bangladesh based on real market data.
+              {dataSource === "nirman" && " Data pre-filled from your Nirman AI results."}
             </p>
           </div>
           
@@ -161,8 +234,8 @@ const ROICalculator = () => {
                   <div className="space-y-2">
                     <Label htmlFor="location">Location</Label>
                     <Select 
-                      value={location} 
-                      onValueChange={setLocation}
+                      value={propertyLocation} 
+                      onValueChange={setPropertyLocation}
                     >
                       <SelectTrigger id="location">
                         <SelectValue placeholder="Select location" />
@@ -229,7 +302,7 @@ const ROICalculator = () => {
                 <Button 
                   className="mt-8 w-full bg-nirman-gold hover:bg-nirman-gold/90"
                   onClick={calculateROI}
-                  disabled={!propertyType || !location}
+                  disabled={!propertyType || !propertyLocation}
                 >
                   <Calculator className="mr-2 h-4 w-4" />
                   Calculate ROI
