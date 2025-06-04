@@ -45,6 +45,7 @@ const Header = ({ onLogoClick }: HeaderProps) => {
     { label: "Area Snapshot", path: "/area-snapshot", icon: MapPin },
     { label: "Legal Support", path: "/legal-support", icon: ShieldCheck },
     { label: "EMI Calculator", path: "/emi-calculator", icon: CreditCard },
+    { label: "Compare Property", path: "/compare-property", icon: Building2 },
   ];
   
   return (
@@ -120,7 +121,7 @@ const Header = ({ onLogoClick }: HeaderProps) => {
               <span>ROI Calculator</span>
             </Button>
 
-            {/* Community Chat button - moved after ROI Calculator */}
+            {/* Community Chat button - renamed to Community */}
             <Button
               variant="default"
               size="sm"
@@ -256,7 +257,7 @@ const Header = ({ onLogoClick }: HeaderProps) => {
                     </Link>
                   </SheetClose>
 
-                  {/* Community Chat button in mobile menu */}
+                  {/* Community Chat button in mobile menu - renamed to Community */}
                   <SheetClose asChild>
                     <Link 
                       to="/community-chat"

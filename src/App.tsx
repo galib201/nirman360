@@ -15,6 +15,7 @@ import NirmanAI from '@/pages/NirmanAI';
 import ROICalculator from '@/pages/ROICalculator';
 import EMICalculator from '@/pages/EMICalculator';
 import CommunityChat from '@/pages/CommunityChat';
+import CompareProperty from '@/pages/CompareProperty';
 import Admin from '@/pages/Admin';
 import NotFound from '@/pages/NotFound';
 import './App.css';
@@ -40,6 +41,7 @@ function App() {
             <Route path="/roi-calculator" element={<ROICalculator />} />
             <Route path="/emi-calculator" element={<EMICalculator />} />
             <Route path="/community-chat" element={<CommunityChat />} />
+            <Route path="/compare-property" element={<CompareProperty />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

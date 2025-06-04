@@ -96,6 +96,16 @@ const PropertyDetail = () => {
       });
     }
   };
+
+  const handleCompareProperty = () => {
+    if (property) {
+      navigate('/compare-property', {
+        state: {
+          property: property
+        }
+      });
+    }
+  };
   
   if (loading) {
     return (
@@ -427,6 +437,23 @@ const PropertyDetail = () => {
                 
                 <Button variant="outline" className="w-full">
                   Save Property
+                </Button>
+              </Card>
+
+              {/* Compare Property Card */}
+              <Card className="p-6 mb-6">
+                <h3 className="font-semibold text-lg mb-4">Compare Properties</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Compare this property with similar options
+                </p>
+                
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={handleCompareProperty}
+                >
+                  <Building2 size={16} className="mr-2" />
+                  Compare with Other Properties
                 </Button>
               </Card>
 
