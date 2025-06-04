@@ -88,12 +88,12 @@ const Header = ({ onLogoClick }: HeaderProps) => {
               </Link>
             ))}
             
-            {/* Post Your Property button - moved after Trusted Developers */}
+            {/* Post Your Property button */}
             <Button
               variant="default"
               size="sm"
               onClick={() => navigate("/post-property")}
-              className="bg-nirman-gold hover:bg-nirman-gold/90"
+              className="bg-nirman-gold hover:bg-nirman-gold/90 text-nirman-navy"
             >
               <Plus className="h-4 w-4 mr-2" />
               <span>Post Your Property</span>
@@ -104,7 +104,7 @@ const Header = ({ onLogoClick }: HeaderProps) => {
               variant="default"
               size="sm"
               onClick={() => navigate("/nirman-ai")}
-              className="bg-nirman-gold hover:bg-nirman-gold/90"
+              className="bg-nirman-gold hover:bg-nirman-gold/90 text-nirman-navy"
             >
               <Zap className="h-4 w-4 mr-2" />
               <span>Nirman AI</span>
@@ -115,18 +115,18 @@ const Header = ({ onLogoClick }: HeaderProps) => {
               variant="default"
               size="sm"
               onClick={() => navigate("/roi-calculator")}
-              className="bg-nirman-gold hover:bg-nirman-gold/90"
+              className="bg-nirman-gold hover:bg-nirman-gold/90 text-nirman-navy"
             >
               <Calculator className="h-4 w-4 mr-2" />
               <span>ROI Calculator</span>
             </Button>
 
-            {/* Community Chat button - renamed to Community */}
+            {/* Community button */}
             <Button
               variant="default"
               size="sm"
               onClick={() => navigate("/community-chat")}
-              className="bg-nirman-gold hover:bg-nirman-gold/90"
+              className="bg-nirman-gold hover:bg-nirman-gold/90 text-nirman-navy"
             >
               <MessageCircle className="h-4 w-4 mr-2" />
               <span>Community</span>
@@ -166,7 +166,7 @@ const Header = ({ onLogoClick }: HeaderProps) => {
         )}
         
         <div className="flex items-center justify-end space-x-2 ml-auto">
-          {/* Account button - moved to the last position */}
+          {/* Account button */}
           <Button
             variant="outline"
             size="sm"
@@ -257,7 +257,7 @@ const Header = ({ onLogoClick }: HeaderProps) => {
                     </Link>
                   </SheetClose>
 
-                  {/* Community Chat button in mobile menu - renamed to Community */}
+                  {/* Community button in mobile menu */}
                   <SheetClose asChild>
                     <Link 
                       to="/community-chat"
