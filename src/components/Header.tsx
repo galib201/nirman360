@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Building, User, Search, ShieldCheck, Building2, MapPin, Zap, Users, ArrowLeft, Calculator } from "lucide-react";
+import { Building, User, ShieldCheck, Building2, MapPin, Zap, Users, ArrowLeft, Calculator, Plus, MessageCircle } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-mobile";
 import {
   Sheet,
@@ -44,9 +44,6 @@ const Header = ({ onLogoClick }: HeaderProps) => {
   const featureItems = [
     { label: "Area Snapshot", path: "/area-snapshot", icon: MapPin },
     { label: "Legal Support", path: "/legal-support", icon: ShieldCheck },
-    { label: "ROI Calculator", path: "/roi-calculator", icon: Calculator },
-    { label: "Community Chat", path: "/community-chat", icon: Users },
-    { label: "Find Property", path: "/find-property", icon: Search },
   ];
   
   return (
@@ -89,7 +86,18 @@ const Header = ({ onLogoClick }: HeaderProps) => {
               </Link>
             ))}
             
-            {/* Nirman AI button (now first in the order) */}
+            {/* Post Your Property button - moved after Trusted Developers */}
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => navigate("/post-property")}
+              className="bg-nirman-gold hover:bg-nirman-gold/90"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              <span>Post Your Property</span>
+            </Button>
+            
+            {/* Nirman AI button */}
             <Button
               variant="default"
               size="sm"
@@ -99,19 +107,8 @@ const Header = ({ onLogoClick }: HeaderProps) => {
               <Zap className="h-4 w-4 mr-2" />
               <span>Nirman AI</span>
             </Button>
-            
-            {/* Find Property button (now second in the order) */}
-            <Button
-              variant="default"
-              size="sm"
-              onClick={() => navigate("/find-property")}
-              className="bg-nirman-gold hover:bg-nirman-gold/90"
-            >
-              <Search className="h-4 w-4 mr-2" />
-              <span>Find Property</span>
-            </Button>
 
-            {/* ROI Calculator button (now third in the order) */}
+            {/* ROI Calculator button */}
             <Button
               variant="default"
               size="sm"
@@ -120,6 +117,17 @@ const Header = ({ onLogoClick }: HeaderProps) => {
             >
               <Calculator className="h-4 w-4 mr-2" />
               <span>ROI Calculator</span>
+            </Button>
+
+            {/* Community Chat button - moved after ROI Calculator */}
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => navigate("/community-chat")}
+              className="bg-nirman-gold hover:bg-nirman-gold/90"
+            >
+              <MessageCircle className="h-4 w-4 mr-2" />
+              <span>Community</span>
             </Button>
 
             <NavigationMenu>
@@ -211,7 +219,19 @@ const Header = ({ onLogoClick }: HeaderProps) => {
                     </SheetClose>
                   ))}
                   
-                  {/* Reordered buttons in mobile menu too */}
+                  {/* Post Your Property button in mobile menu */}
+                  <SheetClose asChild>
+                    <Link 
+                      to="/post-property"
+                      className="flex items-center rounded-md px-2 py-1.5 bg-nirman-gold/20 text-nirman-gold font-semibold"
+                      onClick={() => setShowMobileMenu(false)}
+                    >
+                      <Plus className="mr-2.5 h-5 w-5" />
+                      Post Your Property
+                    </Link>
+                  </SheetClose>
+                  
+                  {/* Nirman AI button in mobile menu */}
                   <SheetClose asChild>
                     <Link 
                       to="/nirman-ai"
@@ -222,18 +242,8 @@ const Header = ({ onLogoClick }: HeaderProps) => {
                       Nirman AI
                     </Link>
                   </SheetClose>
-
-                  <SheetClose asChild>
-                    <Link 
-                      to="/find-property"
-                      className="flex items-center rounded-md px-2 py-1.5 bg-nirman-gold/20 text-nirman-gold font-semibold"
-                      onClick={() => setShowMobileMenu(false)}
-                    >
-                      <Search className="mr-2.5 h-5 w-5" />
-                      Find Property
-                    </Link>
-                  </SheetClose>
                   
+                  {/* ROI Calculator button in mobile menu */}
                   <SheetClose asChild>
                     <Link 
                       to="/roi-calculator"
@@ -242,6 +252,18 @@ const Header = ({ onLogoClick }: HeaderProps) => {
                     >
                       <Calculator className="mr-2.5 h-5 w-5" />
                       ROI Calculator
+                    </Link>
+                  </SheetClose>
+
+                  {/* Community Chat button in mobile menu */}
+                  <SheetClose asChild>
+                    <Link 
+                      to="/community-chat"
+                      className="flex items-center rounded-md px-2 py-1.5 bg-nirman-gold/20 text-nirman-gold font-semibold"
+                      onClick={() => setShowMobileMenu(false)}
+                    >
+                      <MessageCircle className="mr-2.5 h-5 w-5" />
+                      Community
                     </Link>
                   </SheetClose>
                   
