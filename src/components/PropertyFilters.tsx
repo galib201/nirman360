@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Filter, PropertyType } from '@/models';
 import { Button } from '@/components/ui/button';
@@ -18,13 +19,9 @@ const PropertyFilters = ({ onFilterChange, currentFilters = {}, category }: Prop
   const [filters, setFilters] = useState<Filter>(currentFilters);
   const [showAdvanced, setShowAdvanced] = useState(false);
   
-  // Price range for slider
+  // Price range for slider - adjust based on category
   const minPrice = 0;
-  const maxPrice = 50000000;
-  
-  const handleCategoryChange = (category: PropertyCategory) => {
-    setFilters(prev => ({ ...prev, category }));
-  };
+  const maxPrice = category === 'rent' ? 500000 : 50000000;
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -44,18 +41,18 @@ const PropertyFilters = ({ onFilterChange, currentFilters = {}, category }: Prop
   };
   
   const handleApplyFilters = () => {
-    onFilterChange(filters);
+    onFilterChange({ ...filters, category });
   };
   
   const handleResetFilters = () => {
     setFilters({});
-    onFilterChange({});
+    onFilterChange({ category });
   };
 
   return (
     <Card className="mb-8">
       <CardContent className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
@@ -67,32 +64,10 @@ const PropertyFilters = ({ onFilterChange, currentFilters = {}, category }: Prop
             />
           </div>
           
-          <div className="col-span-1 md:col-span-2">
-            <Tabs defaultValue={filters.category || "all"} className="w-full">
-              <TabsList className="w-full">
-                <TabsTrigger 
-                  value="all" 
-                  className="flex-1"
-                  onClick={() => handleCategoryChange(undefined)}
-                >
-                  All Properties
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="buy" 
-                  className="flex-1"
-                  onClick={() => handleCategoryChange('buy')}
-                >
-                  Buy
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="rent" 
-                  className="flex-1"
-                  onClick={() => handleCategoryChange('rent')}
-                >
-                  Rent
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
+          <div className="flex items-center">
+            <h2 className="text-lg font-semibold capitalize text-nirman-navy">
+              {category === 'buy' ? 'Properties for Sale' : 'Properties for Rent'}
+            </h2>
           </div>
         </div>
         
@@ -104,7 +79,7 @@ const PropertyFilters = ({ onFilterChange, currentFilters = {}, category }: Prop
                 <Slider
                   defaultValue={[filters.priceMin || minPrice, filters.priceMax || maxPrice]}
                   max={maxPrice}
-                  step={100000}
+                  step={category === 'rent' ? 5000 : 100000}
                   onValueChange={handlePriceChange}
                 />
               </div>
@@ -185,7 +160,7 @@ const PropertyFilters = ({ onFilterChange, currentFilters = {}, category }: Prop
                   />
                   <Label htmlFor="verified">Verified Only</Label>
                 </div>
-                {filters.category === 'rent' && (
+                {category === 'rent' && (
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="bachelors"
