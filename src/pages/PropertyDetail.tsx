@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Property } from "@/models";
 import { PropertyService } from "@/services/api";
 import { formatPrice, formatDate } from "@/utils/formatters";
@@ -10,12 +10,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Calendar, Check, Home, Info, MapPin } from "lucide-react";
+import { Calendar, Check, Home, Info, MapPin, Calculator, TrendingUp, CreditCard } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 
 const PropertyDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -53,6 +54,46 @@ const PropertyDetail = () => {
       const query = `${property.location.address}, ${property.location.area}, ${property.location.city}`;
       const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
       window.open(url, '_blank');
+    }
+  };
+
+  const handleROICalculator = () => {
+    if (property) {
+      navigate('/roi-calculator', { 
+        state: { 
+          propertyData: {
+            price: property.price,
+            title: property.title,
+            location: property.location,
+            area: property.features.area,
+            type: property.type
+          }
+        }
+      });
+    }
+  };
+
+  const handleEMICalculator = () => {
+    if (property) {
+      navigate('/emi-calculator', { 
+        state: { 
+          propertyData: {
+            price: property.price,
+            title: property.title,
+            location: property.location
+          }
+        }
+      });
+    }
+  };
+
+  const handleAreaSnapshot = () => {
+    if (property) {
+      navigate('/area-snapshot', {
+        state: {
+          location: property.location
+        }
+      });
     }
   };
   
@@ -388,6 +429,45 @@ const PropertyDetail = () => {
                   Save Property
                 </Button>
               </Card>
+
+              {/* Additional Options for Properties for Sale */}
+              {property.category === 'buy' && (
+                <Card className="p-6 mb-6">
+                  <h3 className="font-semibold text-lg mb-4">Property Analysis</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Get detailed insights and calculations for this property
+                  </p>
+                  
+                  <div className="space-y-3">
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={handleAreaSnapshot}
+                    >
+                      <MapPin size={16} className="mr-2" />
+                      Detailed Area Snapshot
+                    </Button>
+                    
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={handleROICalculator}
+                    >
+                      <TrendingUp size={16} className="mr-2" />
+                      Calculate ROI
+                    </Button>
+                    
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={handleEMICalculator}
+                    >
+                      <CreditCard size={16} className="mr-2" />
+                      EMI Calculator
+                    </Button>
+                  </div>
+                </Card>
+              )}
               
               {/* Legal Help Card */}
               <Card className="p-6 mb-6 bg-nirman-lightblue border-none">

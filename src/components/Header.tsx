@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Building, User, ShieldCheck, Building2, MapPin, Zap, Users, ArrowLeft, Calculator, Plus, MessageCircle } from "lucide-react";
+import { Building, User, ShieldCheck, Building2, MapPin, Zap, Users, ArrowLeft, Calculator, Plus, MessageCircle, CreditCard } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-mobile";
 import {
   Sheet,
@@ -44,6 +44,7 @@ const Header = ({ onLogoClick }: HeaderProps) => {
   const featureItems = [
     { label: "Area Snapshot", path: "/area-snapshot", icon: MapPin },
     { label: "Legal Support", path: "/legal-support", icon: ShieldCheck },
+    { label: "EMI Calculator", path: "/emi-calculator", icon: CreditCard },
   ];
   
   return (
