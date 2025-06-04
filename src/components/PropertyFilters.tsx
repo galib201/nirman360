@@ -1,21 +1,20 @@
-
 import { useState } from 'react';
-import { Filter, PropertyCategory, PropertyType } from '@/models';
+import { Filter, PropertyType } from '@/models';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { Filter as FilterIcon, Search } from 'lucide-react';
 
 interface PropertyFiltersProps {
   onFilterChange: (filters: Filter) => void;
   currentFilters?: Filter;
+  category?: 'buy' | 'rent';
 }
 
-const PropertyFilters = ({ onFilterChange, currentFilters = {} }: PropertyFiltersProps) => {
+const PropertyFilters = ({ onFilterChange, currentFilters = {}, category }: PropertyFiltersProps) => {
   const [filters, setFilters] = useState<Filter>(currentFilters);
   const [showAdvanced, setShowAdvanced] = useState(false);
   
