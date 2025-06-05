@@ -1,8 +1,8 @@
-
 import { useEffect, useState } from "react";
 import { DeveloperService } from "@/services/api";
 import { TrustedDeveloper } from "@/models";
 import PageLayout from "@/components/layout/PageLayout";
+import DeveloperDetailsModal from "@/components/DeveloperDetailsModal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,10 +13,9 @@ import {
   Award, 
   Phone, 
   Mail, 
-  Globe,
+  Eye,
   Construction,
-  CheckCircle,
-  ExternalLink
+  CheckCircle
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -26,6 +25,8 @@ const TrustedDevelopers = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+  const [selectedDeveloper, setSelectedDeveloper] = useState<TrustedDeveloper | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   
   useEffect(() => {
     const fetchDevelopers = async () => {
@@ -71,24 +72,19 @@ const TrustedDevelopers = () => {
   
   const handleCall = (developer: TrustedDeveloper) => {
     toast.success(`Calling ${developer.name}...`);
-    // In a real app, this would initiate a call or show contact info
     setTimeout(() => {
-      toast.info(`Contact: +880-1XXX-XXXXXX (Demo number for ${developer.name})`);
+      toast.info(`Contact: ${developer.contactInfo.phone}`);
     }, 1000);
   };
   
   const handleEmail = (developer: TrustedDeveloper) => {
-    const email = `contact@${developer.name.toLowerCase().replace(/\s+/g, '')}.com`;
     toast.success(`Opening email to ${developer.name}...`);
-    window.open(`mailto:${email}?subject=Property Development Inquiry`, '_blank');
+    window.open(`mailto:${developer.contactInfo.email}?subject=Property Development Inquiry`, '_blank');
   };
   
-  const handleViewPortfolio = (developer: TrustedDeveloper) => {
-    toast.success(`Opening ${developer.name}'s portfolio...`);
-    // In a real app, this would navigate to the developer's portfolio page
-    setTimeout(() => {
-      toast.info(`Portfolio: www.${developer.name.toLowerCase().replace(/\s+/g, '')}.com/portfolio (Demo URL)`);
-    }, 500);
+  const handleViewDetails = (developer: TrustedDeveloper) => {
+    setSelectedDeveloper(developer);
+    setShowDetailsModal(true);
   };
   
   return (
@@ -224,10 +220,10 @@ const TrustedDevelopers = () => {
                     </div>
                     <Button 
                       className="w-full"
-                      onClick={() => handleViewPortfolio(developer)}
+                      onClick={() => handleViewDetails(developer)}
                     >
-                      <Globe className="h-4 w-4 mr-2" />
-                      View Portfolio
+                      <Eye className="h-4 w-4 mr-2" />
+                      View Details
                     </Button>
                   </CardFooter>
                 </Card>
@@ -254,6 +250,12 @@ const TrustedDevelopers = () => {
           </div>
         </div>
       </div>
+      
+      <DeveloperDetailsModal
+        developer={selectedDeveloper}
+        open={showDetailsModal}
+        onClose={() => setShowDetailsModal(false)}
+      />
     </PageLayout>
   );
 };

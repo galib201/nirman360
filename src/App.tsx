@@ -55,6 +55,7 @@ function App() {
             <Route path="/community-chat" element={<CommunityChat />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/trusted-developers" element={<TrustedDevelopers />} />
+            <Route path="/legal-support" element={<LegalSupport />} />
             <Route path="/services/legal-help" element={<LegalSupport />} />
             <Route path="/services/property-management" element={<PropertyManagement />} />
             <Route path="/services/photography" element={<Photography />} />
