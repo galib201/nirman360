@@ -1,412 +1,395 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { Upload, FileCheck, Scale, FileText, PoundSterling } from "lucide-react";
+import { 
+  Scale, 
+  FileText, 
+  Shield, 
+  Clock, 
+  CheckCircle, 
+  Phone, 
+  Mail, 
+  MapPin,
+  Star,
+  Award,
+  Users,
+  Briefcase
+} from "lucide-react";
+import PageLayout from "@/components/layout/PageLayout";
 import { toast } from "sonner";
 
 const LegalSupport = () => {
-  const navigate = useNavigate();
-  const [selectedTab, setSelectedTab] = useState<string>("deed-verification");
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [uploadedFile, setUploadedFile] = useState<string | null>(null);
-  
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    
-    if (file) {
-      // Simulate file upload
-      setIsSubmitting(true);
-      
-      setTimeout(() => {
-        setUploadedFile(file.name);
-        setIsSubmitting(false);
-        toast.success("Document uploaded successfully!");
-      }, 1500);
+  const [selectedService, setSelectedService] = useState<string>("");
+  const [contactForm, setContactForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    service: "",
+    description: ""
+  });
+
+  const legalServices = [
+    {
+      id: "property-verification",
+      title: "Property Verification",
+      price: "BDT 5,000",
+      description: "Complete document verification and title search",
+      features: ["Title deed verification", "Legal clearance certificate", "Encumbrance check", "Court case verification"],
+      duration: "3-5 business days"
+    },
+    {
+      id: "contract-review",
+      title: "Contract Review",
+      price: "BDT 3,000",
+      description: "Professional review of sale/purchase agreements",
+      features: ["Contract terms analysis", "Risk assessment", "Legal advice", "Amendment suggestions"],
+      duration: "1-2 business days"
+    },
+    {
+      id: "registration-assistance",
+      title: "Registration Assistance",
+      price: "BDT 8,000",
+      description: "Complete property registration support",
+      features: ["Document preparation", "Registration filing", "Government liaison", "Completion follow-up"],
+      duration: "7-10 business days"
+    },
+    {
+      id: "dispute-resolution",
+      title: "Dispute Resolution",
+      price: "BDT 15,000",
+      description: "Legal representation for property disputes",
+      features: ["Case analysis", "Legal representation", "Negotiation support", "Court proceedings"],
+      duration: "Varies by case"
     }
+  ];
+
+  const lawyers = [
+    {
+      id: "1",
+      name: "Advocate Rashida Khan",
+      specialization: "Property Law",
+      experience: "15 years",
+      rating: 4.9,
+      cases: 500,
+      location: "Dhaka High Court",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face"
+    },
+    {
+      id: "2",
+      name: "Barrister Ahmed Hassan",
+      specialization: "Real Estate Law",
+      experience: "12 years",
+      rating: 4.8,
+      cases: 350,
+      location: "Supreme Court",
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face"
+    },
+    {
+      id: "3",
+      name: "Advocate Fatima Rahman",
+      specialization: "Contract Law",
+      experience: "10 years",
+      rating: 4.7,
+      cases: 280,
+      location: "Chittagong Bar",
+      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=300&h=300&fit=crop&crop=face"
+    }
+  ];
+
+  const handleServiceSelect = (serviceId: string) => {
+    setSelectedService(serviceId);
+    const service = legalServices.find(s => s.id === serviceId);
+    setContactForm(prev => ({ ...prev, service: service?.title || "" }));
   };
-  
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!contactForm.name || !contactForm.email || !contactForm.phone || !contactForm.service) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
     
-    setIsSubmitting(true);
-    
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
-      toast.success("Your legal consultation request has been submitted!");
-      navigate("/dashboard");
-    }, 2000);
+    toast.success("Your request has been submitted. A legal expert will contact you within 24 hours.");
+    setContactForm({ name: "", email: "", phone: "", service: "", description: "" });
   };
-  
-  const simulatePayment = () => {
-    setIsSubmitting(true);
-    
-    // Simulate payment processing
-    setTimeout(() => {
-      setIsSubmitting(false);
-      toast.success("Payment successful! Your legal consultation is booked.");
-      navigate("/dashboard");
-    }, 2000);
-  };
-  
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      
-      <main className="flex-grow bg-background py-8">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl md:text-4xl font-display font-semibold mb-6">
-            Legal Support Services
-          </h1>
-          
-          <p className="text-muted-foreground mb-8 max-w-3xl">
-            Nirman360 offers professional legal support services to ensure your real estate transactions
-            are secure and compliant. Our team of legal experts will guide you through the process.
-          </p>
-          
-          <Tabs 
-            defaultValue="deed-verification" 
-            className="w-full"
-            value={selectedTab}
-            onValueChange={setSelectedTab}
-          >
-            <TabsList className="grid grid-cols-1 md:grid-cols-3 mb-8">
-              <TabsTrigger value="deed-verification">Deed Verification</TabsTrigger>
-              <TabsTrigger value="legal-consultation">Legal Consultation</TabsTrigger>
-              <TabsTrigger value="premium-services">Premium Services</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="deed-verification">
-              <Card className="border-2 border-muted">
+    <PageLayout 
+      title="Legal Support" 
+      subtitle="Expert legal assistance for all your property transactions and disputes"
+    >
+      <Tabs defaultValue="services" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="services">Legal Services</TabsTrigger>
+          <TabsTrigger value="lawyers">Our Lawyers</TabsTrigger>
+          <TabsTrigger value="contact">Get Help</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="services" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {legalServices.map((service) => (
+              <Card 
+                key={service.id} 
+                className={`cursor-pointer transition-all ${
+                  selectedService === service.id ? 'ring-2 ring-nirman-navy' : ''
+                }`}
+                onClick={() => handleServiceSelect(service.id)}
+              >
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileCheck className="h-5 w-5 text-nirman-gold" />
-                    Deed Verification Service
+                  <CardTitle className="flex justify-between items-center">
+                    <span>{service.title}</span>
+                    <Badge variant="secondary">{service.price}</Badge>
                   </CardTitle>
-                  <CardDescription>
-                    Upload your property deed documents for verification by our legal experts.
-                  </CardDescription>
+                  <CardDescription>{service.description}</CardDescription>
                 </CardHeader>
                 
                 <CardContent>
-                  <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
-                    <div className="flex flex-col items-center">
-                      {uploadedFile ? (
-                        <div className="flex items-center gap-2 text-green-600">
-                          <FileCheck size={24} />
-                          <span>{uploadedFile}</span>
-                        </div>
-                      ) : (
-                        <>
-                          <Upload className="h-10 w-10 text-muted-foreground mb-4" />
-                          <h3 className="text-lg font-medium mb-2">Upload Your Documents</h3>
-                          <p className="text-sm text-muted-foreground mb-4">
-                            Drag and drop your files here or click to browse
-                          </p>
-                          <Input 
-                            type="file"
-                            className="max-w-sm"
-                            onChange={handleFileUpload}
-                          />
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label htmlFor="name" className="text-sm font-medium">Your Name</label>
-                        <Input id="name" placeholder="Enter your full name" required />
-                      </div>
-                      <div className="space-y-2">
-                        <label htmlFor="phone" className="text-sm font-medium">Phone Number</label>
-                        <Input id="phone" placeholder="Enter your phone number" required />
-                      </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Clock className="h-4 w-4 mr-2" />
+                      {service.duration}
                     </div>
                     
-                    <div className="space-y-2">
-                      <label htmlFor="property-address" className="text-sm font-medium">Property Address</label>
-                      <Input id="property-address" placeholder="Enter the property address" required />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label htmlFor="message" className="text-sm font-medium">Additional Information</label>
-                      <Textarea 
-                        id="message" 
-                        placeholder="Any specific information or questions about the deed..." 
-                        className="min-h-[100px]"
-                      />
-                    </div>
-                    
-                    <Button type="submit" className="w-full" disabled={isSubmitting}>
-                      {isSubmitting ? "Processing..." : "Submit for Verification"}
-                    </Button>
-                  </form>
-                </CardContent>
-                
-                <CardFooter className="flex flex-col text-sm text-muted-foreground">
-                  <p className="mb-2">
-                    <strong>Free Service:</strong> Basic verification is free for Nirman360 users.
-                  </p>
-                  <p>
-                    Our legal team will review your documents and get back to you within 48 hours.
-                  </p>
-                </CardFooter>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="legal-consultation">
-              <Card className="border-2 border-muted">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Scale className="h-5 w-5 text-nirman-gold" />
-                    Legal Consultation Service
-                  </CardTitle>
-                  <CardDescription>
-                    Book a consultation with our legal experts for your property-related matters.
-                  </CardDescription>
-                </CardHeader>
-                
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-medium">Choose Consultation Type</h3>
-                      
-                      <div className="space-y-4">
-                        <div className="flex items-start gap-4 p-4 border rounded-lg hover:bg-nirman-lightblue cursor-pointer transition-colors">
-                          <div className="mt-1">
-                            <input type="radio" name="consultation-type" defaultChecked />
-                          </div>
-                          <div>
-                            <h4 className="font-medium mb-1">Basic Consultation</h4>
-                            <p className="text-sm text-muted-foreground mb-2">
-                              30-minute video call with a legal advisor
-                            </p>
-                            <p className="font-semibold">BDT 499</p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-start gap-4 p-4 border rounded-lg hover:bg-nirman-lightblue cursor-pointer transition-colors">
-                          <div className="mt-1">
-                            <input type="radio" name="consultation-type" />
-                          </div>
-                          <div>
-                            <h4 className="font-medium mb-1">Standard Consultation</h4>
-                            <p className="text-sm text-muted-foreground mb-2">
-                              60-minute video call with a senior legal advisor
-                            </p>
-                            <p className="font-semibold">BDT 999</p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-start gap-4 p-4 border rounded-lg hover:bg-nirman-lightblue cursor-pointer transition-colors">
-                          <div className="mt-1">
-                            <input type="radio" name="consultation-type" />
-                          </div>
-                          <div>
-                            <h4 className="font-medium mb-1">Premium Consultation</h4>
-                            <p className="text-sm text-muted-foreground mb-2">
-                              90-minute video call with a legal expert + document review
-                            </p>
-                            <p className="font-semibold">BDT 1,999</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-medium">Your Details</h3>
-                      
-                      <form className="space-y-4">
-                        <div className="space-y-2">
-                          <label htmlFor="your-name" className="text-sm font-medium">Your Name</label>
-                          <Input id="your-name" placeholder="Enter your full name" required />
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <label htmlFor="your-email" className="text-sm font-medium">Email Address</label>
-                          <Input id="your-email" type="email" placeholder="Enter your email address" required />
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <label htmlFor="your-phone" className="text-sm font-medium">Phone Number</label>
-                          <Input id="your-phone" placeholder="Enter your phone number" required />
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <label htmlFor="consultation-reason" className="text-sm font-medium">Reason for Consultation</label>
-                          <Textarea 
-                            id="consultation-reason" 
-                            placeholder="Briefly describe your legal concerns..." 
-                            className="min-h-[100px]"
-                            required
-                          />
-                        </div>
-                      </form>
+                    <div>
+                      <p className="font-medium mb-2">Includes:</p>
+                      <ul className="space-y-1">
+                        {service.features.map((feature, index) => (
+                          <li key={index} className="flex items-center text-sm">
+                            <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
                 </CardContent>
                 
-                <CardFooter className="flex justify-between flex-col md:flex-row gap-4">
-                  <p className="text-sm text-muted-foreground">
-                    You will receive a confirmation email with meeting details after payment.
-                  </p>
-                  <Button onClick={simulatePayment} disabled={isSubmitting} className="min-w-[200px]">
-                    {isSubmitting ? "Processing..." : "Pay Now & Book"}
+                <CardFooter>
+                  <Button 
+                    className="w-full"
+                    variant={selectedService === service.id ? "default" : "outline"}
+                  >
+                    {selectedService === service.id ? "Selected" : "Select Service"}
                   </Button>
                 </CardFooter>
               </Card>
-            </TabsContent>
-            
-            <TabsContent value="premium-services">
-              <Card className="border-2 border-muted">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <PoundSterling className="h-5 w-5 text-nirman-gold" />
-                    Premium Legal Services
-                  </CardTitle>
-                  <CardDescription>
-                    Comprehensive legal support for complex real estate transactions.
-                  </CardDescription>
+            ))}
+          </div>
+          
+          <div className="bg-muted rounded-lg p-6">
+            <div className="flex items-start gap-4">
+              <Shield className="h-8 w-8 text-nirman-gold flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold mb-2">Why Choose Our Legal Services?</h3>
+                <ul className="text-sm space-y-1 text-muted-foreground">
+                  <li>• Experienced lawyers specializing in Bangladesh property law</li>
+                  <li>• Fixed pricing with no hidden costs</li>
+                  <li>• Quick turnaround times</li>
+                  <li>• 100% confidential and secure</li>
+                  <li>• Money-back guarantee if not satisfied</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="lawyers" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {lawyers.map((lawyer) => (
+              <Card key={lawyer.id}>
+                <CardHeader className="text-center">
+                  <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden">
+                    <img 
+                      src={lawyer.image} 
+                      alt={lawyer.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <CardTitle>{lawyer.name}</CardTitle>
+                  <CardDescription>{lawyer.specialization}</CardDescription>
                 </CardHeader>
                 
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card>
-                      <CardHeader className="bg-gradient-premium text-white">
-                        <CardTitle className="text-xl">Title Investigation</CardTitle>
-                        <CardDescription className="text-white text-opacity-80">
-                          Thorough title verification
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="pt-6">
-                        <p className="mb-4 text-sm text-muted-foreground">
-                          Our legal experts will conduct a comprehensive investigation 
-                          of the property title to ensure it is free from disputes.
-                        </p>
-                        <ul className="space-y-2 text-sm">
-                          <li className="flex items-center gap-2">
-                            <FileCheck className="h-4 w-4 text-green-600" />
-                            <span>Document verification</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <FileCheck className="h-4 w-4 text-green-600" />
-                            <span>Land records check</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <FileCheck className="h-4 w-4 text-green-600" />
-                            <span>Legal opinion report</span>
-                          </li>
-                        </ul>
-                        <div className="mt-6 text-center">
-                          <p className="font-semibold text-2xl">BDT 4,999</p>
-                        </div>
-                      </CardContent>
-                      <CardFooter>
-                        <Button className="w-full" variant="outline" onClick={simulatePayment}>
-                          Book Service
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                    
-                    <Card>
-                      <CardHeader className="bg-gradient-premium text-white">
-                        <CardTitle className="text-xl">Contract Review</CardTitle>
-                        <CardDescription className="text-white text-opacity-80">
-                          Expert contract analysis
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="pt-6">
-                        <p className="mb-4 text-sm text-muted-foreground">
-                          Our legal team will review and analyze your real estate contracts
-                          to ensure your interests are protected.
-                        </p>
-                        <ul className="space-y-2 text-sm">
-                          <li className="flex items-center gap-2">
-                            <FileCheck className="h-4 w-4 text-green-600" />
-                            <span>Contract analysis</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <FileCheck className="h-4 w-4 text-green-600" />
-                            <span>Terms negotiation</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <FileCheck className="h-4 w-4 text-green-600" />
-                            <span>Legal recommendation</span>
-                          </li>
-                        </ul>
-                        <div className="mt-6 text-center">
-                          <p className="font-semibold text-2xl">BDT 3,499</p>
-                        </div>
-                      </CardContent>
-                      <CardFooter>
-                        <Button className="w-full" variant="outline" onClick={simulatePayment}>
-                          Book Service
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                    
-                    <Card>
-                      <CardHeader className="bg-gradient-premium text-white">
-                        <CardTitle className="text-xl">Full Transaction Support</CardTitle>
-                        <CardDescription className="text-white text-opacity-80">
-                          End-to-end legal assistance
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="pt-6">
-                        <p className="mb-4 text-sm text-muted-foreground">
-                          Complete legal support throughout your property transaction process,
-                          from initial agreement to final registration.
-                        </p>
-                        <ul className="space-y-2 text-sm">
-                          <li className="flex items-center gap-2">
-                            <FileCheck className="h-4 w-4 text-green-600" />
-                            <span>Contract preparation</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <FileCheck className="h-4 w-4 text-green-600" />
-                            <span>Registration assistance</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <FileCheck className="h-4 w-4 text-green-600" />
-                            <span>Dedicated legal advisor</span>
-                          </li>
-                        </ul>
-                        <div className="mt-6 text-center">
-                          <p className="font-semibold text-2xl">BDT 9,999</p>
-                        </div>
-                      </CardContent>
-                      <CardFooter>
-                        <Button className="w-full" variant="outline" onClick={simulatePayment}>
-                          Book Service
-                        </Button>
-                      </CardFooter>
-                    </Card>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Experience</span>
+                    <span className="font-medium">{lawyer.experience}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Rating</span>
+                    <div className="flex items-center">
+                      <Star className="h-4 w-4 fill-amber-400 text-amber-400 mr-1" />
+                      <span className="font-medium">{lawyer.rating}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Cases Handled</span>
+                    <span className="font-medium">{lawyer.cases}+</span>
+                  </div>
+                  
+                  <div className="flex items-center text-sm">
+                    <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <span>{lawyer.location}</span>
                   </div>
                 </CardContent>
                 
-                <CardFooter className="flex justify-center">
-                  <p className="text-sm text-muted-foreground text-center max-w-xl">
-                    Our premium legal services are designed for complex real estate transactions.
-                    For custom legal requirements, please contact us directly for a tailored quote.
-                  </p>
+                <CardFooter className="flex gap-2">
+                  <Button size="sm" className="flex-1">
+                    <Phone className="h-4 w-4 mr-2" />
+                    Call
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <Mail className="h-4 w-4 mr-2" />
+                    Email
+                  </Button>
                 </CardFooter>
               </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </main>
-      
-      <Footer />
-    </div>
+            ))}
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="contact" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Request Legal Assistance</CardTitle>
+                <CardDescription>
+                  Fill out the form below and one of our legal experts will contact you within 24 hours.
+                </CardDescription>
+              </CardHeader>
+              
+              <CardContent>
+                <form onSubmit={handleContactSubmit} className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium">Full Name *</label>
+                    <Input
+                      value={contactForm.name}
+                      onChange={(e) => setContactForm(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="Enter your full name"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm font-medium">Email *</label>
+                    <Input
+                      type="email"
+                      value={contactForm.email}
+                      onChange={(e) => setContactForm(prev => ({ ...prev, email: e.target.value }))}
+                      placeholder="Enter your email"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm font-medium">Phone *</label>
+                    <Input
+                      value={contactForm.phone}
+                      onChange={(e) => setContactForm(prev => ({ ...prev, phone: e.target.value }))}
+                      placeholder="Enter your phone number"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm font-medium">Service Required *</label>
+                    <select 
+                      className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      value={contactForm.service}
+                      onChange={(e) => setContactForm(prev => ({ ...prev, service: e.target.value }))}
+                      required
+                    >
+                      <option value="">Select a service</option>
+                      {legalServices.map((service) => (
+                        <option key={service.id} value={service.title}>
+                          {service.title} - {service.price}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm font-medium">Case Description</label>
+                    <Textarea
+                      value={contactForm.description}
+                      onChange={(e) => setContactForm(prev => ({ ...prev, description: e.target.value }))}
+                      placeholder="Describe your legal requirement in detail..."
+                      rows={4}
+                    />
+                  </div>
+                  
+                  <Button type="submit" className="w-full">
+                    Submit Request
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+            
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Emergency Legal Help</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Need immediate legal assistance? Call our emergency hotline.
+                  </p>
+                  
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-5 w-5 text-red-600" />
+                    <span className="font-semibold text-lg">+880 1711-LEGAL (534250)</span>
+                  </div>
+                  
+                  <p className="text-xs text-muted-foreground">
+                    Available 24/7 for urgent property legal matters
+                  </p>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Free Consultation</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Get a free 15-minute consultation to understand your legal options.
+                  </p>
+                  <Button className="w-full" variant="outline">
+                    Book Free Consultation
+                  </Button>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Legal Resources</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <FileText className="h-4 w-4" />
+                    <a href="#" className="text-blue-600 hover:underline">Property Law Guide</a>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <FileText className="h-4 w-4" />
+                    <a href="#" className="text-blue-600 hover:underline">Contract Templates</a>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <FileText className="h-4 w-4" />
+                    <a href="#" className="text-blue-600 hover:underline">Legal FAQs</a>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </PageLayout>
   );
 };
 
