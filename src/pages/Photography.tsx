@@ -1,9 +1,8 @@
-
 import PageLayout from "@/components/layout/PageLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Camera, Video, Drone, Edit, Star, Clock } from "lucide-react";
+import { Camera, Video, Plane, Edit, Star, Clock } from "lucide-react";
 
 const Photography = () => {
   const packages = [
@@ -45,7 +44,7 @@ const Photography = () => {
         "Virtual staging options",
         "Social media ready content"
       ],
-      icon: <Drone className="h-8 w-8 text-nirman-gold" />
+      icon: <Plane className="h-8 w-8 text-nirman-gold" />
     }
   ];
 

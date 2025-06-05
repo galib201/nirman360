@@ -1,7 +1,6 @@
-
 import PageLayout from "@/components/layout/PageLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Camera, PriceTag, Users, FileCheck } from "lucide-react";
+import { CheckCircle, Camera, Tag, Users, FileCheck } from "lucide-react";
 
 const SellerGuide = () => {
   const steps = [
@@ -11,7 +10,7 @@ const SellerGuide = () => {
       description: "Gather all necessary legal documents including title deed, tax receipts, and approvals."
     },
     {
-      icon: <PriceTag className="h-8 w-8 text-nirman-gold" />,
+      icon: <Tag className="h-8 w-8 text-nirman-gold" />,
       title: "Set the Right Price",
       description: "Research market rates and price your property competitively for a quick sale."
     },
