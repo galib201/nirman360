@@ -350,6 +350,406 @@ export const MOCK_PROPERTIES: Property[] = [
       crimeRate: "low",
       walkScore: 90
     }
+  },
+  {
+    id: "p8",
+    title: "Cozy 2-Bedroom Apartment in Old Dhaka",
+    description: "Traditional style apartment with modern renovations. Perfect for those who appreciate heritage architecture with contemporary comforts.",
+    price: 18000,
+    location: {
+      address: "89 Heritage Lane",
+      city: "Dhaka",
+      area: "Old Dhaka",
+      coordinates: {
+        latitude: 23.7104,
+        longitude: 90.4074
+      }
+    },
+    features: {
+      bedrooms: 2,
+      bathrooms: 1,
+      area: 900,
+      furnished: true,
+      parking: false,
+      petFriendly: true,
+      garden: false,
+      securitySystem: true,
+      bachelorsAllowed: true,
+      familiesAllowed: true,
+      womenOnly: false,
+      additionalFeatures: ["Traditional Architecture", "Rooftop Access", "Heritage Building"]
+    },
+    type: "apartment",
+    category: "rent",
+    status: "available",
+    images: [
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
+      "https://images.unsplash.com/photo-1571055107559-3e67626fa8be"
+    ],
+    isVerified: true,
+    isPremium: false,
+    postedAt: "2023-04-22T08:45:00Z",
+    areaSnapshot: {
+      averagePrice: 17000,
+      nearbyPlaces: [
+        { name: "Historic Mosque", type: "cultural", distance: 0.2 },
+        { name: "Traditional Market", type: "shopping", distance: 0.1 },
+        { name: "Heritage Museum", type: "cultural", distance: 0.4 }
+      ],
+      crimeRate: "medium",
+      walkScore: 88
+    }
+  },
+  {
+    id: "p9",
+    title: "Premium Penthouse with City Skyline View",
+    description: "Luxurious penthouse featuring panoramic city views, premium finishes, and exclusive rooftop terrace. The epitome of urban luxury living.",
+    price: 75000000,
+    location: {
+      address: "1 Sky Tower",
+      city: "Dhaka",
+      area: "Gulshan",
+      coordinates: {
+        latitude: 23.7805,
+        longitude: 90.4156
+      }
+    },
+    features: {
+      bedrooms: 4,
+      bathrooms: 4,
+      area: 3500,
+      furnished: true,
+      parking: true,
+      petFriendly: true,
+      garden: false,
+      securitySystem: true,
+      bachelorsAllowed: false,
+      familiesAllowed: true,
+      womenOnly: false,
+      additionalFeatures: ["Private Elevator", "Rooftop Terrace", "Smart Home", "Concierge Service"]
+    },
+    type: "apartment",
+    category: "buy",
+    status: "available",
+    images: [
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00",
+      "https://images.unsplash.com/photo-1616047006789-b7af710a5387",
+      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0"
+    ],
+    isVerified: true,
+    isPremium: true,
+    postedAt: "2023-04-08T12:15:00Z",
+    areaSnapshot: {
+      averagePrice: 65000000,
+      nearbyPlaces: [
+        { name: "Luxury Shopping Center", type: "shopping", distance: 0.3 },
+        { name: "Five Star Hotel", type: "hospitality", distance: 0.4 },
+        { name: "Embassy Quarter", type: "government", distance: 0.6 }
+      ],
+      crimeRate: "low",
+      walkScore: 92
+    }
+  },
+  {
+    id: "p10",
+    title: "Affordable Student Housing Near Campus",
+    description: "Budget-friendly shared accommodation designed for students. Clean, safe, and conveniently located near major universities.",
+    price: 8000,
+    location: {
+      address: "156 Student Avenue",
+      city: "Dhaka",
+      area: "Shahbag",
+      coordinates: {
+        latitude: 23.7389,
+        longitude: 90.3958
+      }
+    },
+    features: {
+      bedrooms: 1,
+      bathrooms: 1,
+      area: 250,
+      furnished: true,
+      parking: false,
+      petFriendly: false,
+      garden: false,
+      securitySystem: true,
+      bachelorsAllowed: true,
+      familiesAllowed: false,
+      womenOnly: false,
+      additionalFeatures: ["Study Desk", "High-Speed WiFi", "Shared Kitchen", "Laundry Facility"]
+    },
+    type: "room",
+    category: "rent",
+    status: "available",
+    images: [
+      "https://images.unsplash.com/photo-1555854877-bab0e564b8d5",
+      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7",
+      "https://images.unsplash.com/photo-1631679706909-1844bbd07221"
+    ],
+    isVerified: false,
+    isPremium: false,
+    postedAt: "2023-04-28T15:30:00Z",
+    areaSnapshot: {
+      averagePrice: 9000,
+      nearbyPlaces: [
+        { name: "Dhaka University", type: "school", distance: 0.2 },
+        { name: "Student Cafeteria", type: "restaurant", distance: 0.1 },
+        { name: "Library", type: "library", distance: 0.3 }
+      ],
+      crimeRate: "medium",
+      walkScore: 95
+    }
+  },
+  {
+    id: "p11",
+    title: "Spacious Duplex with Modern Design",
+    description: "Contemporary duplex apartment with open-plan living, floor-to-ceiling windows, and premium fixtures throughout.",
+    price: 35000000,
+    location: {
+      address: "78 Modern Heights",
+      city: "Dhaka",
+      area: "Bashundhara",
+      coordinates: {
+        latitude: 23.8223,
+        longitude: 90.4254
+      }
+    },
+    features: {
+      bedrooms: 3,
+      bathrooms: 3,
+      area: 2200,
+      furnished: false,
+      parking: true,
+      petFriendly: true,
+      garden: true,
+      securitySystem: true,
+      bachelorsAllowed: false,
+      familiesAllowed: true,
+      womenOnly: false,
+      additionalFeatures: ["Double Height Ceiling", "Private Balcony", "Modern Kitchen", "Storage Room"]
+    },
+    type: "apartment",
+    category: "buy",
+    status: "available",
+    images: [
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c",
+      "https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4"
+    ],
+    isVerified: true,
+    isPremium: false,
+    postedAt: "2023-04-14T11:20:00Z",
+    areaSnapshot: {
+      averagePrice: 32000000,
+      nearbyPlaces: [
+        { name: "Shopping Complex", type: "shopping", distance: 0.5 },
+        { name: "International School", type: "school", distance: 0.7 },
+        { name: "Medical Center", type: "hospital", distance: 0.4 }
+      ],
+      crimeRate: "low",
+      walkScore: 78
+    }
+  },
+  {
+    id: "p12",
+    title: "Executive Office Space with River View",
+    description: "Premium office space overlooking the Buriganga River. Ideal for corporate headquarters or upscale business operations.",
+    price: 180000,
+    location: {
+      address: "25 River Plaza",
+      city: "Dhaka",
+      area: "Sadarghat",
+      coordinates: {
+        latitude: 23.7057,
+        longitude: 90.4125
+      }
+    },
+    features: {
+      bedrooms: 0,
+      bathrooms: 3,
+      area: 3000,
+      furnished: false,
+      parking: true,
+      petFriendly: false,
+      garden: false,
+      securitySystem: true,
+      bachelorsAllowed: false,
+      familiesAllowed: false,
+      womenOnly: false,
+      additionalFeatures: ["Conference Rooms", "Executive Lounge", "Server Room", "Reception Area"]
+    },
+    type: "commercial",
+    category: "rent",
+    status: "available",
+    images: [
+      "https://images.unsplash.com/photo-1497366216548-37526070297c",
+      "https://images.unsplash.com/photo-1497366754035-f200968a6e72",
+      "https://images.unsplash.com/photo-1564069114553-7215e1ff1890"
+    ],
+    isVerified: true,
+    isPremium: true,
+    postedAt: "2023-04-11T09:00:00Z",
+    areaSnapshot: {
+      averagePrice: 150000,
+      nearbyPlaces: [
+        { name: "Port Authority", type: "government", distance: 0.2 },
+        { name: "Business Center", type: "commercial", distance: 0.3 },
+        { name: "Executive Hotel", type: "hospitality", distance: 0.1 }
+      ],
+      crimeRate: "low",
+      walkScore: 85
+    }
+  },
+  {
+    id: "p13",
+    title: "Suburban Family Villa with Pool",
+    description: "Elegant family villa in a gated community with private swimming pool, landscaped gardens, and premium amenities.",
+    price: 45000000,
+    location: {
+      address: "12 Garden Estate",
+      city: "Dhaka",
+      area: "Dhanmondi",
+      coordinates: {
+        latitude: 23.7465,
+        longitude: 90.3700
+      }
+    },
+    features: {
+      bedrooms: 4,
+      bathrooms: 4,
+      area: 3200,
+      furnished: true,
+      parking: true,
+      petFriendly: true,
+      garden: true,
+      securitySystem: true,
+      bachelorsAllowed: false,
+      familiesAllowed: true,
+      womenOnly: false,
+      additionalFeatures: ["Private Pool", "Landscaped Garden", "Maid's Quarter", "Generator Backup"]
+    },
+    type: "villa",
+    category: "buy",
+    status: "available",
+    images: [
+      "https://images.unsplash.com/photo-1613490493576-7fde63acd811",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
+      "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea"
+    ],
+    isVerified: true,
+    isPremium: true,
+    postedAt: "2023-04-07T14:30:00Z",
+    areaSnapshot: {
+      averagePrice: 42000000,
+      nearbyPlaces: [
+        { name: "Dhanmondi Lake", type: "park", distance: 0.3 },
+        { name: "Upscale Restaurant", type: "restaurant", distance: 0.4 },
+        { name: "Private School", type: "school", distance: 0.6 }
+      ],
+      crimeRate: "low",
+      walkScore: 72
+    }
+  },
+  {
+    id: "p14",
+    title: "Modern 1-Bedroom Apartment for Professionals",
+    description: "Sleek and contemporary apartment perfect for working professionals. Features smart home technology and premium finishes.",
+    price: 22000,
+    location: {
+      address: "99 Tech Park Road",
+      city: "Dhaka",
+      area: "Tejgaon",
+      coordinates: {
+        latitude: 23.7644,
+        longitude: 90.3912
+      }
+    },
+    features: {
+      bedrooms: 1,
+      bathrooms: 1,
+      area: 650,
+      furnished: true,
+      parking: true,
+      petFriendly: false,
+      garden: false,
+      securitySystem: true,
+      bachelorsAllowed: true,
+      familiesAllowed: false,
+      womenOnly: false,
+      additionalFeatures: ["Smart Home System", "Gym Access", "Co-working Space", "High-Speed Internet"]
+    },
+    type: "apartment",
+    category: "rent",
+    status: "available",
+    images: [
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
+      "https://images.unsplash.com/photo-1560472354-b33ff0c44a43",
+      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace"
+    ],
+    isVerified: true,
+    isPremium: false,
+    postedAt: "2023-04-24T10:45:00Z",
+    areaSnapshot: {
+      averagePrice: 21000,
+      nearbyPlaces: [
+        { name: "Tech Companies", type: "commercial", distance: 0.2 },
+        { name: "Modern Cafe", type: "restaurant", distance: 0.1 },
+        { name: "Fitness Center", type: "gym", distance: 0.3 }
+      ],
+      crimeRate: "low",
+      walkScore: 88
+    }
+  },
+  {
+    id: "p15",
+    title: "Boutique Retail Space in Shopping District",
+    description: "Prime retail location in the heart of the shopping district. Perfect for fashion boutiques, cafes, or specialty stores.",
+    price: 85000,
+    location: {
+      address: "201 Fashion Street",
+      city: "Dhaka",
+      area: "New Market",
+      coordinates: {
+        latitude: 23.7337,
+        longitude: 90.3854
+      }
+    },
+    features: {
+      bedrooms: 0,
+      bathrooms: 1,
+      area: 800,
+      furnished: false,
+      parking: false,
+      petFriendly: false,
+      garden: false,
+      securitySystem: true,
+      bachelorsAllowed: false,
+      familiesAllowed: false,
+      womenOnly: false,
+      additionalFeatures: ["Street Frontage", "Display Windows", "Customer Parking", "Loading Area"]
+    },
+    type: "commercial",
+    category: "rent",
+    status: "available",
+    images: [
+      "https://images.unsplash.com/photo-1441986300917-64674bd600d8",
+      "https://images.unsplash.com/photo-1560472354-b33ff0c44a43",
+      "https://images.unsplash.com/photo-1571624436279-b272aff752b5"
+    ],
+    isVerified: true,
+    isPremium: false,
+    postedAt: "2023-04-19T13:15:00Z",
+    areaSnapshot: {
+      averagePrice: 75000,
+      nearbyPlaces: [
+        { name: "Shopping Mall", type: "shopping", distance: 0.1 },
+        { name: "Food Court", type: "restaurant", distance: 0.2 },
+        { name: "Metro Station", type: "transport", distance: 0.3 }
+      ],
+      crimeRate: "medium",
+      walkScore: 95
+    }
   }
 ];
 
@@ -416,20 +816,21 @@ export const ADMIN_USER = {
 
 // Add property analytics for admin dashboard
 export const PROPERTY_ANALYTICS = {
-  totalListings: 178,
-  verifiedListings: 142,
-  pendingVerification: 36,
-  premiumListings: 24,
-  mostViewedAreas: ["Gulshan", "Dhanmondi", "Banani", "Uttara"],
+  totalListings: 235,
+  verifiedListings: 198,
+  pendingVerification: 37,
+  premiumListings: 32,
+  mostViewedAreas: ["Gulshan", "Dhanmondi", "Banani", "Uttara", "Bashundhara"],
   listingsPerCategory: {
-    buy: 97,
-    rent: 81
+    buy: 134,
+    rent: 101
   },
   listingsPerType: {
-    apartment: 102,
-    house: 43,
-    commercial: 12,
-    room: 21
+    apartment: 142,
+    house: 51,
+    commercial: 18,
+    villa: 15,
+    room: 9
   },
   recentTransactions: [
     {
