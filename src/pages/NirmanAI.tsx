@@ -32,7 +32,7 @@ const NirmanAI = () => {
   return (
     <PageLayout 
       title="NirmanAI Assistant" 
-      description="Your intelligent real estate companion"
+      subtitle="Your intelligent real estate companion"
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Column - Information */}
