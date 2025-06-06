@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import PageLayout from "@/components/layout/PageLayout";
 import GoogleMapsRedirect from "@/components/GoogleMapsRedirect";
+import UnlockContactButton from "@/components/UnlockContactButton";
 
 const BookVisit = () => {
   const navigate = useNavigate();
@@ -139,6 +140,7 @@ const BookVisit = () => {
                           selected={selectedDate}
                           onSelect={setSelectedDate}
                           initialFocus
+                          className={cn("p-3 pointer-events-auto")}
                           disabled={(date) => {
                             const now = new Date();
                             now.setHours(0, 0, 0, 0);
@@ -329,6 +331,12 @@ const BookVisit = () => {
                   <span className="text-muted-foreground">Status</span>
                   <span className="font-medium capitalize">{property.status}</span>
                 </div>
+              </div>
+              
+              {/* Quick Unlock Option */}
+              <div className="border-t pt-4">
+                <h4 className="font-medium mb-2">Quick Contact Access</h4>
+                <UnlockContactButton propertyId={property.id} />
               </div>
             </CardContent>
           </Card>

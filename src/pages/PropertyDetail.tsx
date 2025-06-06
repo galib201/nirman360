@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Property } from "@/models";
@@ -6,6 +5,8 @@ import { PropertyService } from "@/services/api";
 import { formatPrice, formatDate } from "@/utils/formatters";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import AreaMoodScore from "@/components/AreaMoodScore";
+import UnlockContactButton from "@/components/UnlockContactButton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -370,18 +371,22 @@ const PropertyDetail = () => {
                       </div>
                     </div>
                     
+                    {/* Area Mood Score */}
+                    <div className="mb-6">
+                      <AreaMoodScore 
+                        area={property.location.area}
+                        score={4.3}
+                        characteristics={['Quiet', 'Safe', 'Family-friendly']}
+                      />
+                    </div>
+                    
                     <h4 className="font-medium mb-3">Nearby Places</h4>
                     <div className="space-y-3">
                       {property.areaSnapshot.nearbyPlaces.map((place, index) => (
                         <div key={index} className="flex items-center justify-between border-b pb-2">
                           <div className="flex items-center">
                             <div className="bg-nirman-lightblue p-1 rounded mr-2">
-                              {place.type === 'restaurant' && <Home size={16} />}
-                              {place.type === 'school' && <Home size={16} />}
-                              {place.type === 'hospital' && <Home size={16} />}
-                              {place.type === 'park' && <Home size={16} />}
-                              {place.type === 'shopping' && <Home size={16} />}
-                              {place.type === 'transport' && <Home size={16} />}
+                              <Home size={16} />
                             </div>
                             <span>{place.name}</span>
                           </div>
@@ -435,9 +440,8 @@ const PropertyDetail = () => {
                   </DialogContent>
                 </Dialog>
                 
-                <Button variant="outline" className="w-full">
-                  Save Property
-                </Button>
+                {/* Unlock Contact Button */}
+                <UnlockContactButton propertyId={property.id} />
               </Card>
 
               {/* Compare Property Card */}

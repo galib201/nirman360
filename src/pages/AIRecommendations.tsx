@@ -6,37 +6,52 @@ import PropertyCard from "@/components/PropertyCard";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Lightbulb } from "lucide-react";
 
 const AIRecommendations = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [bestDeals, setBestDeals] = useState<Property[]>([]);
   const [recentlyVerified, setRecentlyVerified] = useState<Property[]>([]);
   const [basedOnArea, setBasedOnArea] = useState<Property[]>([]);
+  const [userPreferences, setUserPreferences] = useState<any>({});
   
   useEffect(() => {
+    // Mock user preferences from localStorage
+    const mockPreferences = {
+      budget: { min: 2000000, max: 8000000 },
+      preferredAreas: ['Gulshan', 'Dhanmondi', 'Banani'],
+      propertyType: 'apartment',
+      bedrooms: 3,
+      category: 'buy'
+    };
+    
+    // In real app, get from localStorage
+    const storedPreferences = localStorage.getItem('userPreferences');
+    const preferences = storedPreferences ? JSON.parse(storedPreferences) : mockPreferences;
+    setUserPreferences(preferences);
+    
     const fetchRecommendations = async () => {
       try {
         setLoading(true);
         
-        // In a real app, these would be separate API calls with actual algorithms
-        // For now, we'll simulate them by filtering the mock data differently
         const allProperties = await PropertyService.getProperties();
         
-        // Best Deals - properties with good price/value ratio (simulated here with price filters)
+        // Best Deals - properties with good price/value ratio
         const deals = allProperties
           .filter(p => p.category === 'buy' && p.price < 5000000)
           .sort((a, b) => a.price - b.price)
           .slice(0, 4);
         setBestDeals(deals);
         
-        // Recently Verified - sort by verification date (using postedAt as proxy)
+        // Recently Verified
         const verified = allProperties
           .filter(p => p.isVerified)
           .sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime())
           .slice(0, 4);
         setRecentlyVerified(verified);
         
-        // Based on your area - properties in a specific area (using Gulshan as example)
+        // Based on your area
         const areaProperties = allProperties
           .filter(p => p.location.area === "Gulshan")
           .slice(0, 4);
@@ -50,6 +65,57 @@ const AIRecommendations = () => {
     
     fetchRecommendations();
   }, []);
+
+  const getRecommendationExplanation = (property: Property, type: string) => {
+    const reasons = [];
+    
+    if (type === 'bestDeals') {
+      if (property.price <= userPreferences.budget?.max) {
+        reasons.push('within your budget');
+      }
+      if (property.features.bedrooms === userPreferences.bedrooms) {
+        reasons.push(`has ${userPreferences.bedrooms} bedrooms as preferred`);
+      }
+      if (property.type === userPreferences.propertyType) {
+        reasons.push('matches your property type preference');
+      }
+    } else if (type === 'recentlyVerified') {
+      reasons.push('recently verified by our team');
+      if (userPreferences.preferredAreas?.includes(property.location.area)) {
+        reasons.push('in your preferred area');
+      }
+      if (property.category === userPreferences.category) {
+        reasons.push('matches your buying/renting preference');
+      }
+    } else if (type === 'basedOnArea') {
+      if (userPreferences.preferredAreas?.includes(property.location.area)) {
+        reasons.push('in your frequently searched area');
+      }
+      reasons.push('popular in this neighborhood');
+      if (property.features.area >= 1200) {
+        reasons.push('spacious layout');
+      }
+    }
+    
+    return reasons.length > 0 ? reasons.join(', ') : 'matches your search history';
+  };
+
+  const PropertyCardWithExplanation = ({ property, type }: { property: Property, type: string }) => (
+    <div className="space-y-3">
+      <PropertyCard property={property} />
+      <div className="bg-nirman-cream p-3 rounded-lg">
+        <div className="flex items-start gap-2">
+          <Lightbulb className="h-4 w-4 text-nirman-gold mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-nirman-navy mb-1">Why we recommend this:</p>
+            <p className="text-xs text-muted-foreground capitalize">
+              Suggested because it {getRecommendationExplanation(property, type)}.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -92,7 +158,7 @@ const AIRecommendations = () => {
                       className="animate-fade-in"
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
-                      <PropertyCard property={property} />
+                      <PropertyCardWithExplanation property={property} type="bestDeals" />
                     </div>
                   ))}
                 </div>
@@ -119,7 +185,7 @@ const AIRecommendations = () => {
                       className="animate-fade-in"
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
-                      <PropertyCard property={property} />
+                      <PropertyCardWithExplanation property={property} type="recentlyVerified" />
                     </div>
                   ))}
                 </div>
@@ -146,7 +212,7 @@ const AIRecommendations = () => {
                       className="animate-fade-in"
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
-                      <PropertyCard property={property} />
+                      <PropertyCardWithExplanation property={property} type="basedOnArea" />
                     </div>
                   ))}
                 </div>
