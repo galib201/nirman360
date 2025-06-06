@@ -2,7 +2,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
+import Login from "./pages/Login";
 import Properties from "./pages/Properties";
 import PropertyDetail from "./pages/PropertyDetail";
 import ComparePropertyPage from "./pages/CompareProperty";
@@ -40,12 +42,20 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/properties" element={<Properties />} />
             <Route path="/properties/:id" element={<PropertyDetail />} />
             <Route path="/compare-property" element={<ComparePropertyPage />} />
             <Route path="/book-visit/:id" element={<BookVisit />} />
             <Route path="/post-property" element={<PostProperty />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
             <Route path="/find-property" element={<FindProperty />} />
             <Route path="/ai-recommendations" element={<AIRecommendations />} />
             <Route path="/nirman-ai" element={<NirmanAI />} />
@@ -53,7 +63,14 @@ function App() {
             <Route path="/roi-calculator" element={<ROICalculator />} />
             <Route path="/area-snapshot" element={<AreaSnapshot />} />
             <Route path="/community-chat" element={<CommunityChat />} />
-            <Route path="/admin" element={<Admin />} />
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <Admin />
+                </ProtectedRoute>
+              } 
+            />
             <Route path="/trusted-developers" element={<TrustedDevelopers />} />
             <Route path="/legal-support" element={<LegalSupport />} />
             <Route path="/services/legal-help" element={<LegalSupport />} />
