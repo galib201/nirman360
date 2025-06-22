@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { formatPrice } from "@/utils/formatters";
@@ -24,6 +25,7 @@ const AreaSnapshot = () => {
   const [areaData, setAreaData] = useState<AreaSnapshotType | null>(null);
   const [compareData, setCompareData] = useState<AreaSnapshotType | null>(null);
   const [chartMode, setChartMode] = useState<'buy' | 'rent'>('buy');
+  const [enableCompare, setEnableCompare] = useState<boolean>(false);
   
   useEffect(() => {
     const fetchAreas = async () => {
@@ -60,10 +62,12 @@ const AreaSnapshot = () => {
   }, [selectedArea]);
   
   useEffect(() => {
-    if (secondArea) {
+    if (secondArea && enableCompare) {
       fetchAreaData(secondArea, setCompareData);
+    } else {
+      setCompareData(null);
     }
-  }, [secondArea]);
+  }, [secondArea, enableCompare]);
   
   const fetchAreaData = async (area: string, setData: React.Dispatch<React.SetStateAction<AreaSnapshotType | null>>) => {
     try {
@@ -160,7 +164,7 @@ const AreaSnapshot = () => {
             to make informed real estate decisions.
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div>
               <label className="block text-sm font-medium mb-2">Select Primary Area</label>
               <Select value={selectedArea} onValueChange={setSelectedArea}>
@@ -177,21 +181,34 @@ const AreaSnapshot = () => {
               </Select>
             </div>
             
-            <div>
-              <label className="block text-sm font-medium mb-2">Compare With</label>
-              <Select value={secondArea} onValueChange={setSecondArea}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select comparison area" />
-                </SelectTrigger>
-                <SelectContent>
-                  {areas.filter(area => area !== selectedArea).map((area) => (
-                    <SelectItem key={area} value={area}>
-                      {area}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="enable-compare"
+                checked={enableCompare}
+                onCheckedChange={setEnableCompare}
+              />
+              <Label htmlFor="enable-compare" className="text-sm font-medium">
+                Enable Compare
+              </Label>
             </div>
+            
+            {enableCompare && (
+              <div>
+                <label className="block text-sm font-medium mb-2">Compare With</label>
+                <Select value={secondArea} onValueChange={setSecondArea}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select comparison area" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {areas.filter(area => area !== selectedArea).map((area) => (
+                      <SelectItem key={area} value={area}>
+                        {area}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             
             <div className="flex items-end">
               <Button 
@@ -211,7 +228,7 @@ const AreaSnapshot = () => {
               <div className="mb-8">
                 <Card>
                   <CardContent className="pt-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className={`grid grid-cols-1 ${enableCompare && compareData ? 'md:grid-cols-2' : ''} gap-8`}>
                       <div>
                         <h2 className="text-xl font-semibold mb-4 flex items-center">
                           <MapPin className="mr-2 h-5 w-5 text-nirman-gold" />
@@ -253,7 +270,7 @@ const AreaSnapshot = () => {
                         </div>
                       </div>
                       
-                      {compareData && (
+                      {enableCompare && compareData && (
                         <div>
                           <h2 className="text-xl font-semibold mb-4 flex items-center">
                             <MapPin className="mr-2 h-5 w-5 text-nirman-navy" />
@@ -300,45 +317,47 @@ const AreaSnapshot = () => {
                 </Card>
               </div>
               
-              <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-4">Price Comparison</h2>
-                
-                <div className="bg-card rounded-lg p-6 border">
-                  <div className="mb-4">
-                    <Tabs defaultValue="buy" className="w-full" onValueChange={(v) => setChartMode(v as 'buy' | 'rent')}>
-                      <TabsList className="grid w-full max-w-xs grid-cols-2">
-                        <TabsTrigger value="buy">Buy</TabsTrigger>
-                        <TabsTrigger value="rent">Rent</TabsTrigger>
-                      </TabsList>
-                    </Tabs>
-                  </div>
+              {enableCompare && (
+                <div className="mb-8">
+                  <h2 className="text-xl font-semibold mb-4">Price Comparison</h2>
                   
-                  <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart
-                        data={prepareChartData()}
-                        margin={{ top: 20, right: 30, left: 30, bottom: 5 }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis tickFormatter={(value) => {
-                          return value >= 1000000 
-                            ? `${(value / 1000000).toFixed(1)}M` 
-                            : value >= 1000 
-                              ? `${(value / 1000).toFixed(0)}K` 
-                              : value.toString();
-                        }} />
-                        <Tooltip 
-                          formatter={(value) => [`৳ ${value.toLocaleString()}`, ""]}
-                          labelFormatter={(label) => `Property Type: ${label}`}
-                        />
-                        <Bar dataKey={selectedArea} fill="#1A1F2C" name={selectedArea} />
-                        {compareData && <Bar dataKey={secondArea} fill="#D4AF37" name={secondArea} />}
-                      </BarChart>
-                    </ResponsiveContainer>
+                  <div className="bg-card rounded-lg p-6 border">
+                    <div className="mb-4">
+                      <Tabs defaultValue="buy" className="w-full" onValueChange={(v) => setChartMode(v as 'buy' | 'rent')}>
+                        <TabsList className="grid w-full max-w-xs grid-cols-2">
+                          <TabsTrigger value="buy">Buy</TabsTrigger>
+                          <TabsTrigger value="rent">Rent</TabsTrigger>
+                        </TabsList>
+                      </Tabs>
+                    </div>
+                    
+                    <div className="h-80">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={prepareChartData()}
+                          margin={{ top: 20, right: 30, left: 30, bottom: 5 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis tickFormatter={(value) => {
+                            return value >= 1000000 
+                              ? `${(value / 1000000).toFixed(1)}M` 
+                              : value >= 1000 
+                                ? `${(value / 1000).toFixed(0)}K` 
+                                : value.toString();
+                          }} />
+                          <Tooltip 
+                            formatter={(value) => [`৳ ${value.toLocaleString()}`, ""]}
+                            labelFormatter={(label) => `Property Type: ${label}`}
+                          />
+                          <Bar dataKey={selectedArea} fill="#1A1F2C" name={selectedArea} />
+                          {compareData && <Bar dataKey={secondArea} fill="#D4AF37" name={secondArea} />}
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
               
               <div>
                 <h2 className="text-xl font-semibold mb-4">Area Recommendations</h2>

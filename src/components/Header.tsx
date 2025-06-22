@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Building, User, ShieldCheck, Building2, MapPin, Zap, Users, ArrowLeft, Calculator, Plus, MessageCircle, CreditCard } from "lucide-react";
+import { Building, User, ShieldCheck, Building2, MapPin, Zap, Users, ArrowLeft, Calculator, Plus, MessageCircle, CreditCard, TrendingUp, LogOut } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-mobile";
+import { toast } from "sonner";
 import {
   Sheet,
   SheetContent,
@@ -34,6 +35,17 @@ const Header = ({ onLogoClick }: HeaderProps) => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   
   const isHomePage = location.pathname === "/";
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const userRole = localStorage.getItem("userRole");
+  const userEmail = localStorage.getItem("userEmail");
+  
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userEmail");
+    toast.success("Logged out successfully");
+    navigate("/login");
+  };
   
   const mainNavItems = [
     { label: "Buy", path: "/properties?category=buy", icon: Building },
@@ -45,6 +57,7 @@ const Header = ({ onLogoClick }: HeaderProps) => {
     { label: "Area Snapshot", path: "/area-snapshot", icon: MapPin },
     { label: "Legal Support", path: "/legal-support", icon: ShieldCheck },
     { label: "EMI Calculator", path: "/emi-calculator", icon: CreditCard },
+    { label: "ROI Calculator", path: "/roi-calculator", icon: TrendingUp },
     { label: "Compare Property", path: "/compare-property", icon: Building2 },
   ];
   
@@ -110,17 +123,6 @@ const Header = ({ onLogoClick }: HeaderProps) => {
               <span>Nirman AI</span>
             </Button>
 
-            {/* ROI Calculator button */}
-            <Button
-              variant="default"
-              size="sm"
-              onClick={() => navigate("/roi-calculator")}
-              className="bg-nirman-gold hover:bg-nirman-gold/90 text-nirman-navy"
-            >
-              <Calculator className="h-4 w-4 mr-2" />
-              <span>ROI Calculator</span>
-            </Button>
-
             {/* Community button */}
             <Button
               variant="default"
@@ -166,16 +168,51 @@ const Header = ({ onLogoClick }: HeaderProps) => {
         )}
         
         <div className="flex items-center justify-end space-x-2 ml-auto">
-          {/* Account button */}
-          <Button
-            variant="outline"
-            size="sm"
-            className="hidden md:flex"
-            onClick={() => navigate("/dashboard")}
-          >
-            <User className="h-4 w-4 md:mr-2" />
-            <span className="hidden md:inline">Account</span>
-          </Button>
+          {isLoggedIn ? (
+            <>
+              {userRole === "admin" && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="hidden md:flex"
+                  onClick={() => navigate("/admin")}
+                >
+                  <ShieldCheck className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">Admin</span>
+                </Button>
+              )}
+              
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden md:flex"
+                onClick={() => navigate("/dashboard")}
+              >
+                <User className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Dashboard</span>
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+                className="hidden md:flex"
+              >
+                <LogOut className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Logout</span>
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="hidden md:flex"
+              onClick={() => navigate("/login")}
+            >
+              <User className="h-4 w-4 md:mr-2" />
+              <span className="hidden md:inline">Login</span>
+            </Button>
+          )}
           
           {isMobile && (
             <Sheet open={showMobileMenu} onOpenChange={setShowMobileMenu}>
@@ -244,18 +281,6 @@ const Header = ({ onLogoClick }: HeaderProps) => {
                       Nirman AI
                     </Link>
                   </SheetClose>
-                  
-                  {/* ROI Calculator button in mobile menu */}
-                  <SheetClose asChild>
-                    <Link 
-                      to="/roi-calculator"
-                      className="flex items-center rounded-md px-2 py-1.5 bg-nirman-gold/20 text-nirman-gold font-semibold"
-                      onClick={() => setShowMobileMenu(false)}
-                    >
-                      <Calculator className="mr-2.5 h-5 w-5" />
-                      ROI Calculator
-                    </Link>
-                  </SheetClose>
 
                   {/* Community button in mobile menu */}
                   <SheetClose asChild>
@@ -282,6 +307,58 @@ const Header = ({ onLogoClick }: HeaderProps) => {
                       </Link>
                     </SheetClose>
                   ))}
+                  
+                  {isLoggedIn ? (
+                    <>
+                      {userRole === "admin" && (
+                        <SheetClose asChild>
+                          <Link 
+                            to="/admin"
+                            className="flex items-center rounded-md px-2 py-1.5 transition-colors hover:bg-muted"
+                            onClick={() => setShowMobileMenu(false)}
+                          >
+                            <ShieldCheck className="mr-2.5 h-5 w-5" />
+                            Admin Panel
+                          </Link>
+                        </SheetClose>
+                      )}
+                      
+                      <SheetClose asChild>
+                        <Link 
+                          to="/dashboard"
+                          className="flex items-center rounded-md px-2 py-1.5 transition-colors hover:bg-muted"
+                          onClick={() => setShowMobileMenu(false)}
+                        >
+                          <User className="mr-2.5 h-5 w-5" />
+                          Dashboard
+                        </Link>
+                      </SheetClose>
+                      
+                      <SheetClose asChild>
+                        <button 
+                          onClick={() => {
+                            handleLogout();
+                            setShowMobileMenu(false);
+                          }}
+                          className="flex items-center rounded-md px-2 py-1.5 transition-colors hover:bg-muted text-left w-full"
+                        >
+                          <LogOut className="mr-2.5 h-5 w-5" />
+                          Logout
+                        </button>
+                      </SheetClose>
+                    </>
+                  ) : (
+                    <SheetClose asChild>
+                      <Link 
+                        to="/login"
+                        className="flex items-center rounded-md px-2 py-1.5 transition-colors hover:bg-muted"
+                        onClick={() => setShowMobileMenu(false)}
+                      >
+                        <User className="mr-2.5 h-5 w-5" />
+                        Login
+                      </Link>
+                    </SheetClose>
+                  )}
                 </nav>
               </SheetContent>
             </Sheet>
