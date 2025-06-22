@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Building, User, ShieldCheck, Building2, MapPin, Zap, Users, ArrowLeft, Calculator, Plus, MessageCircle, CreditCard, TrendingUp } from "lucide-react";
+import { Building, User, ShieldCheck, Building2, MapPin, Zap, Users, ArrowLeft, Calculator, Plus, MessageCircle, CreditCard } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-mobile";
 import {
   Sheet,
@@ -45,7 +45,6 @@ const Header = ({ onLogoClick }: HeaderProps) => {
     { label: "Area Snapshot", path: "/area-snapshot", icon: MapPin },
     { label: "Legal Support", path: "/legal-support", icon: ShieldCheck },
     { label: "EMI Calculator", path: "/emi-calculator", icon: CreditCard },
-    { label: "ROI Calculator", path: "/roi-calculator", icon: TrendingUp },
     { label: "Compare Property", path: "/compare-property", icon: Building2 },
   ];
   
@@ -109,6 +108,17 @@ const Header = ({ onLogoClick }: HeaderProps) => {
             >
               <Zap className="h-4 w-4 mr-2" />
               <span>Nirman AI</span>
+            </Button>
+
+            {/* ROI Calculator button */}
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => navigate("/roi-calculator")}
+              className="bg-nirman-gold hover:bg-nirman-gold/90 text-nirman-navy"
+            >
+              <Calculator className="h-4 w-4 mr-2" />
+              <span>ROI Calculator</span>
             </Button>
 
             {/* Community button */}
@@ -232,6 +242,18 @@ const Header = ({ onLogoClick }: HeaderProps) => {
                     >
                       <Zap className="mr-2.5 h-5 w-5" />
                       Nirman AI
+                    </Link>
+                  </SheetClose>
+                  
+                  {/* ROI Calculator button in mobile menu */}
+                  <SheetClose asChild>
+                    <Link 
+                      to="/roi-calculator"
+                      className="flex items-center rounded-md px-2 py-1.5 bg-nirman-gold/20 text-nirman-gold font-semibold"
+                      onClick={() => setShowMobileMenu(false)}
+                    >
+                      <Calculator className="mr-2.5 h-5 w-5" />
+                      ROI Calculator
                     </Link>
                   </SheetClose>
 
