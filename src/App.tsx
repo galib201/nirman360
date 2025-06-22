@@ -3,8 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import FloatingNirmanBot from "@/components/FloatingNirmanBot";
-import AdminLayout from "@/components/AdminLayout";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Properties from "./pages/Properties";
@@ -21,11 +19,6 @@ import ROICalculator from "./pages/ROICalculator";
 import AreaSnapshot from "./pages/AreaSnapshot";
 import CommunityChat from "./pages/CommunityChat";
 import Admin from "./pages/Admin";
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminProperties from "./pages/AdminProperties";
-import AdminUsers from "./pages/AdminUsers";
-import AdminLegal from "./pages/AdminLegal";
-import AdminAnnouncements from "./pages/AdminAnnouncements";
 import TrustedDevelopers from "./pages/TrustedDevelopers";
 import LegalSupport from "./pages/LegalSupport";
 import Terms from "./pages/Terms";
@@ -70,33 +63,14 @@ function App() {
             <Route path="/roi-calculator" element={<ROICalculator />} />
             <Route path="/area-snapshot" element={<AreaSnapshot />} />
             <Route path="/community-chat" element={<CommunityChat />} />
-            
-            {/* Admin Routes */}
             <Route 
               path="/admin" 
-              element={
-                <ProtectedRoute requireAdmin={true}>
-                  <AdminLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<AdminDashboard />} />
-              <Route path="properties" element={<AdminProperties />} />
-              <Route path="users" element={<AdminUsers />} />
-              <Route path="legal" element={<AdminLegal />} />
-              <Route path="announcements" element={<AdminAnnouncements />} />
-            </Route>
-            
-            {/* Legacy admin route for compatibility */}
-            <Route 
-              path="/admin-legacy" 
               element={
                 <ProtectedRoute requireAdmin={true}>
                   <Admin />
                 </ProtectedRoute>
               } 
             />
-            
             <Route path="/trusted-developers" element={<TrustedDevelopers />} />
             <Route path="/legal-support" element={<LegalSupport />} />
             <Route path="/services/legal-help" element={<LegalSupport />} />
@@ -111,10 +85,6 @@ function App() {
             <Route path="/cookies" element={<Cookies />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-          
-          {/* Floating NirmanBot - only show on non-admin pages */}
-          <FloatingNirmanBot />
-          
           <Toaster />
         </div>
       </Router>
