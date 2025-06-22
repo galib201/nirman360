@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import PageLayout from "@/components/layout/PageLayout";
 import { Card } from "@/components/ui/card";
@@ -8,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Bot, Calculator, Clock, MapPin, Building, Home, Car, Elevator } from "lucide-react";
+import { Bot, Calculator, Clock, MapPin, Building, Home, Car, ArrowUp } from "lucide-react";
 
 interface PropertyConfig {
   buildingType: string;
@@ -266,7 +265,7 @@ const NirmanAI = () => {
                 <Label>Additional Features</Label>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    { key: 'hasLift', label: 'Elevator', icon: Elevator },
+                    { key: 'hasLift', label: 'Elevator', icon: ArrowUp },
                     { key: 'hasParking', label: 'Parking', icon: Car },
                     { key: 'hasGenerator', label: 'Generator', icon: Bot }
                   ].map(({ key, label, icon: Icon }) => (
