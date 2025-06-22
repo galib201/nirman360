@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { format } from "date-fns";
@@ -9,14 +10,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { formatPrice } from "@/utils/formatters";
 import { PropertyService } from "@/services/api";
 import { Property } from "@/models";
-import { Calendar as CalendarIcon, Clock, Phone, Mail, MapPin, ExternalLink, CheckCircle, Star } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, Phone, Mail, MapPin, ExternalLink, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import PageLayout from "@/components/layout/PageLayout";
 import GoogleMapsRedirect from "@/components/GoogleMapsRedirect";
 import UnlockContactButton from "@/components/UnlockContactButton";
-import PostVisitRatingModal from "@/components/PostVisitRatingModal";
 
 const BookVisit = () => {
   const navigate = useNavigate();
@@ -29,7 +29,6 @@ const BookVisit = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [paymentCompleted, setPaymentCompleted] = useState<boolean>(false);
   const [ownerContact, setOwnerContact] = useState<any>(null);
-  const [showRatingModal, setShowRatingModal] = useState<boolean>(false);
   
   const timeSlots = [
     "10:00 AM", "11:00 AM", "12:00 PM", 
@@ -79,10 +78,6 @@ const BookVisit = () => {
       const price = paymentType === "standard" ? "49" : "99";
       toast.success(`Payment of BDT ${price} successful! Your visit has been booked.`);
     }, 2000);
-  };
-
-  const handleCompleteVisit = () => {
-    setShowRatingModal(true);
   };
   
   if (loading) {
@@ -282,19 +277,6 @@ const BookVisit = () => {
                     variant="default"
                   />
                 </div>
-
-                {/* Complete Visit Button */}
-                <div className="space-y-4 border-t pt-4">
-                  <h3 className="font-semibold">After Your Visit</h3>
-                  <Button 
-                    onClick={handleCompleteVisit}
-                    className="w-full flex items-center gap-2"
-                    variant="outline"
-                  >
-                    <Star className="h-4 w-4" />
-                    Complete Visit & Rate Experience
-                  </Button>
-                </div>
               </CardContent>
               
               <CardFooter>
@@ -378,14 +360,6 @@ const BookVisit = () => {
           </div>
         </div>
       </div>
-
-      {/* Post Visit Rating Modal */}
-      <PostVisitRatingModal
-        isOpen={showRatingModal}
-        onClose={() => setShowRatingModal(false)}
-        propertyId={property.id}
-        propertyTitle={property.title}
-      />
     </PageLayout>
   );
 };

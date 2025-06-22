@@ -6,7 +6,6 @@ import { formatPrice, formatDate } from "@/utils/formatters";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AreaMoodScore from "@/components/AreaMoodScore";
-import AreaSnapshotCard from "@/components/AreaSnapshotCard";
 import UnlockContactButton from "@/components/UnlockContactButton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -344,13 +343,10 @@ const PropertyDetail = () => {
                   </Card>
                 </TabsContent>
                 
-                {/* Area Snapshot Tab - Updated */}
+                {/* Area Snapshot Tab */}
                 <TabsContent value="area" className="space-y-4">
-                  {/* Area Snapshot Card */}
-                  <AreaSnapshotCard area={property.location.area} />
-                  
                   <Card className="p-6">
-                    <h3 className="text-xl font-semibold mb-4">Area Details</h3>
+                    <h3 className="text-xl font-semibold mb-4">Area Snapshot</h3>
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                       <div className="bg-muted p-4 rounded-lg">
