@@ -5,7 +5,6 @@ import { PropertyService } from "@/services/api";
 import { formatPrice, formatDate } from "@/utils/formatters";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import AreaMoodScore from "@/components/AreaMoodScore";
 import AreaSnapshotCard from "@/components/AreaSnapshotCard";
 import UnlockContactButton from "@/components/UnlockContactButton";
 import { Badge } from "@/components/ui/badge";
@@ -373,15 +372,6 @@ const PropertyDetail = () => {
                           {property.areaSnapshot.walkScore}/100
                         </span>
                       </div>
-                    </div>
-                    
-                    {/* Area Mood Score */}
-                    <div className="mb-6">
-                      <AreaMoodScore 
-                        area={property.location.area}
-                        score={4.3}
-                        characteristics={['Quiet', 'Safe', 'Family-friendly']}
-                      />
                     </div>
                     
                     <h4 className="font-medium mb-3">Nearby Places</h4>
