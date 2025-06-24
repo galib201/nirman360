@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +7,7 @@ import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Search, CheckCircle, XCircle, Edit } from "lucide-react";
 import { toast } from "sonner";
-import { mockProperties, MockProperty } from "@/data/mockData";
+import { mockProperties, MockProperty } from "@/utils/mockData";
 
 const AdminProperties = () => {
   const [properties, setProperties] = useState<MockProperty[]>(mockProperties);

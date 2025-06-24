@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Phone, Mail } from "lucide-react";
 import { toast } from "sonner";
-import { mockLawFirms, MockLawFirm } from "@/data/mockData";
+import { mockLawFirms, MockLawFirm } from "@/utils/mockData";
 
 const AdminLegal = () => {
   const [lawFirms, setLawFirms] = useState<MockLawFirm[]>(mockLawFirms);

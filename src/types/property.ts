@@ -4,6 +4,8 @@
  * Centralized location for all property types and interfaces
  */
 
+import { Property } from '@/models';
+
 export interface PropertyImageGalleryProps {
   images: string[];
   title: string;

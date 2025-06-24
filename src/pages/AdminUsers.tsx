@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Search, Eye } from "lucide-react";
-import { mockUsers, mockUserActivities, MockUser, MockUserActivity } from "@/data/mockData";
+import { mockUsers, mockUserActivities, MockUser, MockUserActivity } from "@/utils/mockData";
 
 const AdminUsers = () => {
   const [users] = useState<MockUser[]>(mockUsers);
