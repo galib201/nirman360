@@ -1,3 +1,4 @@
+
 import { AIUserPreference, BookingRequest, Property, User } from "../models";
 
 export const MOCK_PROPERTIES: Property[] = [
@@ -851,3 +852,127 @@ export const PROPERTY_ANALYTICS = {
     }
   ]
 };
+
+// Add mock data needed by admin components
+export interface MockUser extends User {
+  joinDate: string;
+  lastActive: string;
+  propertiesViewed: number;
+  bookingsMade: number;
+}
+
+export interface MockUserActivity {
+  id: string;
+  userEmail: string;
+  propertyTitle: string;
+  action: string;
+  date: string;
+}
+
+export interface MockProperty extends Property {
+  ownerName: string;
+  ownerEmail: string;
+  trustScore: number;
+  verificationStatus: 'pending' | 'approved' | 'rejected';
+}
+
+export interface MockLawFirm {
+  id: string;
+  name: string;
+  contact: string;
+  email: string;
+  specialization: string;
+  status: 'active' | 'inactive';
+}
+
+// Mock users with additional admin fields
+export const mockUsers: MockUser[] = [
+  {
+    id: "u1",
+    name: "John Doe",
+    email: "john.doe@example.com",
+    phone: "+8801712345678",
+    savedProperties: ["p1", "p4"],
+    bookings: ["b1"],
+    inquiries: ["i1", "i2"],
+    joinDate: "2023-03-15T10:30:00Z",
+    lastActive: "2023-04-28T15:45:00Z",
+    propertiesViewed: 12,
+    bookingsMade: 3
+  },
+  {
+    id: "u2",
+    name: "Sarah Ahmed",
+    email: "sarah.ahmed@example.com",
+    phone: "+8801687654321",
+    savedProperties: ["p2", "p3"],
+    bookings: [],
+    inquiries: ["i3"],
+    joinDate: "2023-04-01T09:15:00Z",
+    lastActive: "2023-04-29T11:20:00Z",
+    propertiesViewed: 8,
+    bookingsMade: 1
+  }
+];
+
+// Mock user activities
+export const mockUserActivities: MockUserActivity[] = [
+  {
+    id: "a1",
+    userEmail: "john.doe@example.com",
+    propertyTitle: "Luxury Apartment with Ocean View",
+    action: "visited",
+    date: "2023-04-28T10:30:00Z"
+  },
+  {
+    id: "a2",
+    userEmail: "sarah.ahmed@example.com",
+    propertyTitle: "Modern Family Home in Green Suburbs",
+    action: "unlocked",
+    date: "2023-04-27T14:15:00Z"
+  },
+  {
+    id: "a3",
+    userEmail: "john.doe@example.com",
+    propertyTitle: "Studio Apartment for Bachelors",
+    action: "booked",
+    date: "2023-04-26T16:45:00Z"
+  }
+];
+
+// Mock properties with admin fields
+export const mockProperties: MockProperty[] = MOCK_PROPERTIES.map((property, index) => ({
+  ...property,
+  ownerName: `Owner ${index + 1}`,
+  ownerEmail: `owner${index + 1}@example.com`,
+  trustScore: Math.floor(Math.random() * 40) + 60, // Random score between 60-100
+  verificationStatus: ['pending', 'approved', 'rejected'][Math.floor(Math.random() * 3)] as 'pending' | 'approved' | 'rejected'
+}));
+
+// Mock law firms
+export const mockLawFirms: MockLawFirm[] = [
+  {
+    id: "lf1",
+    name: "Rahman & Associates",
+    contact: "+8801711111111",
+    email: "info@rahmanlaw.com",
+    specialization: "Property Law",
+    status: "active"
+  },
+  {
+    id: "lf2",
+    name: "Legal Excellence Ltd.",
+    contact: "+8801722222222", 
+    email: "contact@legalexcellence.com",
+    specialization: "Real Estate",
+    status: "active"
+  },
+  {
+    id: "lf3",
+    name: "City Law Chambers",
+    contact: "+8801733333333",
+    email: "hello@citylawchambers.com", 
+    specialization: "Property Disputes",
+    status: "inactive"
+  }
+];
