@@ -1,135 +1,93 @@
+
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Property } from "@/models";
 import { PropertyService } from "@/services/api";
-import { formatPrice, formatDate } from "@/utils/formatters";
+import { formatDate } from "@/utils/formatters";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AreaSnapshotCard from "@/components/AreaSnapshotCard";
-import UnlockContactButton from "@/components/UnlockContactButton";
-import { Badge } from "@/components/ui/badge";
+import PropertyImageGallery from "@/components/property/PropertyImageGallery";
+import PropertyHeader from "@/components/property/PropertyHeader";
+import PropertyFeatures from "@/components/property/PropertyFeatures";
+import PropertyActions from "@/components/property/PropertyActions";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
+import ErrorState from "@/components/common/ErrorState";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Calendar, Check, Home, Info, MapPin, Calculator, TrendingUp, CreditCard, Building2 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { toast } from "@/hooks/use-toast";
+import { Check, Home, MapPin } from "lucide-react";
+import { usePropertyActions } from "@/hooks/usePropertyActions";
+import { formatPrice } from "@/utils/formatters";
 
+/**
+ * PropertyDetail - Main property detail page component
+ * Displays comprehensive property information including images, details, features, and actions
+ */
 const PropertyDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   
-  useEffect(() => {
-    const fetchProperty = async () => {
-      try {
-        setLoading(true);
-        if (id) {
-          const data = await PropertyService.getPropertyById(id);
-          if (data) {
-            setProperty(data);
-          }
+  const {
+    handleMapRedirect,
+    handleROICalculator,
+    handleEMICalculator,
+    handleAreaSnapshot,
+    handleCompareProperty
+  } = usePropertyActions(property);
+  
+  const fetchProperty = async () => {
+    try {
+      setLoading(true);
+      setError(false);
+      if (id) {
+        const data = await PropertyService.getPropertyById(id);
+        if (data) {
+          setProperty(data);
+        } else {
+          setError(true);
         }
-      } catch (error) {
-        console.error('Error fetching property details:', error);
-      } finally {
-        setLoading(false);
       }
-    };
-    
+    } catch (error) {
+      console.error('Error fetching property details:', error);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
     fetchProperty();
   }, [id]);
   
-  const handleBookVisit = () => {
-    // In a real app, this would open a booking form
-    toast({
-      title: "Booking request sent!",
-      description: "You'll be redirected to complete payment of BDT 99 to unlock contact details.",
-    });
-  };
-  
-  const handleMapRedirect = () => {
-    if (property) {
-      const query = `${property.location.address}, ${property.location.area}, ${property.location.city}`;
-      const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
-      window.open(url, '_blank');
-    }
-  };
-
-  const handleROICalculator = () => {
-    if (property) {
-      navigate('/roi-calculator', { 
-        state: { 
-          propertyData: {
-            price: property.price,
-            title: property.title,
-            location: property.location,
-            area: property.features.area,
-            type: property.type
-          }
-        }
-      });
-    }
-  };
-
-  const handleEMICalculator = () => {
-    if (property) {
-      navigate('/emi-calculator', { 
-        state: { 
-          propertyData: {
-            price: property.price,
-            title: property.title,
-            location: property.location
-          }
-        }
-      });
-    }
-  };
-
-  const handleAreaSnapshot = () => {
-    if (property) {
-      navigate('/area-snapshot', {
-        state: {
-          location: property.location
-        }
-      });
-    }
-  };
-
-  const handleCompareProperty = () => {
-    if (property) {
-      navigate('/compare-property', {
-        state: {
-          property: property
-        }
-      });
-    }
-  };
-  
+  // Loading state
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-grow flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-nirman-navy border-t-transparent"></div>
+          <LoadingSpinner size="lg" />
         </main>
         <Footer />
       </div>
     );
   }
   
-  if (!property) {
+  // Error or property not found state
+  if (error || !property) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-grow py-12 container mx-auto px-4 text-center">
-          <h1 className="text-3xl font-display font-semibold mb-4">Property Not Found</h1>
-          <p className="mb-6">The property you're looking for doesn't exist or has been removed.</p>
-          <Button asChild>
-            <a href="/properties">Browse Properties</a>
-          </Button>
+        <main className="flex-grow py-12 container mx-auto px-4">
+          <ErrorState
+            title="Property Not Found"
+            message="The property you're looking for doesn't exist or has been removed."
+            actionLabel="Browse Properties"
+            onAction={() => window.location.href = '/properties'}
+          />
         </main>
         <Footer />
       </div>
@@ -143,61 +101,15 @@ const PropertyDetail = () => {
       <main className="flex-grow py-8">
         <div className="container mx-auto px-4">
           {/* Property Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start mb-6">
-            <div>
-              <h1 className="text-3xl font-display font-semibold">{property.title}</h1>
-              <div className="flex items-center mt-2">
-                <MapPin size={18} className="text-muted-foreground mr-1" />
-                <span className="text-muted-foreground">
-                  {property.location.address}, {property.location.area}, {property.location.city}
-                </span>
-              </div>
-            </div>
-            
-            <div className="mt-4 md:mt-0">
-              <h2 className="text-2xl font-semibold">
-                {property.category === 'rent' ? `${formatPrice(property.price)}/mo` : formatPrice(property.price)}
-              </h2>
-              <div className="flex items-center mt-1">
-                <Badge className="mr-2" variant={property.status === 'available' ? 'default' : 'outline'}>
-                  {property.status.charAt(0).toUpperCase() + property.status.slice(1)}
-                </Badge>
-                
-                {property.isVerified && (
-                  <Badge variant="outline" className="bg-green-50 text-green-600 border-green-200">
-                    <Check size={14} className="mr-1" /> Verified
-                  </Badge>
-                )}
-              </div>
-            </div>
-          </div>
+          <PropertyHeader property={property} />
           
           {/* Property Images */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mb-8">
-            <div className="lg:col-span-3 rounded-lg overflow-hidden h-96">
-              <img
-                src={property.images[activeImageIndex]}
-                alt={property.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            
-            <div className="lg:col-span-2 grid grid-cols-2 gap-4">
-              {property.images.map((image, index) => (
-                <div 
-                  key={index}
-                  onClick={() => setActiveImageIndex(index)}
-                  className={`cursor-pointer rounded-lg overflow-hidden h-44 ${activeImageIndex === index ? 'ring-4 ring-nirman-gold' : ''}`}
-                >
-                  <img
-                    src={image}
-                    alt={`${property.title} image ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+          <PropertyImageGallery
+            images={property.images}
+            title={property.title}
+            activeImageIndex={activeImageIndex}
+            onImageSelect={setActiveImageIndex}
+          />
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Column - Property Details */}
@@ -280,72 +192,11 @@ const PropertyDetail = () => {
                 
                 {/* Features Tab */}
                 <TabsContent value="features" className="space-y-4">
-                  <Card className="p-6">
-                    <h3 className="text-xl font-semibold mb-4">Property Features</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <h4 className="font-medium mb-3">Main Features</h4>
-                        <ul className="space-y-2">
-                          <li className="flex items-center">
-                            <Check size={16} className="text-green-500 mr-2" />
-                            <span>{property.features.bedrooms} Bedrooms</span>
-                          </li>
-                          <li className="flex items-center">
-                            <Check size={16} className="text-green-500 mr-2" />
-                            <span>{property.features.bathrooms} Bathrooms</span>
-                          </li>
-                          <li className="flex items-center">
-                            <Check size={16} className="text-green-500 mr-2" />
-                            <span>{property.features.area} sq ft</span>
-                          </li>
-                          <li className="flex items-center">
-                            <Check size={16} className="text-green-500 mr-2" />
-                            <span>{property.features.furnished ? 'Furnished' : 'Unfurnished'}</span>
-                          </li>
-                          <li className="flex items-center">
-                            <Check size={16} className="text-green-500 mr-2" />
-                            <span>{property.features.parking ? 'Parking Available' : 'No Parking'}</span>
-                          </li>
-                        </ul>
-                      </div>
-                      
-                      <div>
-                        <h4 className="font-medium mb-3">Additional Features</h4>
-                        <ul className="space-y-2">
-                          {property.features.additionalFeatures.map((feature, index) => (
-                            <li key={index} className="flex items-center">
-                              <Check size={16} className="text-green-500 mr-2" />
-                              <span>{feature}</span>
-                            </li>
-                          ))}
-                          {property.features.petFriendly && (
-                            <li className="flex items-center">
-                              <Check size={16} className="text-green-500 mr-2" />
-                              <span>Pet Friendly</span>
-                            </li>
-                          )}
-                          {property.features.garden && (
-                            <li className="flex items-center">
-                              <Check size={16} className="text-green-500 mr-2" />
-                              <span>Garden/Outdoor Space</span>
-                            </li>
-                          )}
-                          {property.features.securitySystem && (
-                            <li className="flex items-center">
-                              <Check size={16} className="text-green-500 mr-2" />
-                              <span>Security System</span>
-                            </li>
-                          )}
-                        </ul>
-                      </div>
-                    </div>
-                  </Card>
+                  <PropertyFeatures features={property.features} />
                 </TabsContent>
                 
-                {/* Area Snapshot Tab - Updated */}
+                {/* Area Snapshot Tab */}
                 <TabsContent value="area" className="space-y-4">
-                  {/* Area Snapshot Card */}
                   <AreaSnapshotCard area={property.location.area} />
                   
                   <Card className="p-6">
@@ -400,118 +251,18 @@ const PropertyDetail = () => {
               </Tabs>
             </div>
             
-            {/* Right Column - Contact and Actions */}
+            {/* Right Column - Actions */}
             <div>
-              {/* Book a Visit Card */}
-              <Card className="p-6 mb-6">
-                <h3 className="font-semibold text-lg mb-4">Book a Visit</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Schedule a visit to see this property in person
-                </p>
-                
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="w-full mb-4">
-                      <Calendar size={16} className="mr-2" />
-                      Book a Visit
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Book a Visit</DialogTitle>
-                    </DialogHeader>
-                    <div className="py-4 px-2">
-                      <p className="mb-4">
-                        A small fee of <strong>BDT 99</strong> is required to unlock contact details and book a visit.
-                      </p>
-                      <p className="text-sm mb-6">
-                        This helps us ensure that only genuine visitors can book appointments.
-                      </p>
-                      <Button onClick={handleBookVisit} className="w-full">
-                        Pay BDT 99 to Continue
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-                
-                {/* Unlock Contact Button */}
-                <UnlockContactButton propertyId={property.id} />
-              </Card>
-
-              {/* Compare Property Card */}
-              <Card className="p-6 mb-6">
-                <h3 className="font-semibold text-lg mb-4">Compare Properties</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Compare this property with similar options
-                </p>
-                
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={handleCompareProperty}
-                >
-                  <Building2 size={16} className="mr-2" />
-                  Compare with Other Properties
-                </Button>
-              </Card>
-
-              {/* Additional Options for Properties for Sale */}
-              {property.category === 'buy' && (
-                <Card className="p-6 mb-6">
-                  <h3 className="font-semibold text-lg mb-4">Property Analysis</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Get detailed insights and calculations for this property
-                  </p>
-                  
-                  <div className="space-y-3">
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-start"
-                      onClick={handleAreaSnapshot}
-                    >
-                      <MapPin size={16} className="mr-2" />
-                      Detailed Area Snapshot
-                    </Button>
-                    
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-start"
-                      onClick={handleROICalculator}
-                    >
-                      <TrendingUp size={16} className="mr-2" />
-                      Calculate ROI
-                    </Button>
-                    
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-start"
-                      onClick={handleEMICalculator}
-                    >
-                      <CreditCard size={16} className="mr-2" />
-                      EMI Calculator
-                    </Button>
-                  </div>
-                </Card>
-              )}
+              <PropertyActions
+                property={property}
+                onAreaSnapshot={handleAreaSnapshot}
+                onROICalculator={handleROICalculator}
+                onEMICalculator={handleEMICalculator}
+                onCompareProperty={handleCompareProperty}
+              />
               
-              {/* Legal Help Card */}
-              <Card className="p-6 mb-6 bg-nirman-lightblue border-none">
-                <div className="flex items-start mb-4">
-                  <Info size={24} className="text-nirman-navy mr-2 mt-1" />
-                  <div>
-                    <h3 className="font-semibold text-lg">Need Legal Help?</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Get professional assistance with documentation and legal formalities
-                    </p>
-                  </div>
-                </div>
-                <Button variant="secondary" className="w-full">
-                  Explore Legal Services
-                </Button>
-              </Card>
-              
-              {/* Area Snapshot Card */}
-              <Card className="p-6">
+              {/* Quick Info Card */}
+              <Card className="p-6 mt-6">
                 <h3 className="font-semibold text-lg mb-4">Quick Info</h3>
                 <ul className="space-y-3">
                   <li className="flex justify-between">
