@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,7 +19,9 @@ const AdminProperties = () => {
   const filteredProperties = properties.filter(property =>
     property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     property.ownerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    property.location.toLowerCase().includes(searchTerm.toLowerCase())
+    property.location.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    property.location.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    property.location.area.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Update property verification status
@@ -111,7 +114,7 @@ const AdminProperties = () => {
                     <TableCell>
                       <div>
                         <p className="font-medium text-nirman-navy">{property.title}</p>
-                        <p className="text-sm text-gray-500">{property.location}</p>
+                        <p className="text-sm text-gray-500">{property.location.area}, {property.location.city}</p>
                       </div>
                     </TableCell>
                     <TableCell>
