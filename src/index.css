@@ -1,5 +1,3 @@
-
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
 @tailwind base;
@@ -95,12 +93,63 @@
 
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Focus styles for accessibility */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+
+  /* Screen reader only content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .sr-only.focus:not(.sr-only) {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
   }
 }
 
 @layer components {
+  /* Responsive typography */
+  .text-responsive-xs { @apply text-xs sm:text-sm; }
+  .text-responsive-sm { @apply text-sm sm:text-base; }
+  .text-responsive-base { @apply text-base sm:text-lg; }
+  .text-responsive-lg { @apply text-lg sm:text-xl; }
+  .text-responsive-xl { @apply text-xl sm:text-2xl; }
+  .text-responsive-2xl { @apply text-2xl sm:text-3xl; }
+  .text-responsive-3xl { @apply text-3xl sm:text-4xl; }
+
+  /* Responsive spacing */
+  .space-responsive { @apply space-y-4 sm:space-y-6 lg:space-y-8; }
+  .gap-responsive { @apply gap-4 sm:gap-6 lg:gap-8; }
+  .p-responsive { @apply p-4 sm:p-6 lg:p-8; }
+  .px-responsive { @apply px-4 sm:px-6 lg:px-8; }
+  .py-responsive { @apply py-4 sm:py-6 lg:py-8; }
+
+  /* Enhanced property card */
   .property-card {
-    @apply relative overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md;
+    @apply relative overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1;
   }
   
   .property-card:hover img {
@@ -108,55 +157,132 @@
   }
   
   .property-badge {
-    @apply absolute top-3 right-3 z-10 rounded-full px-3 py-1 text-xs font-semibold;
+    @apply absolute top-3 right-3 z-10 rounded-full px-3 py-1 text-xs font-semibold backdrop-blur-sm;
   }
 
   .verified-badge {
-    @apply bg-green-500 text-white;
+    @apply bg-green-500/90 text-white;
   }
   
   .premium-badge {
-    @apply bg-nirman-gold text-black;
+    @apply bg-nirman-gold/90 text-black;
   }
   
-  .section-title {
-    @apply text-2xl font-display font-semibold mb-6 text-nirman-navy;
-  }
-  
+  /* Enhanced buttons */
   .button-primary {
-    @apply bg-nirman-navy text-white hover:bg-opacity-90 transition-colors px-4 py-2 rounded-md;
+    @apply bg-nirman-navy text-white hover:bg-opacity-90 transition-all duration-200 px-4 py-2 rounded-md font-medium focus:ring-2 focus:ring-nirman-navy/20;
   }
   
   .button-secondary {
-    @apply bg-nirman-gold text-nirman-navy hover:bg-opacity-90 transition-colors px-4 py-2 rounded-md;
+    @apply bg-nirman-gold text-nirman-navy hover:bg-opacity-90 transition-all duration-200 px-4 py-2 rounded-md font-medium focus:ring-2 focus:ring-nirman-gold/20;
   }
-  
-  /* Add class for black text on white/cream backgrounds */
-  .text-on-light {
-    @apply text-nirman-navy;
+
+  /* Interactive elements */
+  .interactive-scale {
+    @apply transition-transform duration-200 hover:scale-105 active:scale-95;
   }
-  
-  /* Section heading for light backgrounds */
-  .section-heading-light {
-    @apply text-2xl font-semibold text-nirman-navy mb-4;
+
+  .glass-effect {
+    @apply backdrop-blur-md bg-white/80 dark:bg-gray-900/80;
+  }
+
+  /* Loading states */
+  .loading-shimmer {
+    @apply animate-pulse bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%];
+    animation: shimmer 1.5s infinite;
+  }
+
+  /* Custom animations */
+  .fade-in-up {
+    @apply animate-[fadeInUp_0.5s_ease-out_forwards];
+  }
+
+  .stagger-children > * {
+    @apply opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards];
+  }
+
+  .stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+  .stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+  .stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+  .stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+  .stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
+}
+
+/* Custom animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Custom Scroll Bar */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .property-card {
+    @apply border-2 border-gray-800;
+  }
+  
+  .button-primary, .button-secondary {
+    @apply border-2 border-current;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .property-card:hover {
+    @apply transform-none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    @apply text-black bg-white;
+  }
+}
+
+/* Custom Scroll Bar - Enhanced */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #D4AF37;
+  background: hsl(var(--muted));
   border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #b8941f;
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground));
+  border-radius: 4px;
+  transition: background 0.2s;
 }
 
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--foreground));
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground)) hsl(var(--muted));
+}
